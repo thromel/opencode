@@ -3056,6 +3056,130 @@ describe("SessionContextLedgerBenchmark", () => {
     ])
   })
 
+  test("CLI can repeat OpenCode manifest rows and pair matching repeats", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "context-ledger-opencode-run-repeats-"))
+    const repoDir = join(dir, "repo")
+    const outputDir = join(dir, "runs")
+    mkdirSync(repoDir, { recursive: true })
+    const fakeCliPath = join(dir, "fake-opencode.mjs")
+    const manifestPath = join(dir, "run-manifest.jsonl")
+    const reportPath = join(dir, "run-report.json")
+    const predictionPath = join(dir, "predictions.jsonl")
+    await Bun.write(
+      fakeCliPath,
+      [
+        "const args = process.argv.slice(2)",
+        "const label = process.env.CTXLEDGER_RUN_LABEL",
+        "const repeat = process.env.CONTEXTLEDGER_BENCHMARK_REPEAT_INDEX",
+        "if (args[0] === 'run') {",
+        "  const sessionID = `ses_${label}_${repeat}`",
+        "  console.log(JSON.stringify({ sessionID, part: { type: 'text', text: `answer-${label}-${repeat}` } }))",
+        "  process.exit(0)",
+        "}",
+        "if (args[0] === 'export') {",
+        "  const input = (label === 'baseline' ? 100 : 80) + Number(repeat)",
+        "  console.log(JSON.stringify({",
+        "    info: {",
+        "      id: args[1],",
+        "      model: { providerID: 'openai', id: 'gpt-5.5', variant: 'high' },",
+        "      tokens: { input, output: 10, reasoning: 5, cache: { read: 2, write: 1 } },",
+        "    },",
+        "    messages: [{ info: { id: `msg_${args[1]}` }, parts: [{ type: 'text', text: `summary-${label}-${repeat}` }] }],",
+        "  }))",
+        "  process.exit(0)",
+        "}",
+        "process.exit(1)",
+      ].join("\n"),
+    )
+    await Bun.write(
+      manifestPath,
+      [
+        {
+          instance_id: "owner__repo-repeat",
+          run_id: "owner__repo-repeat-baseline",
+          dir: repoDir,
+          prompt: "repeat baseline",
+          title: "repeat baseline",
+          env: { CTXLEDGER_RUN_LABEL: "baseline" },
+          repeats: 2,
+          answer_contains: ["answer-baseline"],
+        },
+        {
+          instance_id: "owner__repo-repeat",
+          run_id: "owner__repo-repeat-contextledger",
+          dir: repoDir,
+          prompt: "repeat contextledger",
+          title: "repeat contextledger",
+          env: { CTXLEDGER_RUN_LABEL: "contextledger" },
+          repeats: 2,
+          answer_contains: ["answer-contextledger"],
+        },
+      ]
+        .map((row) => JSON.stringify(row))
+        .join("\n") + "\n",
+    )
+
+    const proc = Bun.spawn({
+      cmd: [
+        "bun",
+        "run",
+        "script/context-ledger-benchmark.ts",
+        "--opencode-run-manifest",
+        manifestPath,
+        "--opencode-run-command-json",
+        JSON.stringify(["bun", fakeCliPath]),
+        "--opencode-run-output-dir",
+        outputDir,
+        "--opencode-run-report-output",
+        reportPath,
+        "--prediction-output",
+        predictionPath,
+      ],
+      cwd: process.cwd(),
+      stdout: "pipe",
+      stderr: "pipe",
+    })
+    const exit = await proc.exited
+    const stderr = await new Response(proc.stderr).text()
+
+    expect(exit, stderr).toBe(0)
+    expect(existsSync(join(outputDir, "owner__repo-repeat-baseline-r01.run.stdout"))).toBe(true)
+    expect(existsSync(join(outputDir, "owner__repo-repeat-contextledger-r02.export.json"))).toBe(true)
+    const predictions = SessionContextLedgerBenchmark.parsePredictionJsonl(readFileSync(predictionPath, "utf8"))
+    expect(predictions).toHaveLength(4)
+    const report = JSON.parse(readFileSync(reportPath, "utf8"))
+    expect(report.rows.map((row: { runID: string; repeatIndex?: number; repeatCount?: number }) => row)).toMatchObject([
+      { runID: "owner__repo-repeat-baseline-r1", repeatIndex: 1, repeatCount: 2 },
+      { runID: "owner__repo-repeat-baseline-r2", repeatIndex: 2, repeatCount: 2 },
+      { runID: "owner__repo-repeat-contextledger-r1", repeatIndex: 1, repeatCount: 2 },
+      { runID: "owner__repo-repeat-contextledger-r2", repeatIndex: 2, repeatCount: 2 },
+    ])
+    expect(
+      report.summaries.map((row: { label: string; runs: number; answerPassRate: number; meanInputTokens: number }) => [
+        row.label,
+        row.runs,
+        row.answerPassRate,
+        row.meanInputTokens,
+      ]),
+    ).toEqual([
+      ["repeat baseline", 2, 1, 101.5],
+      ["repeat contextledger", 2, 1, 81.5],
+    ])
+    expect(
+      report.pairedComparisons.map(
+        (row: {
+          repeatIndex: number
+          baselineRunID: string
+          candidateRunID: string
+          delta: { inputTokens: number }
+        }) => [row.repeatIndex, row.baselineRunID, row.candidateRunID, row.delta.inputTokens],
+      ),
+    ).toEqual([
+      [1, "owner__repo-repeat-baseline-r1", "owner__repo-repeat-contextledger-r1", -20],
+      [2, "owner__repo-repeat-baseline-r2", "owner__repo-repeat-contextledger-r2", -20],
+    ])
+  })
+
   test("CLI can score exported OpenCode compaction summaries against gold claims", async () => {
     const dir = mkdtempSync(join(tmpdir(), "context-ledger-opencode-compaction-summary-cli-"))
     const manifestPath = join(dir, "exports.jsonl")

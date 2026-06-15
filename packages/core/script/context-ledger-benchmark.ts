@@ -449,6 +449,8 @@ type OpenCodeRunReportRow = {
   readonly instanceID: string
   readonly runID: string
   readonly label: string
+  readonly repeatIndex?: number
+  readonly repeatCount?: number
   readonly title?: string
   readonly sessionID: string
   readonly turns: number
@@ -563,6 +565,7 @@ type OpenCodeRunReport = {
     readonly candidateRunID: string
     readonly baselineLabel: string
     readonly candidateLabel: string
+    readonly repeatIndex?: number
     readonly delta: {
       readonly fileF1?: number
       readonly spanF1?: number
@@ -1078,101 +1081,112 @@ async function runOpenCodeManifest(manifestPath: string) {
   const exportRows: SessionContextLedgerBenchmark.OpenCodeExportManifestRow[] = []
   const reportRows: Omit<OpenCodeRunReportRow, "metrics">[] = []
   for (const row of rows) {
-    const segment = safeFileSegment(row.run_id ?? row.instance_id)
+    const baseRunID = row.run_id ?? row.instance_id
+    const baseSegment = safeFileSegment(baseRunID)
     const dir = isAbsolute(row.dir) ? row.dir : join(dirname(manifestPath), row.dir)
     const rowModel = row.model ?? model
     const rowVariant = row.variant ?? variant
     const rowExtraArgs = row.extra_args ?? []
-    const rowEnv = openCodeRunEnvironment({ baseEnv, baseConfig, row })
     const prompts = openCodeRunPrompts(row)
-    const turnRuns: { readonly stdout: string; readonly stderr: string }[] = []
-    let sessionID: string | undefined
-    for (const [index, prompt] of prompts.entries()) {
-      const run = await runCommand(
-        openCodeRunCommand({
-          baseCommand,
-          extraArgs: [...extraArgs, ...rowExtraArgs],
-          dir,
-          model: rowModel,
-          variant: rowVariant,
-          title: index === 0 ? row.title : undefined,
-          sessionID,
-          prompt,
-        }),
-        { env: rowEnv },
-      )
-      turnRuns.push(run)
-      const nextSessionID = openCodeRunSessionID(run.stdout)
-      if (!nextSessionID)
-        throw new Error(`Could not find OpenCode session ID in run output for ${row.instance_id} turn ${index + 1}`)
-      if (sessionID && nextSessionID !== sessionID) {
-        throw new Error(
-          `OpenCode session changed from ${sessionID} to ${nextSessionID} for ${row.instance_id} turn ${index + 1}`,
-        )
+    const repeats = openCodeRunRepeats(row)
+    for (let repeatIndex = 1; repeatIndex <= repeats; repeatIndex++) {
+      const segment = repeats === 1 ? baseSegment : `${baseSegment}-r${String(repeatIndex).padStart(2, "0")}`
+      const runID = repeats === 1 ? baseRunID : `${baseRunID}-r${repeatIndex}`
+      const rowEnv = {
+        ...openCodeRunEnvironment({ baseEnv, baseConfig, row }),
+        CONTEXTLEDGER_BENCHMARK_REPEAT_INDEX: String(repeatIndex),
+        CONTEXTLEDGER_BENCHMARK_REPEAT_COUNT: String(repeats),
       }
-      sessionID = nextSessionID
-    }
-    if (!sessionID) throw new Error(`Could not find OpenCode session ID in run output for ${row.instance_id}`)
-    const runStdoutPath = join(outputDir, `${segment}.run.stdout`)
-    const runStderrPath = join(outputDir, `${segment}.run.stderr`)
-    const runStdout = turnRuns.map((run) => run.stdout.trimEnd()).join("\n") + "\n"
-    const runStderr = turnRuns.map((run) => run.stderr.trimEnd()).join("\n") + "\n"
-    await Bun.write(runStdoutPath, runStdout)
-    await Bun.write(runStderrPath, runStderr)
-    const exported = await runCommand([...baseCommand, "export", sessionID], { env: rowEnv })
-    const exportPath = join(outputDir, `${segment}.export.json`)
-    const exportStderrPath = join(outputDir, `${segment}.export.stderr`)
-    await Bun.write(exportPath, exported.stdout)
-    await Bun.write(exportStderrPath, exported.stderr)
-    const exportedJson = JSON.parse(exported.stdout)
-    exportRows.push({
-      instance_id: row.instance_id,
-      export_path: relative(dirname(exportManifestPath), exportPath) || exportPath,
-      session_id: sessionID,
-      label: row.title ?? row.run_id,
-    })
-    const prediction = relativizeOpenCodePrediction(
-      SessionContextLedgerBenchmark.toPredictionFromOpenCodeExport(exportedJson, {
+      const turnRuns: { readonly stdout: string; readonly stderr: string }[] = []
+      let sessionID: string | undefined
+      for (const [index, prompt] of prompts.entries()) {
+        const run = await runCommand(
+          openCodeRunCommand({
+            baseCommand,
+            extraArgs: [...extraArgs, ...rowExtraArgs],
+            dir,
+            model: rowModel,
+            variant: rowVariant,
+            title: index === 0 ? row.title : undefined,
+            sessionID,
+            prompt,
+          }),
+          { env: rowEnv },
+        )
+        turnRuns.push(run)
+        const nextSessionID = openCodeRunSessionID(run.stdout)
+        if (!nextSessionID)
+          throw new Error(`Could not find OpenCode session ID in run output for ${row.instance_id} turn ${index + 1}`)
+        if (sessionID && nextSessionID !== sessionID) {
+          throw new Error(
+            `OpenCode session changed from ${sessionID} to ${nextSessionID} for ${row.instance_id} turn ${index + 1}`,
+          )
+        }
+        sessionID = nextSessionID
+      }
+      if (!sessionID) throw new Error(`Could not find OpenCode session ID in run output for ${row.instance_id}`)
+      const runStdoutPath = join(outputDir, `${segment}.run.stdout`)
+      const runStderrPath = join(outputDir, `${segment}.run.stderr`)
+      const runStdout = turnRuns.map((run) => run.stdout.trimEnd()).join("\n") + "\n"
+      const runStderr = turnRuns.map((run) => run.stderr.trimEnd()).join("\n") + "\n"
+      await Bun.write(runStdoutPath, runStdout)
+      await Bun.write(runStderrPath, runStderr)
+      const exported = await runCommand([...baseCommand, "export", sessionID], { env: rowEnv })
+      const exportPath = join(outputDir, `${segment}.export.json`)
+      const exportStderrPath = join(outputDir, `${segment}.export.stderr`)
+      await Bun.write(exportPath, exported.stdout)
+      await Bun.write(exportStderrPath, exported.stderr)
+      const exportedJson = JSON.parse(exported.stdout)
+      exportRows.push({
+        instance_id: row.instance_id,
+        export_path: relative(dirname(exportManifestPath), exportPath) || exportPath,
+        session_id: sessionID,
+        label: row.title ?? row.run_id,
+      })
+      const prediction = relativizeOpenCodePrediction(
+        SessionContextLedgerBenchmark.toPredictionFromOpenCodeExport(exportedJson, {
+          instanceID: row.instance_id,
+        }),
+        dir,
+      )
+      predictions.push(prediction)
+      const answer = openCodeRunAnswerReport({
+        stdout: runStdout,
+        contains: row.answer_contains,
+        regex: row.answer_regex,
+      })
+      const fileChecks = openCodeRunFileCheckReport({ dir, checks: row.file_checks })
+      const commandChecks = await openCodeRunCommandCheckReport({
+        dir,
+        outputDir,
+        segment,
+        checks: row.command_checks,
+        env: rowEnv,
+      })
+      reportRows.push({
         instanceID: row.instance_id,
-      }),
-      dir,
-    )
-    predictions.push(prediction)
-    const answer = openCodeRunAnswerReport({
-      stdout: runStdout,
-      contains: row.answer_contains,
-      regex: row.answer_regex,
-    })
-    const fileChecks = openCodeRunFileCheckReport({ dir, checks: row.file_checks })
-    const commandChecks = await openCodeRunCommandCheckReport({
-      dir,
-      outputDir,
-      segment,
-      checks: row.command_checks,
-      env: rowEnv,
-    })
-    reportRows.push({
-      instanceID: row.instance_id,
-      runID: row.run_id ?? row.instance_id,
-      label: row.title ?? row.run_id ?? row.instance_id,
-      title: row.title,
-      sessionID,
-      turns: prompts.length,
-      requestedModel: rowModel,
-      requestedVariant: rowVariant,
-      exportedModel: openCodeExportModel(exportedJson),
-      config: row.config ?? baseConfig,
-      artifacts: {
-        runStdout: runStdoutPath,
-        runStderr: runStderrPath,
-        exportJson: exportPath,
-        exportStderr: exportStderrPath,
-      },
-      tokens: openCodeExportTokens(exportedJson),
-      ...(answer ? { answer } : {}),
-      ...(fileChecks ? { fileChecks } : {}),
-      ...(commandChecks ? { commandChecks } : {}),
-    })
+        runID,
+        label: row.title ?? row.run_id ?? row.instance_id,
+        ...(repeats > 1 ? { repeatIndex, repeatCount: repeats } : {}),
+        title: row.title,
+        sessionID,
+        turns: prompts.length,
+        requestedModel: rowModel,
+        requestedVariant: rowVariant,
+        exportedModel: openCodeExportModel(exportedJson),
+        config: row.config ?? baseConfig,
+        artifacts: {
+          runStdout: runStdoutPath,
+          runStderr: runStderrPath,
+          exportJson: exportPath,
+          exportStderr: exportStderrPath,
+        },
+        tokens: openCodeExportTokens(exportedJson),
+        ...(answer ? { answer } : {}),
+        ...(fileChecks ? { fileChecks } : {}),
+        ...(commandChecks ? { commandChecks } : {}),
+      })
+    }
   }
   await Bun.write(exportManifestPath, exportRows.map((row) => JSON.stringify(row)).join("\n") + "\n")
   if (args.values["opencode-run-report-output"]) {
@@ -1209,6 +1223,14 @@ function openCodeRunPrompts(row: SessionContextLedgerBenchmark.OpenCodeRunManife
   if (blankIndex >= 0)
     throw new Error(`OpenCode run row ${row.instance_id} has an empty prompt at turn ${blankIndex + 1}`)
   return prompts
+}
+
+function openCodeRunRepeats(row: SessionContextLedgerBenchmark.OpenCodeRunManifestRow) {
+  const repeats = row.repeats ?? 1
+  if (!Number.isInteger(repeats) || repeats < 1) {
+    throw new Error(`OpenCode run row ${row.instance_id} requires repeats to be a positive integer`)
+  }
+  return repeats
 }
 
 function openCodeRunCommand(input: {
@@ -1317,35 +1339,40 @@ function openCodeRunReportComparisons(rows: readonly OpenCodeRunReportRow[]): Op
   const instanceIDs = Array.from(new Set(rows.map((row) => row.instanceID)))
   return instanceIDs.flatMap((instanceID) => {
     const items = rows.filter((row) => row.instanceID === instanceID)
-    const baseline = items[0]
-    if (!baseline) return []
-    return items.slice(1).map((candidate) => ({
-      instanceID,
-      baselineRunID: baseline.runID,
-      candidateRunID: candidate.runID,
-      baselineLabel: baseline.label,
-      candidateLabel: candidate.label,
-      delta: {
-        fileF1: metricDelta(candidate.metrics?.file.f1, baseline.metrics?.file.f1),
-        spanF1: metricDelta(candidate.metrics?.span.f1, baseline.metrics?.span.f1),
-        lineF1: metricDelta(candidate.metrics?.line.f1, baseline.metrics?.line.f1),
-        aucLineCoverage: metricDelta(
-          candidate.metrics?.trajectory.aucLineCoverage,
-          baseline.metrics?.trajectory.aucLineCoverage,
-        ),
-        answerPassed: metricDelta(answerScore(candidate.answer), answerScore(baseline.answer)),
-        fileChecksPassed: metricDelta(fileCheckScore(candidate.fileChecks), fileCheckScore(baseline.fileChecks)),
-        commandChecksPassed: metricDelta(
-          commandCheckScore(candidate.commandChecks),
-          commandCheckScore(baseline.commandChecks),
-        ),
-        inputTokens: metricDelta(candidate.tokens?.input, baseline.tokens?.input),
-        outputTokens: metricDelta(candidate.tokens?.output, baseline.tokens?.output),
-        reasoningTokens: metricDelta(candidate.tokens?.reasoning, baseline.tokens?.reasoning),
-        cacheReadTokens: metricDelta(candidate.tokens?.cacheRead, baseline.tokens?.cacheRead),
-        cacheWriteTokens: metricDelta(candidate.tokens?.cacheWrite, baseline.tokens?.cacheWrite),
-      },
-    }))
+    const repeatIndexes = Array.from(new Set(items.map((row) => row.repeatIndex ?? 1)))
+    return repeatIndexes.flatMap((repeatIndex) => {
+      const repeatItems = items.filter((row) => (row.repeatIndex ?? 1) === repeatIndex)
+      const baseline = repeatItems[0]
+      if (!baseline) return []
+      return repeatItems.slice(1).map((candidate) => ({
+        instanceID,
+        baselineRunID: baseline.runID,
+        candidateRunID: candidate.runID,
+        baselineLabel: baseline.label,
+        candidateLabel: candidate.label,
+        ...((baseline.repeatCount ?? candidate.repeatCount ?? 1) > 1 ? { repeatIndex } : {}),
+        delta: {
+          fileF1: metricDelta(candidate.metrics?.file.f1, baseline.metrics?.file.f1),
+          spanF1: metricDelta(candidate.metrics?.span.f1, baseline.metrics?.span.f1),
+          lineF1: metricDelta(candidate.metrics?.line.f1, baseline.metrics?.line.f1),
+          aucLineCoverage: metricDelta(
+            candidate.metrics?.trajectory.aucLineCoverage,
+            baseline.metrics?.trajectory.aucLineCoverage,
+          ),
+          answerPassed: metricDelta(answerScore(candidate.answer), answerScore(baseline.answer)),
+          fileChecksPassed: metricDelta(fileCheckScore(candidate.fileChecks), fileCheckScore(baseline.fileChecks)),
+          commandChecksPassed: metricDelta(
+            commandCheckScore(candidate.commandChecks),
+            commandCheckScore(baseline.commandChecks),
+          ),
+          inputTokens: metricDelta(candidate.tokens?.input, baseline.tokens?.input),
+          outputTokens: metricDelta(candidate.tokens?.output, baseline.tokens?.output),
+          reasoningTokens: metricDelta(candidate.tokens?.reasoning, baseline.tokens?.reasoning),
+          cacheReadTokens: metricDelta(candidate.tokens?.cacheRead, baseline.tokens?.cacheRead),
+          cacheWriteTokens: metricDelta(candidate.tokens?.cacheWrite, baseline.tokens?.cacheWrite),
+        },
+      }))
+    })
   })
 }
 

@@ -360,6 +360,7 @@ export const OpenCodeRunManifestRow = Schema.Struct({
   dir: Schema.String,
   prompt: Schema.optional(Schema.String),
   prompts: Schema.optional(Schema.Array(Schema.String)),
+  repeats: Schema.optional(Schema.Number),
   run_id: Schema.optional(Schema.String),
   title: Schema.optional(Schema.String),
   model: Schema.optional(Schema.String),
