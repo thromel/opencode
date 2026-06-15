@@ -69,6 +69,10 @@ const args = parseArgs({
     "opencode-export": { type: "string" },
     "opencode-export-manifest": { type: "string" },
     "opencode-messages": { type: "string" },
+    "opencode-noisy-compaction-live-command-json": { type: "string" },
+    "opencode-noisy-compaction-live-env-json": { type: "string" },
+    "opencode-noisy-compaction-live-manifest": { type: "string" },
+    "opencode-noisy-compaction-live-output-dir": { type: "string" },
     "opencode-run-command-json": { type: "string" },
     "opencode-run-config-json": { type: "string" },
     "opencode-run-env-json": { type: "string" },
@@ -559,6 +563,88 @@ type OpenCodeRunReport = {
   }[]
 }
 
+type NoisyCompactionLiveManifestRow = {
+  readonly scenario_id: string
+  readonly instance_id: string
+  readonly baseline_session_id: string
+  readonly precision_session_id: string
+  readonly baseline_import_path: string
+  readonly precision_import_path: string
+  readonly gold_path: string
+  readonly summarize_request: {
+    readonly providerID: string
+    readonly modelID: string
+    readonly variant?: string
+    readonly auto?: boolean
+  }
+  readonly baseline_config: unknown
+  readonly precision_config: unknown
+}
+
+type NoisyCompactionLiveLane = "baseline" | "precision"
+
+type NoisyCompactionLiveReportRow = {
+  readonly scenarioID: string
+  readonly instanceID: string
+  readonly lane: NoisyCompactionLiveLane
+  readonly sessionID: string
+  readonly importedSessionID?: string
+  readonly config: unknown
+  readonly summarizeRequest: NoisyCompactionLiveManifestRow["summarize_request"]
+  readonly exportedModel?: {
+    readonly providerID?: string
+    readonly modelID?: string
+    readonly variant?: string
+  }
+  readonly tokens?: {
+    readonly input: number
+    readonly output: number
+    readonly reasoning: number
+    readonly cacheRead: number
+    readonly cacheWrite: number
+  }
+  readonly summaryTokens?: number
+  readonly claimRecall?: number
+  readonly survivedClaims?: readonly string[]
+  readonly missingClaims?: readonly string[]
+  readonly artifacts: {
+    readonly importStdout: string
+    readonly importStderr: string
+    readonly serveStdout: string
+    readonly serveStderr: string
+    readonly summarizeResponse: string
+    readonly exportJson: string
+    readonly exportStderr: string
+  }
+}
+
+type NoisyCompactionLiveReport = {
+  readonly generatedBy: "context-ledger-benchmark"
+  readonly kind: "opencode-noisy-compaction-live-report"
+  readonly manifestPath: string
+  readonly outputDir: string
+  readonly rows: readonly NoisyCompactionLiveReportRow[]
+  readonly summaryReport: SessionContextLedgerBenchmark.OpenCodeCompactionSummaryReport
+  readonly summaries: readonly {
+    readonly lane: NoisyCompactionLiveLane
+    readonly runs: number
+    readonly meanClaimRecall?: number
+    readonly meanSummaryTokens?: number
+    readonly meanInputTokens?: number
+  }[]
+  readonly pairedComparisons: readonly {
+    readonly scenarioID: string
+    readonly instanceID: string
+    readonly baselineSessionID: string
+    readonly precisionSessionID: string
+    readonly delta: {
+      readonly claimRecall?: number
+      readonly summaryTokens?: number
+      readonly inputTokens?: number
+    }
+  }[]
+}
+
 async function emitPredictions(predictions: readonly SessionContextLedgerBenchmark.Prediction[]) {
   const output = predictions.map((prediction) => JSON.stringify(prediction)).join("\n") + "\n"
   if (args.values["prediction-output"]) await Bun.write(args.values["prediction-output"], output)
@@ -715,6 +801,161 @@ function noisyContinuationRunManifestRow(input: {
     prompt: input.fixture.continuation.prompt,
     answer_contains: input.fixture.continuation.answerContains,
   } satisfies SessionContextLedgerBenchmark.OpenCodeRunManifestRow
+}
+
+async function runNoisyCompactionLiveManifest(manifestPath: string) {
+  const rows = parseNoisyCompactionLiveManifestJsonl(await Bun.file(manifestPath).text())
+  if (rows.length === 0) throw new Error("--opencode-noisy-compaction-live-manifest must contain at least one JSONL row")
+  const outputDir = args.values["opencode-noisy-compaction-live-output-dir"] ?? join(dirname(manifestPath), "noisy-compaction-live")
+  mkdirSync(outputDir, { recursive: true })
+  const exportManifestPath = join(outputDir, "exports.jsonl")
+  const summaryReportPath = join(outputDir, "summary-report.json")
+  const reportPath = join(outputDir, "live-report.json")
+  const dbPath = join(outputDir, "opencode-live.db")
+  const baseCommand = parseOpenCodeRunCommand(
+    args.values["opencode-noisy-compaction-live-command-json"] ??
+      JSON.stringify(["bun", "run", "--cwd", join(import.meta.dir, "../../opencode"), "--conditions=browser", "src/index.ts"]),
+    "--opencode-noisy-compaction-live-command-json",
+  )
+  const baseEnv = args.values["opencode-noisy-compaction-live-env-json"]
+    ? parseStringRecord(args.values["opencode-noisy-compaction-live-env-json"], "--opencode-noisy-compaction-live-env-json")
+    : {}
+  if (baseEnv.OPENCODE_CONFIG_CONTENT !== undefined) {
+    throw new Error("--opencode-noisy-compaction-live-env-json cannot include OPENCODE_CONFIG_CONTENT")
+  }
+  const commonEnv = {
+    ...baseEnv,
+    OPENCODE_DB: dbPath,
+    OPENCODE_PURE: baseEnv.OPENCODE_PURE ?? "1",
+    OPENCODE_PRINT_LOGS: baseEnv.OPENCODE_PRINT_LOGS ?? "1",
+    OPENCODE_LOG_LEVEL: baseEnv.OPENCODE_LOG_LEVEL ?? "DEBUG",
+    OPENCODE_SERVER_PASSWORD: baseEnv.OPENCODE_SERVER_PASSWORD ?? "",
+  }
+  const exportRows: SessionContextLedgerBenchmark.OpenCodeExportManifestRow[] = []
+  const reportRows: Omit<NoisyCompactionLiveReportRow, "summaryTokens" | "claimRecall" | "survivedClaims" | "missingClaims">[] = []
+
+  for (const row of rows) {
+    for (const lane of ["baseline", "precision"] as const) {
+      const laneInput = await noisyCompactionLaneInput(row, lane, manifestPath)
+      const env = {
+        ...commonEnv,
+        OPENCODE_CONFIG_CONTENT: JSON.stringify(laneInput.config),
+      }
+      const importResult = await runCommandIn([...baseCommand, "import", laneInput.importPath], {
+        cwd: laneInput.directory,
+        env,
+      })
+      const importedSessionID = importResult.stdout.match(/\bses_[A-Za-z0-9]+\b/)?.[0]
+      const laneSegment = safeFileSegment(`${row.scenario_id}-${lane}`)
+      const importStdoutPath = join(outputDir, `${laneSegment}.import.stdout`)
+      const importStderrPath = join(outputDir, `${laneSegment}.import.stderr`)
+      const serveStdoutPath = join(outputDir, `${laneSegment}.serve.stdout`)
+      const serveStderrPath = join(outputDir, `${laneSegment}.serve.stderr`)
+      const summarizeResponsePath = join(outputDir, `${laneSegment}.summarize.response`)
+      const exportPath = join(outputDir, `${laneSegment}.export.json`)
+      const exportStderrPath = join(outputDir, `${laneSegment}.export.stderr`)
+      await Bun.write(importStdoutPath, importResult.stdout)
+      await Bun.write(importStderrPath, importResult.stderr)
+
+      const server = await startOpenCodeServer({ baseCommand, cwd: laneInput.directory, env })
+      try {
+        const response = await fetch(`${server.url}/session/${laneInput.sessionID}/summarize`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "x-opencode-directory": laneInput.directory,
+          },
+          body: JSON.stringify(row.summarize_request),
+        })
+        const text = await response.text()
+        await Bun.write(summarizeResponsePath, text)
+        if (!response.ok) {
+          throw new Error(`OpenCode summarize failed for ${row.scenario_id} ${lane}: ${response.status} ${text}`)
+        }
+      } finally {
+        const stopped = await server.stop()
+        await Bun.write(serveStdoutPath, stopped.stdout)
+        await Bun.write(serveStderrPath, stopped.stderr)
+      }
+
+      const exported = await runCommandIn([...baseCommand, "export", laneInput.sessionID], {
+        cwd: laneInput.directory,
+        env,
+      })
+      await Bun.write(exportPath, exported.stdout)
+      await Bun.write(exportStderrPath, exported.stderr)
+      const exportedJson = JSON.parse(exported.stdout)
+      exportRows.push({
+        instance_id: row.instance_id,
+        export_path: relative(dirname(exportManifestPath), exportPath) || exportPath,
+        session_id: laneInput.sessionID,
+        label: lane,
+      })
+      reportRows.push({
+        scenarioID: row.scenario_id,
+        instanceID: row.instance_id,
+        lane,
+        sessionID: laneInput.sessionID,
+        ...(importedSessionID ? { importedSessionID } : {}),
+        config: laneInput.config,
+        summarizeRequest: row.summarize_request,
+        exportedModel: openCodeExportModel(exportedJson),
+        tokens: openCodeExportTokens(exportedJson),
+        artifacts: {
+          importStdout: importStdoutPath,
+          importStderr: importStderrPath,
+          serveStdout: serveStdoutPath,
+          serveStderr: serveStderrPath,
+          summarizeResponse: summarizeResponsePath,
+          exportJson: exportPath,
+          exportStderr: exportStderrPath,
+        },
+      })
+    }
+  }
+
+  await Bun.write(exportManifestPath, exportRows.map((row) => JSON.stringify(row)).join("\n") + "\n")
+  const goldPath = resolveManifestPath(rows[0].gold_path, manifestPath)
+  const summaryReport = SessionContextLedgerBenchmark.analyzeOpenCodeCompactionSummaries({
+    exports: await Promise.all(exportRows.map((row) => compactionSummaryInputFromManifestRow(row, exportManifestPath))),
+    gold: SessionContextLedgerBenchmark.parseCompactionSummaryGoldJsonl(await Bun.file(goldPath).text()),
+  })
+  await Bun.write(summaryReportPath, `${JSON.stringify(summaryReport, undefined, 2)}\n`)
+  const enrichedRows = enrichNoisyCompactionLiveRows(reportRows, summaryReport, outputDir)
+  const report: NoisyCompactionLiveReport = {
+    generatedBy: "context-ledger-benchmark",
+    kind: "opencode-noisy-compaction-live-report",
+    manifestPath,
+    outputDir,
+    rows: enrichedRows,
+    summaryReport,
+    summaries: noisyCompactionLiveSummaries(enrichedRows),
+    pairedComparisons: noisyCompactionLiveComparisons(enrichedRows),
+  }
+  await Bun.write(reportPath, `${JSON.stringify(report, undefined, 2)}\n`)
+  process.stdout.write(
+    `${JSON.stringify(
+      { outputDir, manifestPath, exportManifestPath, summaryReportPath, reportPath, rows: enrichedRows.length },
+      undefined,
+      2,
+    )}\n`,
+  )
+}
+
+async function noisyCompactionLaneInput(
+  row: NoisyCompactionLiveManifestRow,
+  lane: NoisyCompactionLiveLane,
+  manifestPath: string,
+) {
+  const importPath = resolveManifestPath(lane === "baseline" ? row.baseline_import_path : row.precision_import_path, manifestPath)
+  const exported = await Bun.file(importPath).json() as SessionContextLedgerBenchmark.OpenCodeExport
+  return {
+    lane,
+    importPath,
+    sessionID: lane === "baseline" ? row.baseline_session_id : row.precision_session_id,
+    config: lane === "baseline" ? row.baseline_config : row.precision_config,
+    directory: optionalStringField(exported.info, "directory") ?? process.cwd(),
+  }
 }
 
 function sessionIDFromExport(exported: SessionContextLedgerBenchmark.OpenCodeExport) {
@@ -1023,7 +1264,7 @@ function commandCheckScore(report: OpenCodeRunCommandCheckReport | undefined) {
   return report.passed ? 1 : 0
 }
 
-function metricAverage(rows: readonly OpenCodeRunReportRow[], value: (row: OpenCodeRunReportRow) => number | undefined) {
+function metricAverage<Row>(rows: readonly Row[], value: (row: Row) => number | undefined) {
   const values = rows.map(value).filter((item): item is number => item !== undefined)
   if (values.length === 0) return undefined
   return values.reduce((total, item) => total + item, 0) / values.length
@@ -1113,8 +1354,8 @@ function relativeOpenCodePath(file: string, root: string) {
   return value
 }
 
-function parseOpenCodeRunCommand(input: string) {
-  return parseOpenCodeStringArray(input, "--opencode-run-command-json", { allowEmpty: false })
+function parseOpenCodeRunCommand(input: string, optionName = "--opencode-run-command-json") {
+  return parseOpenCodeStringArray(input, optionName, { allowEmpty: false })
 }
 
 function parseOpenCodeStringArray(input: string, optionName: string, options: { readonly allowEmpty: boolean }) {
@@ -1163,6 +1404,17 @@ async function runCommand(cmd: readonly string[], options?: { readonly env?: Rec
   return { stdout, stderr }
 }
 
+async function runCommandIn(
+  cmd: readonly string[],
+  options: { readonly cwd: string; readonly env?: Record<string, string> },
+) {
+  const result = await runCommandCapture(cmd, options)
+  if (result.exit !== 0) {
+    throw new Error(`Command failed (${result.exit}): ${cmd.join(" ")}\n${result.stderr}`)
+  }
+  return { stdout: result.stdout, stderr: result.stderr }
+}
+
 async function runCommandCapture(
   cmd: readonly string[],
   options: { readonly cwd: string; readonly env?: Record<string, string> },
@@ -1180,6 +1432,72 @@ async function runCommandCapture(
     proc.exited,
   ])
   return { stdout, stderr, exit }
+}
+
+async function startOpenCodeServer(input: {
+  readonly baseCommand: readonly string[]
+  readonly cwd: string
+  readonly env: Record<string, string>
+}) {
+  const proc = Bun.spawn({
+    cmd: [...input.baseCommand, "serve", "--hostname", "127.0.0.1", "--port", "0"],
+    cwd: input.cwd,
+    stdout: "pipe",
+    stderr: "pipe",
+    env: mergedProcessEnv(input.env),
+  })
+  let ready = false
+  let stdout = ""
+  let stderr = ""
+  let settleReady: (value: string) => void = () => {}
+  let rejectReady: (error: Error) => void = () => {}
+  const readyPromise = new Promise<string>((resolve, reject) => {
+    settleReady = resolve
+    rejectReady = reject
+  })
+  const timer = setTimeout(() => {
+    if (!ready) rejectReady(new Error("Timed out waiting for OpenCode server to start"))
+  }, 30_000)
+  const stdoutDone = readStreamText(proc.stdout, (chunk) => {
+    stdout += chunk
+    const match = stdout.match(/opencode server listening on (http:\/\/[^\s]+)/)
+    if (!ready && match?.[1]) {
+      ready = true
+      clearTimeout(timer)
+      settleReady(match[1])
+    }
+  })
+  const stderrDone = readStreamText(proc.stderr, (chunk) => {
+    stderr += chunk
+  })
+  proc.exited.then((exit) => {
+    if (!ready) {
+      clearTimeout(timer)
+      rejectReady(new Error(`OpenCode server exited before startup (${exit})\n${stderr}`))
+    }
+  })
+  const url = await readyPromise
+  return {
+    url,
+    stop: async () => {
+      proc.kill()
+      await proc.exited.catch(() => undefined)
+      await Promise.all([stdoutDone, stderrDone]).catch(() => undefined)
+      return { stdout, stderr }
+    },
+  }
+}
+
+async function readStreamText(stream: ReadableStream<Uint8Array>, onChunk: (chunk: string) => void) {
+  const reader = stream.getReader()
+  const decoder = new TextDecoder()
+  while (true) {
+    const item = await reader.read()
+    if (item.done) break
+    onChunk(decoder.decode(item.value, { stream: true }))
+  }
+  const tail = decoder.decode()
+  if (tail) onChunk(tail)
 }
 
 function mergedProcessEnv(env: Record<string, string>) {
@@ -1358,6 +1676,110 @@ function safeFileSegment(value: string) {
   return value.replace(/[^A-Za-z0-9_.-]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 120) || "instance"
 }
 
+function parseNoisyCompactionLiveManifestJsonl(text: string): NoisyCompactionLiveManifestRow[] {
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line, index) => noisyCompactionLiveManifestRow(parseJson(line, `--opencode-noisy-compaction-live-manifest line ${index + 1}`), index))
+}
+
+function noisyCompactionLiveManifestRow(input: unknown, index: number): NoisyCompactionLiveManifestRow {
+  if (!isRecord(input)) throw new Error(`Noisy compaction live manifest row ${index + 1} must be an object`)
+  const summarize = input.summarize_request
+  if (!isRecord(summarize)) throw new Error(`Noisy compaction live manifest row ${index + 1} missing summarize_request`)
+  return {
+    scenario_id: requiredStringField(input.scenario_id, "scenario_id", index),
+    instance_id: requiredStringField(input.instance_id, "instance_id", index),
+    baseline_session_id: requiredStringField(input.baseline_session_id, "baseline_session_id", index),
+    precision_session_id: requiredStringField(input.precision_session_id, "precision_session_id", index),
+    baseline_import_path: requiredStringField(input.baseline_import_path, "baseline_import_path", index),
+    precision_import_path: requiredStringField(input.precision_import_path, "precision_import_path", index),
+    gold_path: requiredStringField(input.gold_path, "gold_path", index),
+    summarize_request: {
+      providerID: requiredStringField(summarize.providerID, "summarize_request.providerID", index),
+      modelID: requiredStringField(summarize.modelID, "summarize_request.modelID", index),
+      ...(typeof summarize.variant === "string" ? { variant: summarize.variant } : {}),
+      ...(typeof summarize.auto === "boolean" ? { auto: summarize.auto } : {}),
+    },
+    baseline_config: input.baseline_config,
+    precision_config: input.precision_config,
+  }
+}
+
+function requiredStringField(input: unknown, field: string, index: number) {
+  if (typeof input !== "string" || input.length === 0) {
+    throw new Error(`Noisy compaction live manifest row ${index + 1} requires string ${field}`)
+  }
+  return input
+}
+
+function enrichNoisyCompactionLiveRows(
+  rows: readonly Omit<NoisyCompactionLiveReportRow, "summaryTokens" | "claimRecall" | "survivedClaims" | "missingClaims">[],
+  summaryReport: SessionContextLedgerBenchmark.OpenCodeCompactionSummaryReport,
+  reportDir: string,
+): NoisyCompactionLiveReportRow[] {
+  const summaryBySession = new Map(summaryReport.rows.map((row) => [row.sessionID, row]))
+  return rows.map((row) => {
+    const summary = summaryBySession.get(row.sessionID)
+    return {
+      ...row,
+      ...(summary
+        ? {
+            summaryTokens: summary.tokens,
+            claimRecall: summary.recall,
+            survivedClaims: summary.survived,
+            missingClaims: summary.missing,
+          }
+        : {}),
+      artifacts: {
+        importStdout: reportRelativePath(row.artifacts.importStdout, reportDir),
+        importStderr: reportRelativePath(row.artifacts.importStderr, reportDir),
+        serveStdout: reportRelativePath(row.artifacts.serveStdout, reportDir),
+        serveStderr: reportRelativePath(row.artifacts.serveStderr, reportDir),
+        summarizeResponse: reportRelativePath(row.artifacts.summarizeResponse, reportDir),
+        exportJson: reportRelativePath(row.artifacts.exportJson, reportDir),
+        exportStderr: reportRelativePath(row.artifacts.exportStderr, reportDir),
+      },
+    }
+  })
+}
+
+function noisyCompactionLiveSummaries(rows: readonly NoisyCompactionLiveReportRow[]): NoisyCompactionLiveReport["summaries"] {
+  return (["baseline", "precision"] as const).map((lane) => {
+    const items = rows.filter((row) => row.lane === lane)
+    return {
+      lane,
+      runs: items.length,
+      meanClaimRecall: metricAverage(items, (row) => row.claimRecall),
+      meanSummaryTokens: metricAverage(items, (row) => row.summaryTokens),
+      meanInputTokens: metricAverage(items, (row) => row.tokens?.input),
+    }
+  })
+}
+
+function noisyCompactionLiveComparisons(rows: readonly NoisyCompactionLiveReportRow[]): NoisyCompactionLiveReport["pairedComparisons"] {
+  return Array.from(new Set(rows.map((row) => row.instanceID))).flatMap((instanceID) => {
+    const items = rows.filter((row) => row.instanceID === instanceID)
+    const baseline = items.find((row) => row.lane === "baseline")
+    const precision = items.find((row) => row.lane === "precision")
+    if (!baseline || !precision) return []
+    return [
+      {
+        scenarioID: baseline.scenarioID,
+        instanceID,
+        baselineSessionID: baseline.sessionID,
+        precisionSessionID: precision.sessionID,
+        delta: {
+          claimRecall: metricDelta(precision.claimRecall, baseline.claimRecall),
+          summaryTokens: metricDelta(precision.summaryTokens, baseline.summaryTokens),
+          inputTokens: metricDelta(precision.tokens?.input, baseline.tokens?.input),
+        },
+      },
+    ]
+  })
+}
+
 const opencodePredictionInputs = [
   args.values["opencode-export"],
   args.values["opencode-export-manifest"],
@@ -1378,6 +1800,11 @@ if (args.values["benchmark-registry-output"]) {
 
 if (args.values["noisy-compaction-fixtures-output-dir"]) {
   await emitNoisyCompactionFixtures(args.values["noisy-compaction-fixtures-output-dir"])
+  process.exit(0)
+}
+
+if (args.values["opencode-noisy-compaction-live-manifest"]) {
+  await runNoisyCompactionLiveManifest(args.values["opencode-noisy-compaction-live-manifest"])
   process.exit(0)
 }
 
@@ -1437,6 +1864,14 @@ if (
     )}\n`,
   )
   process.exit(0)
+}
+
+if (
+  args.values["opencode-noisy-compaction-live-command-json"] ||
+  args.values["opencode-noisy-compaction-live-env-json"] ||
+  args.values["opencode-noisy-compaction-live-output-dir"]
+) {
+  throw new Error("--opencode-noisy-compaction-live-command-json, --opencode-noisy-compaction-live-env-json, and --opencode-noisy-compaction-live-output-dir require --opencode-noisy-compaction-live-manifest")
 }
 
 if (
