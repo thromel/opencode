@@ -556,13 +556,51 @@ type OpenCodeRunReport = {
     readonly lineF1?: number
     readonly aucLineCoverage?: number
     readonly answerPassRate?: number
+    readonly stddevAnswerPassRate?: number
+    readonly minAnswerPassed?: number
+    readonly maxAnswerPassed?: number
     readonly fileCheckPassRate?: number
     readonly commandCheckPassRate?: number
     readonly meanInputTokens?: number
+    readonly stddevInputTokens?: number
+    readonly minInputTokens?: number
+    readonly maxInputTokens?: number
     readonly meanOutputTokens?: number
+    readonly stddevOutputTokens?: number
+    readonly minOutputTokens?: number
+    readonly maxOutputTokens?: number
     readonly meanReasoningTokens?: number
+    readonly stddevReasoningTokens?: number
+    readonly minReasoningTokens?: number
+    readonly maxReasoningTokens?: number
     readonly meanCacheReadTokens?: number
+    readonly stddevCacheReadTokens?: number
+    readonly minCacheReadTokens?: number
+    readonly maxCacheReadTokens?: number
     readonly meanCacheWriteTokens?: number
+    readonly stddevCacheWriteTokens?: number
+    readonly minCacheWriteTokens?: number
+    readonly maxCacheWriteTokens?: number
+  }[]
+  readonly pairedSummaries: readonly {
+    readonly instanceID: string
+    readonly baselineLabel: string
+    readonly candidateLabel: string
+    readonly pairs: number
+    readonly meanAnswerPassedDelta?: number
+    readonly stddevAnswerPassedDelta?: number
+    readonly meanInputTokensDelta?: number
+    readonly stddevInputTokensDelta?: number
+    readonly minInputTokensDelta?: number
+    readonly maxInputTokensDelta?: number
+    readonly meanOutputTokensDelta?: number
+    readonly stddevOutputTokensDelta?: number
+    readonly minOutputTokensDelta?: number
+    readonly maxOutputTokensDelta?: number
+    readonly meanReasoningTokensDelta?: number
+    readonly stddevReasoningTokensDelta?: number
+    readonly minReasoningTokensDelta?: number
+    readonly maxReasoningTokensDelta?: number
   }[]
   readonly pairedComparisons: readonly {
     readonly instanceID: string
@@ -1389,12 +1427,14 @@ async function writeOpenCodeRunReport(input: {
       : {}),
     metrics: evaluation?.rows[index],
   }))
+  const pairedComparisons = openCodeRunReportComparisons(rows)
   const report: OpenCodeRunReport = {
     generatedBy: "context-ledger-benchmark",
     kind: "opencode-run-report",
     rows,
     summaries: openCodeRunReportSummaries(rows),
-    pairedComparisons: openCodeRunReportComparisons(rows),
+    pairedSummaries: openCodeRunReportPairedSummaries(pairedComparisons),
+    pairedComparisons,
   }
   await Bun.write(input.outputPath, `${JSON.stringify(report, undefined, 2)}\n`)
 }
@@ -1416,13 +1456,31 @@ function openCodeRunReportSummaries(rows: readonly OpenCodeRunReportRow[]): Open
       lineF1: metricAverage(items, (row) => row.metrics?.line.f1),
       aucLineCoverage: metricAverage(items, (row) => row.metrics?.trajectory.aucLineCoverage),
       answerPassRate: metricAverage(items, (row) => answerScore(row.answer)),
+      stddevAnswerPassRate: metricStddev(items, (row) => answerScore(row.answer)),
+      minAnswerPassed: metricMin(items, (row) => answerScore(row.answer)),
+      maxAnswerPassed: metricMax(items, (row) => answerScore(row.answer)),
       fileCheckPassRate: metricAverage(items, (row) => fileCheckScore(row.fileChecks)),
       commandCheckPassRate: metricAverage(items, (row) => commandCheckScore(row.commandChecks)),
       meanInputTokens: metricAverage(items, (row) => row.tokens?.input),
+      stddevInputTokens: metricStddev(items, (row) => row.tokens?.input),
+      minInputTokens: metricMin(items, (row) => row.tokens?.input),
+      maxInputTokens: metricMax(items, (row) => row.tokens?.input),
       meanOutputTokens: metricAverage(items, (row) => row.tokens?.output),
+      stddevOutputTokens: metricStddev(items, (row) => row.tokens?.output),
+      minOutputTokens: metricMin(items, (row) => row.tokens?.output),
+      maxOutputTokens: metricMax(items, (row) => row.tokens?.output),
       meanReasoningTokens: metricAverage(items, (row) => row.tokens?.reasoning),
+      stddevReasoningTokens: metricStddev(items, (row) => row.tokens?.reasoning),
+      minReasoningTokens: metricMin(items, (row) => row.tokens?.reasoning),
+      maxReasoningTokens: metricMax(items, (row) => row.tokens?.reasoning),
       meanCacheReadTokens: metricAverage(items, (row) => row.tokens?.cacheRead),
+      stddevCacheReadTokens: metricStddev(items, (row) => row.tokens?.cacheRead),
+      minCacheReadTokens: metricMin(items, (row) => row.tokens?.cacheRead),
+      maxCacheReadTokens: metricMax(items, (row) => row.tokens?.cacheRead),
       meanCacheWriteTokens: metricAverage(items, (row) => row.tokens?.cacheWrite),
+      stddevCacheWriteTokens: metricStddev(items, (row) => row.tokens?.cacheWrite),
+      minCacheWriteTokens: metricMin(items, (row) => row.tokens?.cacheWrite),
+      maxCacheWriteTokens: metricMax(items, (row) => row.tokens?.cacheWrite),
     }
   })
 }
@@ -1468,6 +1526,40 @@ function openCodeRunReportComparisons(rows: readonly OpenCodeRunReportRow[]): Op
   })
 }
 
+function openCodeRunReportPairedSummaries(
+  comparisons: OpenCodeRunReport["pairedComparisons"],
+): OpenCodeRunReport["pairedSummaries"] {
+  const groups = new Map<string, OpenCodeRunReport["pairedComparisons"]>()
+  for (const comparison of comparisons) {
+    const key = [comparison.instanceID, comparison.baselineLabel, comparison.candidateLabel].join("\0")
+    groups.set(key, [...(groups.get(key) ?? []), comparison])
+  }
+  return Array.from(groups.values()).map((items) => {
+    const first = items[0]
+    if (!first) throw new Error("empty paired comparison group")
+    return {
+      instanceID: first.instanceID,
+      baselineLabel: first.baselineLabel,
+      candidateLabel: first.candidateLabel,
+      pairs: items.length,
+      meanAnswerPassedDelta: metricAverage(items, (row) => row.delta.answerPassed),
+      stddevAnswerPassedDelta: metricStddev(items, (row) => row.delta.answerPassed),
+      meanInputTokensDelta: metricAverage(items, (row) => row.delta.inputTokens),
+      stddevInputTokensDelta: metricStddev(items, (row) => row.delta.inputTokens),
+      minInputTokensDelta: metricMin(items, (row) => row.delta.inputTokens),
+      maxInputTokensDelta: metricMax(items, (row) => row.delta.inputTokens),
+      meanOutputTokensDelta: metricAverage(items, (row) => row.delta.outputTokens),
+      stddevOutputTokensDelta: metricStddev(items, (row) => row.delta.outputTokens),
+      minOutputTokensDelta: metricMin(items, (row) => row.delta.outputTokens),
+      maxOutputTokensDelta: metricMax(items, (row) => row.delta.outputTokens),
+      meanReasoningTokensDelta: metricAverage(items, (row) => row.delta.reasoningTokens),
+      stddevReasoningTokensDelta: metricStddev(items, (row) => row.delta.reasoningTokens),
+      minReasoningTokensDelta: metricMin(items, (row) => row.delta.reasoningTokens),
+      maxReasoningTokensDelta: metricMax(items, (row) => row.delta.reasoningTokens),
+    }
+  })
+}
+
 function answerScore(answer: OpenCodeRunAnswerReport | undefined) {
   if (!answer) return undefined
   return answer.passed ? 1 : 0
@@ -1484,9 +1576,31 @@ function commandCheckScore(report: OpenCodeRunCommandCheckReport | undefined) {
 }
 
 function metricAverage<Row>(rows: readonly Row[], value: (row: Row) => number | undefined) {
-  const values = rows.map(value).filter((item): item is number => item !== undefined)
+  const values = metricValues(rows, value)
   if (values.length === 0) return undefined
   return values.reduce((total, item) => total + item, 0) / values.length
+}
+
+function metricStddev<Row>(rows: readonly Row[], value: (row: Row) => number | undefined) {
+  const values = metricValues(rows, value)
+  if (values.length === 0) return undefined
+  const average = values.reduce((total, item) => total + item, 0) / values.length
+  const variance = values.reduce((total, item) => total + (item - average) ** 2, 0) / values.length
+  return Math.sqrt(variance)
+}
+
+function metricMin<Row>(rows: readonly Row[], value: (row: Row) => number | undefined) {
+  const values = metricValues(rows, value)
+  return values.length ? Math.min(...values) : undefined
+}
+
+function metricMax<Row>(rows: readonly Row[], value: (row: Row) => number | undefined) {
+  const values = metricValues(rows, value)
+  return values.length ? Math.max(...values) : undefined
+}
+
+function metricValues<Row>(rows: readonly Row[], value: (row: Row) => number | undefined) {
+  return rows.map(value).filter((item): item is number => item !== undefined)
 }
 
 function metricDelta(candidate: number | undefined, baseline: number | undefined) {

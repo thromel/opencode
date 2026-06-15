@@ -3155,15 +3155,30 @@ describe("SessionContextLedgerBenchmark", () => {
       { runID: "owner__repo-repeat-contextledger-r2", repeatIndex: 2, repeatCount: 2 },
     ])
     expect(
-      report.summaries.map((row: { label: string; runs: number; answerPassRate: number; meanInputTokens: number }) => [
-        row.label,
-        row.runs,
-        row.answerPassRate,
-        row.meanInputTokens,
-      ]),
+      report.summaries.map(
+        (row: {
+          label: string
+          runs: number
+          answerPassRate: number
+          stddevAnswerPassRate: number
+          meanInputTokens: number
+          stddevInputTokens: number
+          minInputTokens: number
+          maxInputTokens: number
+        }) => [
+          row.label,
+          row.runs,
+          row.answerPassRate,
+          row.stddevAnswerPassRate,
+          row.meanInputTokens,
+          row.stddevInputTokens,
+          row.minInputTokens,
+          row.maxInputTokens,
+        ],
+      ),
     ).toEqual([
-      ["repeat baseline", 2, 1, 101.5],
-      ["repeat contextledger", 2, 1, 81.5],
+      ["repeat baseline", 2, 1, 0, 101.5, 0.5, 101, 102],
+      ["repeat contextledger", 2, 1, 0, 81.5, 0.5, 81, 82],
     ])
     expect(
       report.pairedComparisons.map(
@@ -3177,6 +3192,28 @@ describe("SessionContextLedgerBenchmark", () => {
     ).toEqual([
       [1, "owner__repo-repeat-baseline-r1", "owner__repo-repeat-contextledger-r1", -20],
       [2, "owner__repo-repeat-baseline-r2", "owner__repo-repeat-contextledger-r2", -20],
+    ])
+    expect(report.pairedSummaries).toEqual([
+      {
+        instanceID: "owner__repo-repeat",
+        baselineLabel: "repeat baseline",
+        candidateLabel: "repeat contextledger",
+        pairs: 2,
+        meanAnswerPassedDelta: 0,
+        stddevAnswerPassedDelta: 0,
+        meanInputTokensDelta: -20,
+        stddevInputTokensDelta: 0,
+        minInputTokensDelta: -20,
+        maxInputTokensDelta: -20,
+        meanOutputTokensDelta: 0,
+        stddevOutputTokensDelta: 0,
+        minOutputTokensDelta: 0,
+        maxOutputTokensDelta: 0,
+        meanReasoningTokensDelta: 0,
+        stddevReasoningTokensDelta: 0,
+        minReasoningTokensDelta: 0,
+        maxReasoningTokensDelta: 0,
+      },
     ])
   })
 
