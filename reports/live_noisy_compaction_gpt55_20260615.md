@@ -30,6 +30,7 @@ Aggregate:
 - Baseline mean summary tokens: 365.3
 - Precision mean summary tokens: 299
 - Total claim recall: baseline 18/18, precision 18/18
+- Offline enhanced scorer rerun: baseline and precision both scored claim precision 1.0 with zero unsupported, contradicted, or stale checklist hits.
 
 Interpretation: precision replacement preserved every scored claim while using about 18.4% of baseline compaction input on the harder noisy fixture.
 

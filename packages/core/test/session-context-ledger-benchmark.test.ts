@@ -3084,7 +3084,17 @@ describe("SessionContextLedgerBenchmark", () => {
     })
     await Bun.write(
       baselineExportPath,
-      `${JSON.stringify(exportJson("ses_fake_baseline", "Preserve KEEP_ALPHA only."))}\n`,
+      `${JSON.stringify(
+        exportJson(
+          "ses_fake_baseline",
+          [
+            "Preserve KEEP_ALPHA only.",
+            "retry budget is 3 attempts",
+            "tests/noise/foo.test.ts passed",
+            "src/noise.ts owns target",
+          ].join("\n"),
+        ),
+      )}\n`,
     )
     await Bun.write(
       contextLedgerExportPath,
@@ -3117,6 +3127,9 @@ describe("SessionContextLedgerBenchmark", () => {
           { id: "keep-alpha", category: "constraint", text: "KEEP_ALPHA" },
           { id: "target-file", category: "file", file: "src/target.ts" },
         ],
+        unsupported: [{ id: "noise-owner", category: "file", text: "src/noise.ts owns target" }],
+        contradicted: [{ id: "wrong-budget", category: "decision", text: "retry budget is 3 attempts" }],
+        stale: [{ id: "old-noise-test", category: "latest-test", text: "tests/noise/foo.test.ts passed" }],
       })}\n`,
     )
     const proc = Bun.spawn({
@@ -3144,14 +3157,49 @@ describe("SessionContextLedgerBenchmark", () => {
       ["baseline", 0.5],
       ["contextledger", 1],
     ])
+    expect(
+      report.rows.map(
+        (row: {
+          label: string
+          precision: number
+          falseClaimRate: number
+          unsupportedClaimRate: number
+          contradictedClaimRate: number
+          staleClaimRate: number
+        }) => [
+          row.label,
+          row.precision,
+          row.falseClaimRate,
+          row.unsupportedClaimRate,
+          row.contradictedClaimRate,
+          row.staleClaimRate,
+        ],
+      ),
+    ).toEqual([
+      ["baseline", 0.25, 0.75, 0.25, 0.25, 0.25],
+      ["contextledger", 1, 0, 0, 0, 0],
+    ])
     expect(report.rows[0].missing).toEqual(["target-file"])
+    expect(report.rows[0]).toMatchObject({
+      predictedClaims: 4,
+      falseClaims: ["noise-owner", "wrong-budget", "old-noise-test"],
+      unsupported: ["noise-owner"],
+      contradicted: ["wrong-budget"],
+      stale: ["old-noise-test"],
+    })
     expect(report.rows[1]).toMatchObject({
       sessionID: "ses_fake_contextledger",
       summaryCount: 1,
       survived: ["keep-alpha", "target-file"],
       missing: [],
+      falseClaims: [],
     })
     expect(report.summary.recall).toBe(0.75)
+    expect(report.summary.precision).toBe(0.625)
+    expect(report.summary.falseClaimRate).toBe(0.375)
+    expect(report.summary.unsupportedClaimRate).toBe(0.125)
+    expect(report.summary.contradictedClaimRate).toBe(0.125)
+    expect(report.summary.staleClaimRate).toBe(0.125)
   })
 
   test("builds noisy OpenCode compaction fixtures with gold claims", () => {
@@ -3173,6 +3221,9 @@ describe("SessionContextLedgerBenchmark", () => {
       "lease-ttl",
       "cache-symbol",
     ])
+    expect(fixture?.gold.contradicted?.map((claim) => claim.id)).toContain("cache-ttl-ninety")
+    expect(fixture?.gold.unsupported?.map((claim) => claim.id)).toContain("cache-search-owner")
+    expect(fixture?.gold.stale?.map((claim) => claim.id)).toContain("cache-old-noise-test")
     expect(fixture?.continuation.prompt).toContain("cache invalidation facts")
     expect(fixture?.continuation.answerContains).toContain("marker=NOISY_LEDGER_CACHE_20260615")
     expect(fixture?.continuation.answerContains).toContain("ttl=45")
@@ -3232,6 +3283,9 @@ describe("SessionContextLedgerBenchmark", () => {
       .split(/\r?\n/)
       .map((line) => JSON.parse(line))
     expect(goldRows).toHaveLength(2)
+    expect(goldRows[0].contradicted.map((claim: { id: string }) => claim.id)).toContain("retry-budget-three")
+    expect(goldRows[0].stale.map((claim: { id: string }) => claim.id)).toContain("retry-old-noise-test")
+    expect(goldRows[1].unsupported.map((claim: { id: string }) => claim.id)).toContain("parser-cache-owner")
     expect(readFileSync(rows[0].baseline_import_path, "utf8")).toContain(
       "ses_ctxledger_noisy_payment_retry_baseline_5678",
     )

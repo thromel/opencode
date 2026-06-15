@@ -82,7 +82,10 @@ export const Prediction = Schema.Struct({
   traj_data: Schema.Struct({
     pred_steps: Schema.Array(Step),
     pred_files: Schema.Array(Schema.String),
-    pred_spans: Schema.Record(Schema.String, Schema.Array(Schema.Struct({ type: Schema.Literal("line"), start: Schema.Number, end: Schema.Number }))),
+    pred_spans: Schema.Record(
+      Schema.String,
+      Schema.Array(Schema.Struct({ type: Schema.Literal("line"), start: Schema.Number, end: Schema.Number })),
+    ),
   }),
   model_patch: Schema.optional(Schema.String),
 })
@@ -117,6 +120,9 @@ export type CompactionSurvivalCase = typeof CompactionSurvivalCase.Type
 export const CompactionSummaryGoldCase = Schema.Struct({
   instance_id: Schema.String,
   gold: Schema.Array(CompactionSurvivalGold),
+  unsupported: Schema.optional(Schema.Array(CompactionSurvivalGold)),
+  contradicted: Schema.optional(Schema.Array(CompactionSurvivalGold)),
+  stale: Schema.optional(Schema.Array(CompactionSurvivalGold)),
 })
 export type CompactionSummaryGoldCase = typeof CompactionSummaryGoldCase.Type
 
@@ -652,8 +658,18 @@ export type OpenCodeCompactionSummaryRow = {
   readonly text: string
   readonly tokens: number
   readonly recall: number
+  readonly precision: number
+  readonly predictedClaims: number
+  readonly falseClaimRate: number
+  readonly unsupportedClaimRate: number
+  readonly contradictedClaimRate: number
+  readonly staleClaimRate: number
   readonly survived: readonly string[]
   readonly missing: readonly string[]
+  readonly falseClaims: readonly string[]
+  readonly unsupported: readonly string[]
+  readonly contradicted: readonly string[]
+  readonly stale: readonly string[]
   readonly categoryRecall: readonly {
     readonly category: CompactionSurvivalCategory
     readonly recall: number
@@ -667,6 +683,11 @@ export type OpenCodeCompactionSummaryReport = {
   readonly rows: readonly OpenCodeCompactionSummaryRow[]
   readonly summary: {
     readonly recall: number
+    readonly precision: number
+    readonly falseClaimRate: number
+    readonly unsupportedClaimRate: number
+    readonly contradictedClaimRate: number
+    readonly staleClaimRate: number
     readonly categoryRecall: readonly {
       readonly category: CompactionSurvivalCategory
       readonly recall: number
@@ -681,6 +702,9 @@ export type NoisyCompactionScenario = {
   readonly facts: readonly string[]
   readonly distractorFiles: readonly string[]
   readonly gold: readonly CompactionSurvivalGold[]
+  readonly unsupported?: readonly CompactionSurvivalGold[]
+  readonly contradicted?: readonly CompactionSurvivalGold[]
+  readonly stale?: readonly CompactionSurvivalGold[]
   readonly continuation: {
     readonly prompt: string
     readonly answerContains: readonly string[]
@@ -1406,7 +1430,9 @@ export function parseSWEContextBenchTaskJsonl(input: string) {
 }
 
 export function parseSWEContextBenchRelationshipJsonl(input: string) {
-  return parseJsonLines(input).map((item, index) => sweContextBenchRelationshipRowFromUnknown(item, `line ${index + 1}`))
+  return parseJsonLines(input).map((item, index) =>
+    sweContextBenchRelationshipRowFromUnknown(item, `line ${index + 1}`),
+  )
 }
 
 export function experienceRecordsFromSWEContextBenchRows(
@@ -1538,11 +1564,7 @@ export function benchmarkRegistry(): BenchmarkRegistryReport {
         "Long-horizon context retention, compaction quality, or coding-agent solve rate.",
         "Line-level localization unless the supplied chunks carry span metadata.",
       ],
-      supportedOutputs: [
-        "--agent-retrieval-bench-ranking-output",
-        "--target-report-output",
-        "--write-cases",
-      ],
+      supportedOutputs: ["--agent-retrieval-bench-ranking-output", "--target-report-output", "--write-cases"],
       primarySources: [{ label: "Project", url: "https://agent-retrieval-bench.github.io/" }],
     },
     {
@@ -1652,7 +1674,10 @@ export function benchmarkRegistry(): BenchmarkRegistryReport {
       supportedOutputs: [],
       primarySources: [
         { label: "GitHub", url: "https://github.com/sourcegraph/CodeScaleBench" },
-        { label: "Sourcegraph", url: "https://sourcegraph.com/blog/codescalebench-testing-coding-agents-on-large-codebases-and-multi-repo-software-engineering-tasks" },
+        {
+          label: "Sourcegraph",
+          url: "https://sourcegraph.com/blog/codescalebench-testing-coding-agents-on-large-codebases-and-multi-repo-software-engineering-tasks",
+        },
       ],
     },
   ]
@@ -1673,7 +1698,9 @@ export function agentRetrievalBenchChunkPathsForSamples(
   samples: readonly AgentRetrievalBenchSample[],
   manifest: readonly AgentRetrievalBenchCorpusManifestRow[],
 ) {
-  const needed = new Set(samples.flatMap((sample) => (sample.repo && sample.base_commit ? [`${sample.repo}\0${sample.base_commit}`] : [])))
+  const needed = new Set(
+    samples.flatMap((sample) => (sample.repo && sample.base_commit ? [`${sample.repo}\0${sample.base_commit}`] : [])),
+  )
   return unique(
     manifest.flatMap((row) =>
       row.status === "ok" && row.chunks_path && needed.has(`${row.repo}\0${row.base_commit}`) ? [row.chunks_path] : [],
@@ -1708,8 +1735,12 @@ export function summarizeOfficialEvaluation(rows: readonly OfficialEvaluationRow
       aucLineCoverage: mean(rows.map((row) => row.trajectory?.auc_coverage?.line ?? 0)),
     },
     editloc: {
-      recall: mean(rows.map((row) => (row.editloc ? ratioOrPerfect(row.editloc.intersection, row.editloc.gold_size) : 0))),
-      precision: mean(rows.map((row) => (row.editloc ? ratioOrPerfect(row.editloc.intersection, row.editloc.pred_size) : 0))),
+      recall: mean(
+        rows.map((row) => (row.editloc ? ratioOrPerfect(row.editloc.intersection, row.editloc.gold_size) : 0)),
+      ),
+      precision: mean(
+        rows.map((row) => (row.editloc ? ratioOrPerfect(row.editloc.intersection, row.editloc.pred_size) : 0)),
+      ),
     },
   } satisfies OfficialEvaluationSummary
 }
@@ -1722,15 +1753,22 @@ export function compareOfficialPolicyEvaluations(input: {
   if (!baseline) throw new Error(`Missing official comparison baseline: ${input.baselinePolicy}`)
   return input.evaluations
     .filter((item) => item.policy !== input.baselinePolicy)
-    .map((item) => ({
-      baselinePolicy: input.baselinePolicy,
-      policy: item.policy,
-      officialUtility: pairedOfficialDelta(baseline.rows, item.rows, officialUtility),
-      fileF1: pairedOfficialDelta(baseline.rows, item.rows, (row) => metricF1(row.final.file)),
-      spanF1: pairedOfficialDelta(baseline.rows, item.rows, (row) => metricF1(row.final.span)),
-      lineF1: pairedOfficialDelta(baseline.rows, item.rows, (row) => metricF1(row.final.line)),
-      aucLineCoverage: pairedOfficialDelta(baseline.rows, item.rows, (row) => row.trajectory?.auc_coverage?.line ?? 0),
-    } satisfies OfficialPolicyComparison))
+    .map(
+      (item) =>
+        ({
+          baselinePolicy: input.baselinePolicy,
+          policy: item.policy,
+          officialUtility: pairedOfficialDelta(baseline.rows, item.rows, officialUtility),
+          fileF1: pairedOfficialDelta(baseline.rows, item.rows, (row) => metricF1(row.final.file)),
+          spanF1: pairedOfficialDelta(baseline.rows, item.rows, (row) => metricF1(row.final.span)),
+          lineF1: pairedOfficialDelta(baseline.rows, item.rows, (row) => metricF1(row.final.line)),
+          aucLineCoverage: pairedOfficialDelta(
+            baseline.rows,
+            item.rows,
+            (row) => row.trajectory?.auc_coverage?.line ?? 0,
+          ),
+        }) satisfies OfficialPolicyComparison,
+    )
 }
 
 function pairedOfficialDelta(
@@ -1857,7 +1895,15 @@ export function evaluatePredictionsAgainstGold(input: {
   readonly predictions: readonly Prediction[]
   readonly goldRows: readonly ContextBenchGoldRow[]
 }) {
-  const goldByID = new Map(input.goldRows.flatMap((row) => [[row.inst_id, row], [row.original_inst_id, row]] as const))
+  const goldByID = new Map(
+    input.goldRows.flatMap(
+      (row) =>
+        [
+          [row.inst_id, row],
+          [row.original_inst_id, row],
+        ] as const,
+    ),
+  )
   const rows = input.predictions.map((prediction) => {
     const gold = goldByID.get(prediction.instance_id)
     if (!gold) throw new Error(`No gold row found for prediction instance '${prediction.instance_id}'`)
@@ -1960,7 +2006,9 @@ export function analyzeCompactionSurvival(input: {
     variants,
     summaries,
     rows: rows.toSorted(
-      (a, b) => a.instanceID.localeCompare(b.instanceID) || compactionSurvivalVariantOrder(a.variant) - compactionSurvivalVariantOrder(b.variant),
+      (a, b) =>
+        a.instanceID.localeCompare(b.instanceID) ||
+        compactionSurvivalVariantOrder(a.variant) - compactionSurvivalVariantOrder(b.variant),
     ),
   } satisfies CompactionSurvivalReport
 }
@@ -1969,13 +2017,20 @@ export function analyzeOpenCodeCompactionSummaries(input: {
   readonly exports: readonly OpenCodeCompactionSummaryInput[]
   readonly gold: readonly CompactionSummaryGoldCase[]
 }) {
-  const goldByInstance = new Map(input.gold.map((item) => [item.instance_id, item.gold]))
+  const goldByInstance = new Map(input.gold.map((item) => [item.instance_id, item]))
   const rows = input.exports.map((item) => {
-    const gold = goldByInstance.get(item.instanceID) ?? []
+    const goldCase = goldByInstance.get(item.instanceID)
+    const gold = goldCase?.gold ?? []
     const summaries = openCodeCompactionSummaries(item.exported)
     const text = summaries.map((summary) => summary.text).join("\n\n")
-    const survived = gold.filter((claim) => compactionGoldSurvived(claim, text)).map((claim) => claim.id)
+    const survived = compactionClaimIDs(gold, text)
     const missing = gold.filter((claim) => !survived.includes(claim.id)).map((claim) => claim.id)
+    const unsupported = compactionClaimIDs(goldCase?.unsupported ?? [], text)
+    const contradicted = compactionClaimIDs(goldCase?.contradicted ?? [], text)
+    const stale = compactionClaimIDs(goldCase?.stale ?? [], text)
+    const falseClaims = unique([...unsupported, ...contradicted, ...stale])
+    const predictedClaims = survived.length + falseClaims.length
+    const precision = predictedClaims === 0 ? 1 : survived.length / predictedClaims
     return {
       instanceID: item.instanceID,
       ...(item.label ? { label: item.label } : {}),
@@ -1984,18 +2039,30 @@ export function analyzeOpenCodeCompactionSummaries(input: {
       text,
       tokens: Token.estimate(text),
       recall: gold.length === 0 ? 1 : survived.length / gold.length,
+      precision,
+      predictedClaims,
+      falseClaimRate: claimRate(falseClaims.length, predictedClaims),
+      unsupportedClaimRate: claimRate(unsupported.length, predictedClaims),
+      contradictedClaimRate: claimRate(contradicted.length, predictedClaims),
+      staleClaimRate: claimRate(stale.length, predictedClaims),
       survived,
       missing,
-      categoryRecall: compactionSurvivalCategories([{ instance_id: item.instanceID, context: [], gold }]).map((category) => {
-        const categoryGold = gold.filter((claim) => claim.category === category)
-        const categorySurvived = categoryGold.filter((claim) => survived.includes(claim.id)).length
-        return {
-          category,
-          recall: categoryGold.length === 0 ? 1 : categorySurvived / categoryGold.length,
-          survived: categorySurvived,
-          total: categoryGold.length,
-        }
-      }),
+      falseClaims,
+      unsupported,
+      contradicted,
+      stale,
+      categoryRecall: compactionSurvivalCategories([{ instance_id: item.instanceID, context: [], gold }]).map(
+        (category) => {
+          const categoryGold = gold.filter((claim) => claim.category === category)
+          const categorySurvived = categoryGold.filter((claim) => survived.includes(claim.id)).length
+          return {
+            category,
+            recall: categoryGold.length === 0 ? 1 : categorySurvived / categoryGold.length,
+            survived: categorySurvived,
+            total: categoryGold.length,
+          }
+        },
+      ),
     } satisfies OpenCodeCompactionSummaryRow
   })
   const categories = compactionSurvivalCategories(input.gold.map((item) => ({ ...item, context: [] })))
@@ -2004,6 +2071,11 @@ export function analyzeOpenCodeCompactionSummaries(input: {
     rows,
     summary: {
       recall: mean(rows.map((row) => row.recall)),
+      precision: mean(rows.map((row) => row.precision)),
+      falseClaimRate: mean(rows.map((row) => row.falseClaimRate)),
+      unsupportedClaimRate: mean(rows.map((row) => row.unsupportedClaimRate)),
+      contradictedClaimRate: mean(rows.map((row) => row.contradictedClaimRate)),
+      staleClaimRate: mean(rows.map((row) => row.staleClaimRate)),
       categoryRecall: categories.map((category) => ({
         category,
         recall: mean(rows.map((row) => row.categoryRecall.find((item) => item.category === category)?.recall ?? 1)),
@@ -2043,6 +2115,11 @@ export const NOISY_COMPACTION_SCENARIOS: readonly NoisyCompactionScenario[] = [
       { id: "retry-budget", category: "decision", text: "retry budget remains exactly 2 attempts" },
       { id: "retry-symbol", category: "evidence", text: "computeRetryPlan" },
     ],
+    contradicted: [{ id: "retry-budget-three", category: "decision", text: "retry budget is 3 attempts" }],
+    stale: [
+      { id: "retry-old-noise-test", category: "latest-test", text: "tests/noise/payment-retry-31.test.ts passed" },
+    ],
+    unsupported: [{ id: "retry-ui-owner", category: "file", text: "src/ui/theme.ts owns the retry policy" }],
     continuation: {
       prompt:
         "Answer from the retained conversation context only. Do not use tools. Return one line in this exact field format: marker=<marker>;header=<header>;file=<file>;test=<test>;attempts=<retry_attempts>;symbol=<symbol>. Use the payment retry facts.",
@@ -2086,6 +2163,13 @@ export const NOISY_COMPACTION_SCENARIOS: readonly NoisyCompactionScenario[] = [
       { id: "lease-ttl", category: "decision", text: "lease TTL remains exactly 45 seconds" },
       { id: "cache-symbol", category: "evidence", text: "planInvalidationBatch" },
     ],
+    contradicted: [{ id: "cache-ttl-ninety", category: "decision", text: "lease TTL is 90 seconds" }],
+    stale: [
+      { id: "cache-old-noise-test", category: "latest-test", text: "tests/noise/cache-invalidation-31.test.ts passed" },
+    ],
+    unsupported: [
+      { id: "cache-search-owner", category: "file", text: "src/search/index.ts owns the invalidation policy" },
+    ],
     continuation: {
       prompt:
         "Answer from the retained conversation context only. Do not use tools. Return one line in this exact field format: marker=<marker>;file=<file>;test=<test>;ttl=<ttl_seconds>;symbol=<symbol>. Use the cache invalidation facts.",
@@ -2128,6 +2212,13 @@ export const NOISY_COMPACTION_SCENARIOS: readonly NoisyCompactionScenario[] = [
       { id: "fallback-depth", category: "decision", text: "fallback depth remains exactly 4 frames" },
       { id: "parser-symbol", category: "evidence", text: "resolveFallbackBranch" },
     ],
+    contradicted: [{ id: "parser-depth-eight", category: "decision", text: "fallback depth is 8 frames" }],
+    stale: [
+      { id: "parser-old-noise-test", category: "latest-test", text: "tests/noise/parser-fallback-31.test.ts passed" },
+    ],
+    unsupported: [
+      { id: "parser-cache-owner", category: "file", text: "src/cache/invalidate.ts owns the fallback policy" },
+    ],
     continuation: {
       prompt:
         "Answer from the retained conversation context only. Do not use tools. Return one line in this exact field format: marker=<marker>;file=<file>;test=<test>;depth=<depth_frames>;code=<fallback_code>;symbol=<symbol>. Use the parser fallback facts.",
@@ -2152,7 +2243,9 @@ export function buildNoisyCompactionFixtures(input: {
   const selected = input.scenarios?.length
     ? NOISY_COMPACTION_SCENARIOS.filter((scenario) => input.scenarios?.includes(scenario.id))
     : NOISY_COMPACTION_SCENARIOS
-  const missing = (input.scenarios ?? []).filter((id) => !NOISY_COMPACTION_SCENARIOS.some((scenario) => scenario.id === id))
+  const missing = (input.scenarios ?? []).filter(
+    (id) => !NOISY_COMPACTION_SCENARIOS.some((scenario) => scenario.id === id),
+  )
   if (missing.length > 0) throw new Error(`Unknown noisy compaction scenario(s): ${missing.join(", ")}`)
   return selected.map((scenario) => noisyCompactionFixture({ ...input, scenario }))
 }
@@ -2169,7 +2262,13 @@ function noisyCompactionFixture(input: {
     instanceID,
     baseline: noisyCompactionExport({ ...input, lane: "baseline" }),
     contextLedger: noisyCompactionExport({ ...input, lane: "precision" }),
-    gold: { instance_id: instanceID, gold: input.scenario.gold },
+    gold: {
+      instance_id: instanceID,
+      gold: input.scenario.gold,
+      ...(input.scenario.unsupported ? { unsupported: input.scenario.unsupported } : {}),
+      ...(input.scenario.contradicted ? { contradicted: input.scenario.contradicted } : {}),
+      ...(input.scenario.stale ? { stale: input.scenario.stale } : {}),
+    },
     continuation: input.scenario.continuation,
   } satisfies NoisyCompactionFixture
 }
@@ -2394,6 +2493,15 @@ function packCompactionRawTail(context: readonly string[], budget: number) {
     tokens += cost
   }
   return selected.join("\n\n")
+}
+
+function compactionClaimIDs(claims: readonly CompactionSurvivalGold[], text: string) {
+  return claims.filter((claim) => compactionGoldSurvived(claim, text)).map((claim) => claim.id)
+}
+
+function claimRate(count: number, predictedClaims: number) {
+  if (predictedClaims === 0) return 0
+  return count / predictedClaims
 }
 
 function compactionGoldSurvived(gold: CompactionSurvivalGold, text: string) {
@@ -2659,15 +2767,16 @@ export function fromSWEExploreRow(
     }),
   )
   const optionalEvents =
-    options?.includeOptionalRegions ?? true
-      ? sweExploreOptionalRegions(row, options?.optionalModels, options?.maxOptionalRegions).map((region: SWEExploreRegion, index: number) =>
-          sweExploreRegionEvent({
-            instanceID: row.instance_id,
-            group: "optional",
-            index,
-            region,
-            order: sweExploreRegionOrder(row, region, 10_000 + index),
-          }),
+    (options?.includeOptionalRegions ?? true)
+      ? sweExploreOptionalRegions(row, options?.optionalModels, options?.maxOptionalRegions).map(
+          (region: SWEExploreRegion, index: number) =>
+            sweExploreRegionEvent({
+              instanceID: row.instance_id,
+              group: "optional",
+              index,
+              region,
+              order: sweExploreRegionOrder(row, region, 10_000 + index),
+            }),
         )
       : []
   return {
@@ -2701,7 +2810,11 @@ function fromSWEExploreRepoCandidateRow(
     task_type: row.dataset,
     repo: row.repo_dir,
     base_commit: undefined,
-    gold_ids: chunkEvents.filter((event) => (event.spans ?? []).some((span) => coreRegions.some((core) => overlaps(span, sweExploreRegionSpan(core))))).map((event) => event.id),
+    gold_ids: chunkEvents
+      .filter((event) =>
+        (event.spans ?? []).some((span) => coreRegions.some((core) => overlaps(span, sweExploreRegionSpan(core)))),
+      )
+      .map((event) => event.id),
     gold_files: unique(row.ground_truth.read_core_files),
     events: chunkEvents,
   } satisfies Case
@@ -2880,15 +2993,22 @@ function sweExploreRegionOrder(row: SWEExploreRow, region: SWEExploreRegion, fal
   return Math.min(
     fallback,
     ...(row.read_step_info?.[region.path] ?? [])
-      .filter((step) => !sweExploreSpan({ path: region.path, start: step.start, end: step.end }) || overlaps({
-        file: region.path,
-        start: step.start,
-        end: step.end,
-      }, {
-        file: region.path,
-        start: region.start,
-        end: region.end,
-      }))
+      .filter(
+        (step) =>
+          !sweExploreSpan({ path: region.path, start: step.start, end: step.end }) ||
+          overlaps(
+            {
+              file: region.path,
+              start: step.start,
+              end: step.end,
+            },
+            {
+              file: region.path,
+              start: region.start,
+              end: region.end,
+            },
+          ),
+      )
       .map((step) => step.step_idx),
   )
 }
@@ -3025,10 +3145,7 @@ function sweExploreRecallAtLineBudget(
   return covered.size / coreLines.size
 }
 
-function sweExploreFirstUsefulHit(
-  regions: readonly SWEExploreRegion[],
-  groundTruth: SWEExploreRow["ground_truth"],
-) {
+function sweExploreFirstUsefulHit(regions: readonly SWEExploreRegion[], groundTruth: SWEExploreRow["ground_truth"]) {
   if (regions.length === 0) return 0
   const coreLines = sweExploreRegionLinesSet(groundTruth.read_core_regions)
   if (coreLines.size === 0) return 0
@@ -3154,16 +3271,19 @@ export function evaluateAgentRetrievalBenchRanking(input: {
       }),
     ),
   )
-  const summaries = Array.from(Map.groupBy(details, (detail) => `${detail.budget}\0${detail.policy}\0${detail.taskType}`).values())
-    .map((items) => ({
-      taskType: items[0]?.taskType ?? "overall",
-      policy: items[0]?.policy ?? "recency",
-      budget: items[0]?.budget ?? 0,
-      rankingStrategy,
-      cases: items.length,
-      metrics: meanAgentRetrievalRankingMetrics(items.map((item) => item.metrics)),
-    }))
-  const overallSummaries = Array.from(Map.groupBy(details, (detail) => `${detail.budget}\0${detail.policy}`).values()).map((items) => ({
+  const summaries = Array.from(
+    Map.groupBy(details, (detail) => `${detail.budget}\0${detail.policy}\0${detail.taskType}`).values(),
+  ).map((items) => ({
+    taskType: items[0]?.taskType ?? "overall",
+    policy: items[0]?.policy ?? "recency",
+    budget: items[0]?.budget ?? 0,
+    rankingStrategy,
+    cases: items.length,
+    metrics: meanAgentRetrievalRankingMetrics(items.map((item) => item.metrics)),
+  }))
+  const overallSummaries = Array.from(
+    Map.groupBy(details, (detail) => `${detail.budget}\0${detail.policy}`).values(),
+  ).map((items) => ({
     taskType: "overall",
     policy: items[0]?.policy ?? "recency",
     budget: items[0]?.budget ?? 0,
@@ -3225,13 +3345,15 @@ export function evaluateSWEExploreOfficial(input: {
       }),
     ),
   )
-  const summaries = Array.from(Map.groupBy(officialRows, (row) => `${row.budget}\0${row.policy}`).values()).map((items) => ({
-    explorer: items[0]?.explorer ?? "context-ledger",
-    policy: items[0]?.policy ?? "recency",
-    budget: items[0]?.budget ?? 0,
-    cases: items.length,
-    metrics: meanSWEExploreOfficialMetrics(items.map((item) => item.metrics)),
-  }))
+  const summaries = Array.from(Map.groupBy(officialRows, (row) => `${row.budget}\0${row.policy}`).values()).map(
+    (items) => ({
+      explorer: items[0]?.explorer ?? "context-ledger",
+      policy: items[0]?.policy ?? "recency",
+      budget: items[0]?.budget ?? 0,
+      cases: items.length,
+      metrics: meanSWEExploreOfficialMetrics(items.map((item) => item.metrics)),
+    }),
+  )
   return {
     cases: input.cases.length,
     budgets: input.budgets,
@@ -3243,7 +3365,9 @@ export function evaluateSWEExploreOfficial(input: {
         a.instance_id.localeCompare(b.instance_id),
     ),
     summaries: summaries.toSorted(
-      (a, b) => a.budget - b.budget || SessionContextLedger.selectionPolicyOrder(a.policy) - SessionContextLedger.selectionPolicyOrder(b.policy),
+      (a, b) =>
+        a.budget - b.budget ||
+        SessionContextLedger.selectionPolicyOrder(a.policy) - SessionContextLedger.selectionPolicyOrder(b.policy),
     ),
   } satisfies SWEExploreOfficialReport
 }
@@ -3264,16 +3388,19 @@ export function analyzeSWEExploreOracles(input: {
   const budgetRows = paired.flatMap(({ item, row }) =>
     input.budgets.map((budget) => sweExploreBudgetOracleRow({ item, row, budget, policies: input.policies })),
   )
-  const budgetSummaries = Array.from(Map.groupBy(budgetRows, (row) => row.budget).entries()).map(([budget, rows]) => ({
-    budget,
-    cases: rows.length,
-    bestPolicyF1: mean(rows.map((row) => row.bestPolicyMetrics.f1_score)),
-    fileOracleF1: mean(rows.map((row) => row.fileOracleMetrics.f1_score)),
-    budgetOracleF1: mean(rows.map((row) => row.budgetOracleMetrics.f1_score)),
-    poolLineRecall: mean(rows.map((row) => row.poolMetrics.recall)),
-    bestPolicyRegretVsBudgetOracle: mean(rows.map((row) => row.bestPolicyRegretVsBudgetOracle)),
-    fileOracleRegretVsBudgetOracle: mean(rows.map((row) => row.fileOracleRegretVsBudgetOracle)),
-  } satisfies SWEExploreOracleBudgetSummary))
+  const budgetSummaries = Array.from(Map.groupBy(budgetRows, (row) => row.budget).entries()).map(
+    ([budget, rows]) =>
+      ({
+        budget,
+        cases: rows.length,
+        bestPolicyF1: mean(rows.map((row) => row.bestPolicyMetrics.f1_score)),
+        fileOracleF1: mean(rows.map((row) => row.fileOracleMetrics.f1_score)),
+        budgetOracleF1: mean(rows.map((row) => row.budgetOracleMetrics.f1_score)),
+        poolLineRecall: mean(rows.map((row) => row.poolMetrics.recall)),
+        bestPolicyRegretVsBudgetOracle: mean(rows.map((row) => row.bestPolicyRegretVsBudgetOracle)),
+        fileOracleRegretVsBudgetOracle: mean(rows.map((row) => row.fileOracleRegretVsBudgetOracle)),
+      }) satisfies SWEExploreOracleBudgetSummary,
+  )
   return {
     cases: input.cases.length,
     budgets: input.budgets,
@@ -3303,7 +3430,9 @@ function sweExploreCandidatePoolOracleRow(item: Case, row: SWEExploreRow) {
   const goldFiles = new Set(row.ground_truth.read_core_files)
   const goldRegions = row.ground_truth.read_core_regions
   const fileHits = Array.from(goldFiles).filter((file) => candidateFiles.has(file)).length
-  const regionHits = goldRegions.filter((gold) => regions.some((region) => sweExploreRegionsOverlap(gold, region))).length
+  const regionHits = goldRegions.filter((gold) =>
+    regions.some((region) => sweExploreRegionsOverlap(gold, region)),
+  ).length
   const candidateLines = sweExploreRegionLinesSet(regions)
   const goldLines = sweExploreRegionLinesSet(goldRegions)
   const lineHits = intersectionSize(candidateLines, goldLines)
@@ -3311,10 +3440,13 @@ function sweExploreCandidatePoolOracleRow(item: Case, row: SWEExploreRow) {
   const regionRecall = goldRegions.length === 0 ? 1 : regionHits / goldRegions.length
   const lineRecall = goldLines.size === 0 ? 1 : lineHits / goldLines.size
   const failureClass: SWEExploreOracleFailureClass =
-    regions.length === 0 ? "empty-candidate-pool"
-    : fileRecall < 1 ? "gold-file-absent"
-    : regionRecall < 1 ? "gold-region-absent"
-    : "pool-covered"
+    regions.length === 0
+      ? "empty-candidate-pool"
+      : fileRecall < 1
+        ? "gold-file-absent"
+        : regionRecall < 1
+          ? "gold-region-absent"
+          : "pool-covered"
   return {
     instanceID: item.instance_id,
     candidateFiles: candidateFiles.size,
@@ -3358,7 +3490,10 @@ function sweExploreBudgetOracleRow(input: {
     sweExplorePackEventsByRegionOracle(input.item.events, input.row.ground_truth, input.budget),
     input.row.ground_truth,
   )
-  const poolMetrics = evaluateSWEExploreOfficialMetrics(sweExploreRegionsFromEvents(input.item.events), input.row.ground_truth)
+  const poolMetrics = evaluateSWEExploreOfficialMetrics(
+    sweExploreRegionsFromEvents(input.item.events),
+    input.row.ground_truth,
+  )
   return {
     instanceID: input.item.instance_id,
     budget: input.budget,
@@ -3378,10 +3513,12 @@ function sweExplorePackEventsByFileOracle(
   budget: number,
 ) {
   const coreFiles = new Set(groundTruth.read_core_files)
-  return sweExploreRegionsFromEvents(sweExplorePackEventsInOrder(
-    events.filter((event) => eventFiles(event).some((file) => coreFiles.has(file))),
-    budget,
-  ))
+  return sweExploreRegionsFromEvents(
+    sweExplorePackEventsInOrder(
+      events.filter((event) => eventFiles(event).some((file) => coreFiles.has(file))),
+      budget,
+    ),
+  )
 }
 
 function sweExplorePackEventsByRegionOracle(
@@ -3430,7 +3567,10 @@ function sweExplorePackEventsInOrder(events: readonly SessionContextLedger.Event
 }
 
 function sweExploreOracleEventCost(event: SessionContextLedger.Event) {
-  const regionLines = sweExploreRegionsFromEvents([event]).reduce((total, region) => total + sweExploreRegionLines(region), 0)
+  const regionLines = sweExploreRegionsFromEvents([event]).reduce(
+    (total, region) => total + sweExploreRegionLines(region),
+    0,
+  )
   return Math.max(1, event.tokens, regionLines)
 }
 
@@ -3463,7 +3603,9 @@ export function evaluateSWEExploreOfficialMetrics(
   const optionalFiles = new Set(Object.values(groundTruth.read_optional_files_map ?? {}).flat())
   const hitFiles = Array.from(coreFiles).filter((file) => visitedFiles.has(file)).length
   const noiseFiles = Array.from(visitedFiles).filter((file) => !coreFiles.has(file) && !optionalFiles.has(file)).length
-  const coreRegionHits = coreRegions.filter((core) => regions.some((region) => sweExploreRegionsOverlap(core, region))).length
+  const coreRegionHits = coreRegions.filter((core) =>
+    regions.some((region) => sweExploreRegionsOverlap(core, region)),
+  ).length
   const noiseRegions = regions.filter(
     (region) =>
       !coreRegions.some((core) => sweExploreRegionsOverlap(region, core)) &&
@@ -3575,10 +3717,18 @@ export function inspectSelectionDelta(input: {
     },
     gainedFiles: candidateFiles.filter((file) => !baselineFiles.includes(file)),
     lostFiles: baselineFiles.filter((file) => !candidateFiles.includes(file)),
-    gainedGoldFiles: candidateFiles.filter((file) => input.item.gold_files.includes(file) && !baselineFiles.includes(file)),
-    lostGoldFiles: baselineFiles.filter((file) => input.item.gold_files.includes(file) && !candidateFiles.includes(file)),
-    gainedSpans: candidateSpans.filter((span) => !baselineSpans.some((baseline) => spanKey(baseline) === spanKey(span))).slice(0, 12),
-    lostSpans: baselineSpans.filter((span) => !candidateSpans.some((candidate) => spanKey(candidate) === spanKey(span))).slice(0, 12),
+    gainedGoldFiles: candidateFiles.filter(
+      (file) => input.item.gold_files.includes(file) && !baselineFiles.includes(file),
+    ),
+    lostGoldFiles: baselineFiles.filter(
+      (file) => input.item.gold_files.includes(file) && !candidateFiles.includes(file),
+    ),
+    gainedSpans: candidateSpans
+      .filter((span) => !baselineSpans.some((baseline) => spanKey(baseline) === spanKey(span)))
+      .slice(0, 12),
+    lostSpans: baselineSpans
+      .filter((span) => !candidateSpans.some((candidate) => spanKey(candidate) === spanKey(span)))
+      .slice(0, 12),
     candidateOnlyEvents: candidateSelection.events
       .filter((event) => !baselineIDs.has(event.id))
       .map((event) => selectionDeltaEvent(event, input.item))
@@ -3602,12 +3752,16 @@ function evaluateSelection(input: {
   const goldFiles = new Set(input.item.gold_files)
   const fileHits = input.item.gold_files.filter((file) => selectedFiles.has(file)).length
   const spanMetrics = overlapMetrics({
-    gold: input.item.events.filter((event) => input.item.gold_ids.includes(event.id)).flatMap((event) => event.spans ?? []),
+    gold: input.item.events
+      .filter((event) => input.item.gold_ids.includes(event.id))
+      .flatMap((event) => event.spans ?? []),
     selected: selection.events.flatMap((event) => event.spans ?? []),
   })
   const trajectory = trajectoryCoverageMetrics({
     goldFiles: input.item.gold_files,
-    goldSpans: input.item.events.filter((event) => input.item.gold_ids.includes(event.id)).flatMap((event) => event.spans ?? []),
+    goldSpans: input.item.events
+      .filter((event) => input.item.gold_ids.includes(event.id))
+      .flatMap((event) => event.spans ?? []),
     events: selection.events,
   })
   return {
@@ -3709,7 +3863,10 @@ function agentRetrievalRankedFiles(
   const scored = packetOrder.map((file) => {
     const fileEvents = events.filter((event) => eventFiles(event).includes(file))
     const text = [file, ...fileEvents.map((event) => event.summary)].join("\n")
-    const overlap = item.task_type === "comment2context" ? 0 : Array.from(queryTerms).filter((term) => textTerms(text).has(term)).length
+    const overlap =
+      item.task_type === "comment2context"
+        ? 0
+        : Array.from(queryTerms).filter((term) => textTerms(text).has(term)).length
     const bucket = pathBucket(file)
     return {
       file,
@@ -3730,9 +3887,7 @@ function agentRetrievalRankedFiles(
 
 function agentRetrievalCaseGivenFiles(item: Case) {
   return unique([
-    ...item.events
-      .filter((event) => event.kind === "user-goal")
-      .flatMap(eventFiles),
+    ...item.events.filter((event) => event.kind === "user-goal").flatMap(eventFiles),
     ...agentRetrievalQueryPathHints(item.query ?? ""),
   ])
 }
@@ -3846,28 +4001,33 @@ function officialUtilityProxy(result: Result) {
 
 export function summarize(results: readonly Result[]) {
   const grouped = Map.groupBy(results, (result) => `${result.budget}\0${result.policy}`)
-  return Array.from(grouped.values()).map((items) => ({
-    budget: items[0]?.budget ?? 0,
-    policy: items[0]?.policy ?? "recency",
-    cases: items.length,
-    tokens: mean(items.map((item) => item.tokens)),
-    recall: mean(items.map((item) => item.recall)),
-    precision: mean(items.map((item) => item.precision)),
-    f1: mean(items.map((item) => item.f1)),
-    recallPerThousandTokens: mean(items.map((item) => item.recallPerThousandTokens)),
-    fileRecall: mean(items.map((item) => item.fileRecall)),
-    filePrecision: mean(items.map((item) => item.filePrecision)),
-    fileF1: mean(items.map((item) => item.fileF1)),
-    spanRecall: mean(items.map((item) => item.spanRecall)),
-    spanPrecision: mean(items.map((item) => item.spanPrecision)),
-    spanF1: mean(items.map((item) => item.spanF1)),
-    lineRecall: mean(items.map((item) => item.lineRecall)),
-    linePrecision: mean(items.map((item) => item.linePrecision)),
-    lineF1: mean(items.map((item) => item.lineF1)),
-    aucFileCoverage: mean(items.map((item) => item.aucFileCoverage)),
-    aucSpanCoverage: mean(items.map((item) => item.aucSpanCoverage)),
-    aucLineCoverage: mean(items.map((item) => item.aucLineCoverage)),
-  } satisfies Summary)).toSorted((a, b) => a.budget - b.budget || policiesOrder(a.policy) - policiesOrder(b.policy))
+  return Array.from(grouped.values())
+    .map(
+      (items) =>
+        ({
+          budget: items[0]?.budget ?? 0,
+          policy: items[0]?.policy ?? "recency",
+          cases: items.length,
+          tokens: mean(items.map((item) => item.tokens)),
+          recall: mean(items.map((item) => item.recall)),
+          precision: mean(items.map((item) => item.precision)),
+          f1: mean(items.map((item) => item.f1)),
+          recallPerThousandTokens: mean(items.map((item) => item.recallPerThousandTokens)),
+          fileRecall: mean(items.map((item) => item.fileRecall)),
+          filePrecision: mean(items.map((item) => item.filePrecision)),
+          fileF1: mean(items.map((item) => item.fileF1)),
+          spanRecall: mean(items.map((item) => item.spanRecall)),
+          spanPrecision: mean(items.map((item) => item.spanPrecision)),
+          spanF1: mean(items.map((item) => item.spanF1)),
+          lineRecall: mean(items.map((item) => item.lineRecall)),
+          linePrecision: mean(items.map((item) => item.linePrecision)),
+          lineF1: mean(items.map((item) => item.lineF1)),
+          aucFileCoverage: mean(items.map((item) => item.aucFileCoverage)),
+          aucSpanCoverage: mean(items.map((item) => item.aucSpanCoverage)),
+          aucLineCoverage: mean(items.map((item) => item.aucLineCoverage)),
+        }) satisfies Summary,
+    )
+    .toSorted((a, b) => a.budget - b.budget || policiesOrder(a.policy) - policiesOrder(b.policy))
 }
 
 function onlySummary(summaries: readonly Summary[]) {
@@ -3895,128 +4055,137 @@ function experienceReplaySummaryDeltas(base: Summary, replay: Summary) {
     spanF1: replay.spanF1 - base.spanF1,
     lineF1: replay.lineF1 - base.lineF1,
     aucLineCoverage: replay.aucLineCoverage - base.aucLineCoverage,
-    officialUtility: mean([replay.fileF1, replay.spanF1, replay.lineF1]) - mean([base.fileF1, base.spanF1, base.lineF1]),
+    officialUtility:
+      mean([replay.fileF1, replay.spanF1, replay.lineF1]) - mean([base.fileF1, base.spanF1, base.lineF1]),
     tokens: replay.tokens - base.tokens,
   } satisfies ExperienceReplayMetricDeltas
 }
 
 export function analyze(results: readonly Result[]) {
   const byBudget = Map.groupBy(results, (result) => result.budget)
-  return Array.from(byBudget.entries()).map(([budget, items]) => {
-    const byCase = Map.groupBy(items, (result) => result.instanceID)
-    const cases = Array.from(byCase.values())
-    const policyItems = Map.groupBy(items, (result) => result.policy)
-    const oracleF1ByCase = cases.map((results) => maxBy(results, (result) => result.f1)?.f1 ?? 0)
-    const oracleSpanF1ByCase = cases.map((results) => maxBy(results, (result) => result.spanF1)?.spanF1 ?? 0)
-    const oracleLineF1ByCase = cases.map((results) => maxBy(results, (result) => result.lineF1)?.lineF1 ?? 0)
-    const policies = Array.from(policyItems.entries())
-      .map(([policy, policyResults]) => ({
-        policy,
-        eventWins: cases.filter((results) => maxBy(results, (result) => result.f1)?.policy === policy).length,
-        spanWins: cases.filter((results) => maxBy(results, (result) => result.spanF1)?.policy === policy).length,
-        lineWins: cases.filter((results) => maxBy(results, (result) => result.lineF1)?.policy === policy).length,
-        f1: mean(policyResults.map((result) => result.f1)),
-        spanF1: mean(policyResults.map((result) => result.spanF1)),
-        lineF1: mean(policyResults.map((result) => result.lineF1)),
-        regretF1: mean(
-          policyResults.map((result) => {
-            const winner = maxBy(byCase.get(result.instanceID) ?? [], (item) => item.f1)
-            return Math.max(0, (winner?.f1 ?? 0) - result.f1)
-          }),
-        ),
-      }))
-      .toSorted((a, b) => policiesOrder(a.policy) - policiesOrder(b.policy))
-    const bestPolicyByF1 = maxBy(policies, (policy) => policy.f1)?.policy ?? "recency"
-    return {
-      budget,
-      cases: cases.length,
-      oracleF1: mean(oracleF1ByCase),
-      oracleSpanF1: mean(oracleSpanF1ByCase),
-      oracleLineF1: mean(oracleLineF1ByCase),
-      bestPolicyByF1,
-      policies,
-    } satisfies PolicyAnalysis
-  }).toSorted((a, b) => a.budget - b.budget)
+  return Array.from(byBudget.entries())
+    .map(([budget, items]) => {
+      const byCase = Map.groupBy(items, (result) => result.instanceID)
+      const cases = Array.from(byCase.values())
+      const policyItems = Map.groupBy(items, (result) => result.policy)
+      const oracleF1ByCase = cases.map((results) => maxBy(results, (result) => result.f1)?.f1 ?? 0)
+      const oracleSpanF1ByCase = cases.map((results) => maxBy(results, (result) => result.spanF1)?.spanF1 ?? 0)
+      const oracleLineF1ByCase = cases.map((results) => maxBy(results, (result) => result.lineF1)?.lineF1 ?? 0)
+      const policies = Array.from(policyItems.entries())
+        .map(([policy, policyResults]) => ({
+          policy,
+          eventWins: cases.filter((results) => maxBy(results, (result) => result.f1)?.policy === policy).length,
+          spanWins: cases.filter((results) => maxBy(results, (result) => result.spanF1)?.policy === policy).length,
+          lineWins: cases.filter((results) => maxBy(results, (result) => result.lineF1)?.policy === policy).length,
+          f1: mean(policyResults.map((result) => result.f1)),
+          spanF1: mean(policyResults.map((result) => result.spanF1)),
+          lineF1: mean(policyResults.map((result) => result.lineF1)),
+          regretF1: mean(
+            policyResults.map((result) => {
+              const winner = maxBy(byCase.get(result.instanceID) ?? [], (item) => item.f1)
+              return Math.max(0, (winner?.f1 ?? 0) - result.f1)
+            }),
+          ),
+        }))
+        .toSorted((a, b) => policiesOrder(a.policy) - policiesOrder(b.policy))
+      const bestPolicyByF1 = maxBy(policies, (policy) => policy.f1)?.policy ?? "recency"
+      return {
+        budget,
+        cases: cases.length,
+        oracleF1: mean(oracleF1ByCase),
+        oracleSpanF1: mean(oracleSpanF1ByCase),
+        oracleLineF1: mean(oracleLineF1ByCase),
+        bestPolicyByF1,
+        policies,
+      } satisfies PolicyAnalysis
+    })
+    .toSorted((a, b) => a.budget - b.budget)
 }
 
 export function analyzeBudgetRouter(results: readonly Result[], options?: { readonly folds?: number }) {
   const requestedFolds = Math.max(1, Math.floor(options?.folds ?? 5))
   const byBudget = Map.groupBy(results, (result) => result.budget)
-  return Array.from(byBudget.entries()).map(([budget, items]) => {
-    const byCase = Map.groupBy(items, (result) => result.instanceID)
-    const caseIDs = Array.from(byCase.keys()).toSorted()
-    const folds = Math.max(1, Math.min(requestedFolds, caseIDs.length))
-    const foldResults = Array.from({ length: folds }, (_, fold) => {
-      const evalCaseIDs = caseIDs.filter((id) => caseFold(id, folds) === fold)
-      const trainCaseIDs = caseIDs.filter((id) => caseFold(id, folds) !== fold)
-      const trainItems = (trainCaseIDs.length ? trainCaseIDs : caseIDs).flatMap((id) => byCase.get(id) ?? [])
-      const trainBestPolicy = bestPolicyByF1(trainItems)
-      const routed = evalCaseIDs.flatMap((id) => {
+  return Array.from(byBudget.entries())
+    .map(([budget, items]) => {
+      const byCase = Map.groupBy(items, (result) => result.instanceID)
+      const caseIDs = Array.from(byCase.keys()).toSorted()
+      const folds = Math.max(1, Math.min(requestedFolds, caseIDs.length))
+      const foldResults = Array.from({ length: folds }, (_, fold) => {
+        const evalCaseIDs = caseIDs.filter((id) => caseFold(id, folds) === fold)
+        const trainCaseIDs = caseIDs.filter((id) => caseFold(id, folds) !== fold)
+        const trainItems = (trainCaseIDs.length ? trainCaseIDs : caseIDs).flatMap((id) => byCase.get(id) ?? [])
+        const trainBestPolicy = bestPolicyByF1(trainItems)
+        const routed = evalCaseIDs.flatMap((id) => {
+          const caseResults = byCase.get(id) ?? []
+          return caseResults.find((result) => result.policy === trainBestPolicy) ?? []
+        })
+        return {
+          fold,
+          trainCases: trainCaseIDs.length || caseIDs.length,
+          evalCases: evalCaseIDs.length,
+          trainBestPolicy,
+          evalF1: mean(routed.map((result) => result.f1)),
+          evalSpanF1: mean(routed.map((result) => result.spanF1)),
+          evalLineF1: mean(routed.map((result) => result.lineF1)),
+          regretF1: mean(
+            routed.map((result) => {
+              const winner = maxBy(byCase.get(result.instanceID) ?? [], (item) => item.f1)
+              return Math.max(0, (winner?.f1 ?? 0) - result.f1)
+            }),
+          ),
+        }
+      }).filter((fold) => fold.evalCases > 0)
+      const routed = foldResults.flatMap((fold) =>
+        caseIDs
+          .filter((id) => caseFold(id, folds) === fold.fold)
+          .flatMap((id) => {
+            const caseResults = byCase.get(id) ?? []
+            return caseResults.find((result) => result.policy === fold.trainBestPolicy) ?? []
+          }),
+      )
+      const bestFixedPolicy = bestPolicyByF1(items)
+      const bestFixedResults = caseIDs.flatMap((id) => {
         const caseResults = byCase.get(id) ?? []
-        return caseResults.find((result) => result.policy === trainBestPolicy) ?? []
+        return caseResults.find((result) => result.policy === bestFixedPolicy) ?? []
       })
+      const oracleF1ByCase = caseIDs.map((id) => maxBy(byCase.get(id) ?? [], (result) => result.f1)?.f1 ?? 0)
+      const oracleSpanF1ByCase = caseIDs.map(
+        (id) => maxBy(byCase.get(id) ?? [], (result) => result.spanF1)?.spanF1 ?? 0,
+      )
+      const oracleLineF1ByCase = caseIDs.map(
+        (id) => maxBy(byCase.get(id) ?? [], (result) => result.lineF1)?.lineF1 ?? 0,
+      )
       return {
-        fold,
-        trainCases: trainCaseIDs.length || caseIDs.length,
-        evalCases: evalCaseIDs.length,
-        trainBestPolicy,
-        evalF1: mean(routed.map((result) => result.f1)),
-        evalSpanF1: mean(routed.map((result) => result.spanF1)),
-        evalLineF1: mean(routed.map((result) => result.lineF1)),
-        regretF1: mean(
+        budget,
+        cases: caseIDs.length,
+        folds: foldResults.length,
+        routerF1: mean(routed.map((result) => result.f1)),
+        routerSpanF1: mean(routed.map((result) => result.spanF1)),
+        routerLineF1: mean(routed.map((result) => result.lineF1)),
+        oracleF1: mean(oracleF1ByCase),
+        oracleSpanF1: mean(oracleSpanF1ByCase),
+        oracleLineF1: mean(oracleLineF1ByCase),
+        bestFixedPolicy,
+        bestFixedF1: mean(bestFixedResults.map((result) => result.f1)),
+        routerRegretF1: mean(
           routed.map((result) => {
             const winner = maxBy(byCase.get(result.instanceID) ?? [], (item) => item.f1)
             return Math.max(0, (winner?.f1 ?? 0) - result.f1)
           }),
         ),
-      }
-    }).filter((fold) => fold.evalCases > 0)
-    const routed = foldResults.flatMap((fold) =>
-      caseIDs
-        .filter((id) => caseFold(id, folds) === fold.fold)
-        .flatMap((id) => {
-          const caseResults = byCase.get(id) ?? []
-          return caseResults.find((result) => result.policy === fold.trainBestPolicy) ?? []
-        }),
-    )
-    const bestFixedPolicy = bestPolicyByF1(items)
-    const bestFixedResults = caseIDs.flatMap((id) => {
-      const caseResults = byCase.get(id) ?? []
-      return caseResults.find((result) => result.policy === bestFixedPolicy) ?? []
+        bestFixedRegretF1: mean(
+          bestFixedResults.map((result) => {
+            const winner = maxBy(byCase.get(result.instanceID) ?? [], (item) => item.f1)
+            return Math.max(0, (winner?.f1 ?? 0) - result.f1)
+          }),
+        ),
+        trainPolicyCounts: Array.from(Map.groupBy(foldResults, (fold) => fold.trainBestPolicy).entries())
+          .map(([policy, folds]) => ({ policy, folds: folds.length }))
+          .toSorted((a, b) => policiesOrder(a.policy) - policiesOrder(b.policy)),
+        foldResults,
+      } satisfies PolicyRouterAnalysis
     })
-    const oracleF1ByCase = caseIDs.map((id) => maxBy(byCase.get(id) ?? [], (result) => result.f1)?.f1 ?? 0)
-    const oracleSpanF1ByCase = caseIDs.map((id) => maxBy(byCase.get(id) ?? [], (result) => result.spanF1)?.spanF1 ?? 0)
-    const oracleLineF1ByCase = caseIDs.map((id) => maxBy(byCase.get(id) ?? [], (result) => result.lineF1)?.lineF1 ?? 0)
-    return {
-      budget,
-      cases: caseIDs.length,
-      folds: foldResults.length,
-      routerF1: mean(routed.map((result) => result.f1)),
-      routerSpanF1: mean(routed.map((result) => result.spanF1)),
-      routerLineF1: mean(routed.map((result) => result.lineF1)),
-      oracleF1: mean(oracleF1ByCase),
-      oracleSpanF1: mean(oracleSpanF1ByCase),
-      oracleLineF1: mean(oracleLineF1ByCase),
-      bestFixedPolicy,
-      bestFixedF1: mean(bestFixedResults.map((result) => result.f1)),
-      routerRegretF1: mean(
-        routed.map((result) => {
-          const winner = maxBy(byCase.get(result.instanceID) ?? [], (item) => item.f1)
-          return Math.max(0, (winner?.f1 ?? 0) - result.f1)
-        }),
-      ),
-      bestFixedRegretF1: mean(
-        bestFixedResults.map((result) => {
-          const winner = maxBy(byCase.get(result.instanceID) ?? [], (item) => item.f1)
-          return Math.max(0, (winner?.f1 ?? 0) - result.f1)
-        }),
-      ),
-      trainPolicyCounts: Array.from(Map.groupBy(foldResults, (fold) => fold.trainBestPolicy).entries())
-        .map(([policy, folds]) => ({ policy, folds: folds.length }))
-        .toSorted((a, b) => policiesOrder(a.policy) - policiesOrder(b.policy)),
-      foldResults,
-    } satisfies PolicyRouterAnalysis
-  }).toSorted((a, b) => a.budget - b.budget)
+    .toSorted((a, b) => a.budget - b.budget)
 }
 
 export function analyzeFeatureRouter(
@@ -4046,11 +4215,17 @@ export function analyzeFeatureRouter(
         evalF1: mean(routed.map((result) => result.f1)),
         evalSpanF1: mean(routed.map((result) => result.spanF1)),
         evalLineF1: mean(routed.map((result) => result.lineF1)),
-        regretF1: mean(routed.map((result) => Math.max(0, exampleOracle(exampleByID(examples, result.instanceID), "event-f1").f1 - result.f1))),
+        regretF1: mean(
+          routed.map((result) =>
+            Math.max(0, exampleOracle(exampleByID(examples, result.instanceID), "event-f1").f1 - result.f1),
+          ),
+        ),
       }
     }).filter((fold) => fold.evalCases > 0)
     const routed = foldResults.flatMap((fold) =>
-      examples.filter((example) => caseFold(example.instanceID, folds) === fold.fold).map((example) => routedResult(example, fold.rule)),
+      examples
+        .filter((example) => caseFold(example.instanceID, folds) === fold.fold)
+        .map((example) => routedResult(example, fold.rule)),
     )
     const scores = featureRouterScores({ target, examples, policies: options.policies, routed })
     return {
@@ -4090,14 +4265,15 @@ export function trainFeatureRouterRules(
       const bestFixedPolicy = bestPolicyForExamples(examples, options.policies, target)
       const bestFixedResults = examples.map((example) => example.results.get(bestFixedPolicy)).filter(isResult)
       const bestFixedTargetScore = mean(bestFixedResults.map((result) => scoreResult(result, target)))
-      const validation = requestedValidationFolds > 1
-        ? analyzeFeatureRouter(cases, {
-            budgets: [budget],
-            policies: options.policies,
-            folds: requestedValidationFolds,
-            target,
-          })[0]
-        : undefined
+      const validation =
+        requestedValidationFolds > 1
+          ? analyzeFeatureRouter(cases, {
+              budgets: [budget],
+              policies: options.policies,
+              folds: requestedValidationFolds,
+              target,
+            })[0]
+          : undefined
       const validationDelta = validation ? validation.routerTargetScore - validation.bestFixedTargetScore : undefined
       const learnedRule = trainFeatureRule(examples, options.policies, target)
       const promoted = validationDelta === undefined || validationDelta >= minimumValidationGain
@@ -4234,55 +4410,60 @@ export function analyzePolicyStability(
     policies: [...options.policies],
     splitCount: splits.length,
     budgets: options.budgets.map((budget) => {
-      const splitRows = splits.map((split) => {
-        const policyRows = options.policies.map((policy) => {
-          const results = split.cases.map((item) => evaluateCase({ item, policy, budget }))
+      const splitRows = splits
+        .map((split) => {
+          const policyRows = options.policies.map((policy) => {
+            const results = split.cases.map((item) => evaluateCase({ item, policy, budget }))
+            return {
+              split: split.id,
+              cases: split.cases.length,
+              policy,
+              targetScore: mean(results.map((result) => scoreResult(result, target))),
+              f1: mean(results.map((result) => result.f1)),
+              spanF1: mean(results.map((result) => result.spanF1)),
+              lineF1: mean(results.map((result) => result.lineF1)),
+            }
+          })
+          const splitBestScore = Math.max(...policyRows.map((row) => row.targetScore))
+          return policyRows.map((row) => ({
+            ...row,
+            deltaVsSplitBest: row.targetScore - splitBestScore,
+            splitBest: row.targetScore === splitBestScore,
+          }))
+        })
+        .flat()
+      const policyRows = options.policies
+        .map((policy) => {
+          const rows = splitRows.filter((row) => row.policy === policy)
+          const splitScores = rows.map((row) => ({
+            split: row.split,
+            cases: row.cases,
+            targetScore: row.targetScore,
+            f1: row.f1,
+            spanF1: row.spanF1,
+            lineF1: row.lineF1,
+            deltaVsSplitBest: row.deltaVsSplitBest,
+            splitBest: row.splitBest,
+          }))
           return {
-            split: split.id,
-            cases: split.cases.length,
             policy,
-            targetScore: mean(results.map((result) => scoreResult(result, target))),
-            f1: mean(results.map((result) => result.f1)),
-            spanF1: mean(results.map((result) => result.spanF1)),
-            lineF1: mean(results.map((result) => result.lineF1)),
+            meanTargetScore: mean(rows.map((row) => row.targetScore)),
+            minTargetScore: Math.min(...rows.map((row) => row.targetScore)),
+            maxTargetScore: Math.max(...rows.map((row) => row.targetScore)),
+            meanF1: mean(rows.map((row) => row.f1)),
+            meanSpanF1: mean(rows.map((row) => row.spanF1)),
+            meanLineF1: mean(rows.map((row) => row.lineF1)),
+            splitWins: rows.filter((row) => row.splitBest).length,
+            worstDeltaVsSplitBest: Math.min(...rows.map((row) => row.deltaVsSplitBest)),
+            meanDeltaVsSplitBest: mean(rows.map((row) => row.deltaVsSplitBest)),
+            splitScores,
           }
         })
-        const splitBestScore = Math.max(...policyRows.map((row) => row.targetScore))
-        return policyRows.map((row) => ({
-          ...row,
-          deltaVsSplitBest: row.targetScore - splitBestScore,
-          splitBest: row.targetScore === splitBestScore,
-        }))
-      }).flat()
-      const policyRows = options.policies.map((policy) => {
-        const rows = splitRows.filter((row) => row.policy === policy)
-        const splitScores = rows.map((row) => ({
-          split: row.split,
-          cases: row.cases,
-          targetScore: row.targetScore,
-          f1: row.f1,
-          spanF1: row.spanF1,
-          lineF1: row.lineF1,
-          deltaVsSplitBest: row.deltaVsSplitBest,
-          splitBest: row.splitBest,
-        }))
-        return {
-          policy,
-          meanTargetScore: mean(rows.map((row) => row.targetScore)),
-          minTargetScore: Math.min(...rows.map((row) => row.targetScore)),
-          maxTargetScore: Math.max(...rows.map((row) => row.targetScore)),
-          meanF1: mean(rows.map((row) => row.f1)),
-          meanSpanF1: mean(rows.map((row) => row.spanF1)),
-          meanLineF1: mean(rows.map((row) => row.lineF1)),
-          splitWins: rows.filter((row) => row.splitBest).length,
-          worstDeltaVsSplitBest: Math.min(...rows.map((row) => row.deltaVsSplitBest)),
-          meanDeltaVsSplitBest: mean(rows.map((row) => row.deltaVsSplitBest)),
-          splitScores,
-        }
-      }).toSorted((a, b) => policiesOrder(a.policy) - policiesOrder(b.policy))
+        .toSorted((a, b) => policiesOrder(a.policy) - policiesOrder(b.policy))
       return {
         budget,
-        robustPolicy: maxBy(policyRows, (row) => row.minTargetScore * 10_000 + row.meanTargetScore)?.policy ?? "recency",
+        robustPolicy:
+          maxBy(policyRows, (row) => row.minTargetScore * 10_000 + row.meanTargetScore)?.policy ?? "recency",
         bestMeanPolicy: maxBy(policyRows, (row) => row.meanTargetScore)?.policy ?? "recency",
         policies: policyRows,
       }
@@ -4300,75 +4481,81 @@ export function analyzePolicyTargets(
   const byBudget = Map.groupBy(results, (result) => result.budget)
   return {
     targets,
-    budgets: Array.from(byBudget.entries()).map(([budget, items]) => {
-      const byCase = Map.groupBy(items, (result) => result.instanceID)
-      const policyItems = Map.groupBy(items, (result) => result.policy)
-      const policies = Array.from(policyItems.keys()).toSorted((a, b) => policiesOrder(a) - policiesOrder(b))
-      const targetRows = targets.map((target) => {
-        const scores = policies
-          .map((policy) => {
-            const policyResults = policyItems.get(policy) ?? []
+    budgets: Array.from(byBudget.entries())
+      .map(([budget, items]) => {
+        const byCase = Map.groupBy(items, (result) => result.instanceID)
+        const policyItems = Map.groupBy(items, (result) => result.policy)
+        const policies = Array.from(policyItems.keys()).toSorted((a, b) => policiesOrder(a) - policiesOrder(b))
+        const targetRows = targets.map((target) => {
+          const scores = policies
+            .map((policy) => {
+              const policyResults = policyItems.get(policy) ?? []
+              return {
+                policy,
+                score: mean(policyResults.map((result) => scoreResult(result, target))),
+              }
+            })
+            .toSorted((a, b) => policiesOrder(a.policy) - policiesOrder(b.policy))
+          const best = maxBy(scores, (item) => item.score) ?? { policy: "recency" as const, score: 0 }
+          const oracleScore = mean(
+            Array.from(byCase.values()).map((caseResults) =>
+              Math.max(...caseResults.map((result) => scoreResult(result, target))),
+            ),
+          )
+          return {
+            target,
+            bestPolicy: best.policy,
+            bestScore: best.score,
+            oracleScore,
+            policies: scores.map((item) => ({
+              policy: item.policy,
+              score: item.score,
+              regretVsBest: Math.max(0, best.score - item.score),
+              regretVsOracle: Math.max(0, oracleScore - item.score),
+            })),
+          }
+        })
+        const policyRows = policies.map((policy) => {
+          const policyResults = policyItems.get(policy) ?? []
+          const targetScores = targetRows.map((target) => {
+            const row = target.policies.find((item) => item.policy === policy)
+            if (!row) throw new Error(`Missing target score for ${policy} at budget ${budget}`)
             return {
-              policy,
-              score: mean(policyResults.map((result) => scoreResult(result, target))),
+              target: target.target,
+              score: row.score,
+              regretVsBest: row.regretVsBest,
+              regretVsOracle: row.regretVsOracle,
             }
           })
-          .toSorted((a, b) => policiesOrder(a.policy) - policiesOrder(b.policy))
-        const best = maxBy(scores, (item) => item.score) ?? { policy: "recency" as const, score: 0 }
-        const oracleScore = mean(
-          Array.from(byCase.values()).map((caseResults) => Math.max(...caseResults.map((result) => scoreResult(result, target)))),
-        )
-        return {
-          target,
-          bestPolicy: best.policy,
-          bestScore: best.score,
-          oracleScore,
-          policies: scores.map((item) => ({
-            policy: item.policy,
-            score: item.score,
-            regretVsBest: Math.max(0, best.score - item.score),
-            regretVsOracle: Math.max(0, oracleScore - item.score),
-          })),
-        }
-      })
-      const policyRows = policies.map((policy) => {
-        const policyResults = policyItems.get(policy) ?? []
-        const targetScores = targetRows.map((target) => {
-          const row = target.policies.find((item) => item.policy === policy)
-          if (!row) throw new Error(`Missing target score for ${policy} at budget ${budget}`)
           return {
-            target: target.target,
-            score: row.score,
-            regretVsBest: row.regretVsBest,
-            regretVsOracle: row.regretVsOracle,
+            policy,
+            meanEventF1: mean(policyResults.map((result) => result.f1)),
+            meanFileF1: mean(policyResults.map((result) => result.fileF1)),
+            meanSpanF1: mean(policyResults.map((result) => result.spanF1)),
+            meanLineF1: mean(policyResults.map((result) => result.lineF1)),
+            meanOfficialUtility: mean(policyResults.map((result) => scoreResult(result, "official-utility"))),
+            worstTargetRegret: Math.max(...targetScores.map((score) => score.regretVsBest)),
+            meanTargetRegret: mean(targetScores.map((score) => score.regretVsBest)),
+            worstOracleRegret: Math.max(...targetScores.map((score) => score.regretVsOracle)),
+            meanOracleRegret: mean(targetScores.map((score) => score.regretVsOracle)),
+            targetWins: targetScores.filter((score) => score.regretVsBest <= 1e-12).length,
+            paretoOptimal: false,
+            targetScores,
           }
         })
         return {
-          policy,
-          meanEventF1: mean(policyResults.map((result) => result.f1)),
-          meanFileF1: mean(policyResults.map((result) => result.fileF1)),
-          meanSpanF1: mean(policyResults.map((result) => result.spanF1)),
-          meanLineF1: mean(policyResults.map((result) => result.lineF1)),
-          meanOfficialUtility: mean(policyResults.map((result) => scoreResult(result, "official-utility"))),
-          worstTargetRegret: Math.max(...targetScores.map((score) => score.regretVsBest)),
-          meanTargetRegret: mean(targetScores.map((score) => score.regretVsBest)),
-          worstOracleRegret: Math.max(...targetScores.map((score) => score.regretVsOracle)),
-          meanOracleRegret: mean(targetScores.map((score) => score.regretVsOracle)),
-          targetWins: targetScores.filter((score) => score.regretVsBest <= 1e-12).length,
-          paretoOptimal: false,
-          targetScores,
+          budget,
+          cases: byCase.size,
+          targets: targetRows,
+          policies: policyRows.map((policy) => ({
+            ...policy,
+            paretoOptimal: !policyRows.some(
+              (other) => other.policy !== policy.policy && dominatesTargets(other, policy, targets),
+            ),
+          })),
         }
       })
-      return {
-        budget,
-        cases: byCase.size,
-        targets: targetRows,
-        policies: policyRows.map((policy) => ({
-          ...policy,
-          paretoOptimal: !policyRows.some((other) => other.policy !== policy.policy && dominatesTargets(other, policy, targets)),
-        })),
-      }
-    }).toSorted((a, b) => a.budget - b.budget),
+      .toSorted((a, b) => a.budget - b.budget),
   } satisfies PolicyTargetComparisonReport
 }
 
@@ -4454,7 +4641,10 @@ export function analyzePolicyPortfolioStability(
 ) {
   const objective = options.objective ?? "minimax-regret"
   const target = options.target ?? "official-utility"
-  const targets = objective === "target-score" ? uniqueTargets([target]) : uniqueTargets(options.targets ?? ["event-f1", "span-f1", "line-f1", "auc-line", "official-utility"])
+  const targets =
+    objective === "target-score"
+      ? uniqueTargets([target])
+      : uniqueTargets(options.targets ?? ["event-f1", "span-f1", "line-f1", "auc-line", "official-utility"])
   const maximumHeldoutLoss = options.maximumHeldoutLoss ?? 0
   const uniqueSplitIDs = new Set(splits.map((split) => split.id))
   if (splits.length === 0) throw new Error("At least one portfolio stability split is required")
@@ -4479,52 +4669,57 @@ export function analyzePolicyPortfolioStability(
           targets,
         }),
       }))
-      const fixedPolicies = options.policies.map((policy) => {
-        const splitScores = splitSelections.map((split) => {
-          const row = split.policyRows.find((item) => item.policy === policy)
-          if (!row) throw new Error(`Missing policy ${policy} for split ${split.id}`)
-          const objectiveScore = portfolioObjectiveScore(row, objective, target)
-          const splitBestObjectiveScore = portfolioObjectiveScore(split.selected, objective, target)
-          const objectiveDeltaVsSplitBest = objectiveScore - splitBestObjectiveScore
-          const heldoutLoss = Math.max(0, splitBestObjectiveScore - objectiveScore)
+      const fixedPolicies = options.policies
+        .map((policy) => {
+          const splitScores = splitSelections.map((split) => {
+            const row = split.policyRows.find((item) => item.policy === policy)
+            if (!row) throw new Error(`Missing policy ${policy} for split ${split.id}`)
+            const objectiveScore = portfolioObjectiveScore(row, objective, target)
+            const splitBestObjectiveScore = portfolioObjectiveScore(split.selected, objective, target)
+            const objectiveDeltaVsSplitBest = objectiveScore - splitBestObjectiveScore
+            const heldoutLoss = Math.max(0, splitBestObjectiveScore - objectiveScore)
+            return {
+              split: split.id,
+              cases: split.cases,
+              objectiveScore,
+              splitBestObjectiveScore,
+              objectiveDeltaVsSplitBest,
+              heldoutLoss,
+              splitBest: heldoutLoss <= 1e-12,
+            }
+          })
+          const rows = splitSelections.map((split) => {
+            const row = split.policyRows.find((item) => item.policy === policy)
+            if (!row) throw new Error(`Missing policy ${policy} for split ${split.id}`)
+            return row
+          })
           return {
-            split: split.id,
-            cases: split.cases,
-            objectiveScore,
-            splitBestObjectiveScore,
-            objectiveDeltaVsSplitBest,
-            heldoutLoss,
-            splitBest: heldoutLoss <= 1e-12,
+            policy,
+            meanObjectiveScore: mean(splitScores.map((score) => score.objectiveScore)),
+            minObjectiveScore: Math.min(...splitScores.map((score) => score.objectiveScore)),
+            maxObjectiveScore: Math.max(...splitScores.map((score) => score.objectiveScore)),
+            meanEventF1: mean(rows.map((row) => row.meanEventF1)),
+            meanOfficialUtility: mean(rows.map((row) => row.meanOfficialUtility)),
+            splitWins: splitScores.filter((score) => score.splitBest).length,
+            maxHeldoutLoss: Math.max(...splitScores.map((score) => score.heldoutLoss)),
+            meanHeldoutLoss: mean(splitScores.map((score) => score.heldoutLoss)),
+            splitScores,
           }
         })
-        const rows = splitSelections.map((split) => {
-          const row = split.policyRows.find((item) => item.policy === policy)
-          if (!row) throw new Error(`Missing policy ${policy} for split ${split.id}`)
-          return row
-        })
-        return {
-          policy,
-          meanObjectiveScore: mean(splitScores.map((score) => score.objectiveScore)),
-          minObjectiveScore: Math.min(...splitScores.map((score) => score.objectiveScore)),
-          maxObjectiveScore: Math.max(...splitScores.map((score) => score.objectiveScore)),
-          meanEventF1: mean(rows.map((row) => row.meanEventF1)),
-          meanOfficialUtility: mean(rows.map((row) => row.meanOfficialUtility)),
-          splitWins: splitScores.filter((score) => score.splitBest).length,
-          maxHeldoutLoss: Math.max(...splitScores.map((score) => score.heldoutLoss)),
-          meanHeldoutLoss: mean(splitScores.map((score) => score.heldoutLoss)),
-          splitScores,
-        }
-      }).toSorted((a, b) => policiesOrder(a.policy) - policiesOrder(b.policy))
+        .toSorted((a, b) => policiesOrder(a.policy) - policiesOrder(b.policy))
       const robustPolicy =
-        maxBy(fixedPolicies, (policy) => -policy.maxHeldoutLoss * 1_000_000 - policy.meanHeldoutLoss * 1_000 + policy.meanObjectiveScore)?.policy ??
-        "recency"
+        maxBy(
+          fixedPolicies,
+          (policy) => -policy.maxHeldoutLoss * 1_000_000 - policy.meanHeldoutLoss * 1_000 + policy.meanObjectiveScore,
+        )?.policy ?? "recency"
       const bestMeanPolicy = maxBy(fixedPolicies, (policy) => policy.meanObjectiveScore)?.policy ?? "recency"
       const trainSplits = splitSelections.map((trained) => {
         const evalSplits = splitSelections
           .filter((evaluated) => evaluated.id !== trained.id)
           .map((evaluated) => {
             const selected = evaluated.policyRows.find((row) => row.policy === trained.selected.policy)
-            if (!selected) throw new Error(`Missing selected policy ${trained.selected.policy} for split ${evaluated.id}`)
+            if (!selected)
+              throw new Error(`Missing selected policy ${trained.selected.policy} for split ${evaluated.id}`)
             const selectedObjectiveScore = portfolioObjectiveScore(selected, objective, target)
             const evalBestObjectiveScore = portfolioObjectiveScore(evaluated.selected, objective, target)
             const objectiveDeltaVsEvalBest = selectedObjectiveScore - evalBestObjectiveScore
@@ -4570,7 +4765,10 @@ export function analyzePolicyPortfolioStability(
   } satisfies PolicyPortfolioStabilityReport
 }
 
-export function toPrediction(input: { readonly instanceID: string; readonly selection: SessionContextLedger.Selection }) {
+export function toPrediction(input: {
+  readonly instanceID: string
+  readonly selection: SessionContextLedger.Selection
+}) {
   const steps = input.selection.events.map((event) => ({
     files: eventFiles(event),
     spans: spansByFile(event.spans ?? []),
@@ -4587,10 +4785,7 @@ export function toPrediction(input: { readonly instanceID: string; readonly sele
   } satisfies Prediction
 }
 
-export function toPredictionFromSessionMessages(input: {
-  readonly messages: unknown
-  readonly instanceID?: string
-}) {
+export function toPredictionFromSessionMessages(input: { readonly messages: unknown; readonly instanceID?: string }) {
   const messages = sessionMessages(input.messages)
   const events = SessionContextLedger.fromEntries(messages.map((message, index) => ({ seq: index + 1, message })))
   const steps = events.flatMap((event) => {
@@ -4670,7 +4865,9 @@ function experienceReplayEvent(instanceID: string, experience: ExperienceRecord,
       files.length ? `Files: ${files.join(", ")}` : "",
       `Similarity score: ${score.toFixed(3)}`,
       experience.summary,
-    ].filter(Boolean).join("\n"),
+    ]
+      .filter(Boolean)
+      .join("\n"),
     recoverability: "medium",
     mustPreserve: false,
     files,
@@ -4685,7 +4882,14 @@ function experienceIDFragment(id: string) {
 function experienceReplayScore(item: Case, experience: ExperienceRecord) {
   const itemTerms = textTerms([item.query, item.repo, item.task_type, item.benchmark].filter(Boolean).join("\n"))
   const experienceTerms = textTerms(
-    [experience.query, experience.summary, experience.repo, experience.task_type, experience.benchmark, experience.files.join("\n")]
+    [
+      experience.query,
+      experience.summary,
+      experience.repo,
+      experience.task_type,
+      experience.benchmark,
+      experience.files.join("\n"),
+    ]
       .filter(Boolean)
       .join("\n"),
   )
@@ -4894,7 +5098,8 @@ function lineOverlap(gold: readonly SessionContextLedger.Span[], selected: reado
         .filter((selectedSpan) => selectedSpan.file === goldSpan.file)
         .reduce(
           (subtotal, selectedSpan) =>
-            subtotal + Math.max(0, Math.min(goldSpan.end, selectedSpan.end) - Math.max(goldSpan.start, selectedSpan.start) + 1),
+            subtotal +
+            Math.max(0, Math.min(goldSpan.end, selectedSpan.end) - Math.max(goldSpan.start, selectedSpan.start) + 1),
           0,
         ),
     0,
@@ -4933,10 +5138,12 @@ function toolPartSteps(part: Record<string, unknown>) {
 }
 
 function inputPathFiles(input: Record<string, unknown>) {
-  return unique(["filePath", "filepath", "path", "file"].flatMap((key) => {
-    const value = stringField(input, key)
-    return value ? [value] : []
-  }))
+  return unique(
+    ["filePath", "filepath", "path", "file"].flatMap((key) => {
+      const value = stringField(input, key)
+      return value ? [value] : []
+    }),
+  )
 }
 
 function outputEvidenceSteps(state: Record<string, unknown>) {
@@ -5070,9 +5277,7 @@ function sweContextBenchAllowedExperienceIDs(
   if (relationships.length === 0 || relatedInstanceIDs.length === 0) return new Set<string>()
   const related = new Set(relatedInstanceIDs)
   return new Set(
-    relationships
-      .filter((item) => related.has(item.related_instance_id))
-      .map((item) => item.experience_instance_id),
+    relationships.filter((item) => related.has(item.related_instance_id)).map((item) => item.experience_instance_id),
   )
 }
 
@@ -5088,12 +5293,15 @@ function sweContextBenchExperienceRecord(row: SWEContextBenchTaskRow): Experienc
     benchmark: "swe-contextbench",
     task_type: "experience",
     query: row.problem_statement,
-    summary: [
-      row.problem_statement ? `Problem:\n${row.problem_statement}` : "",
-      row.hints_text ? `Hints:\n${row.hints_text}` : "",
-      files.length ? `Touched files: ${files.join(", ")}` : "",
-      row.FAIL_TO_PASS ? `Fail-to-pass tests: ${testsFromSWEContextBenchList(row.FAIL_TO_PASS).join(", ")}` : "",
-    ].filter(Boolean).join("\n\n") || row.instance_id,
+    summary:
+      [
+        row.problem_statement ? `Problem:\n${row.problem_statement}` : "",
+        row.hints_text ? `Hints:\n${row.hints_text}` : "",
+        files.length ? `Touched files: ${files.join(", ")}` : "",
+        row.FAIL_TO_PASS ? `Fail-to-pass tests: ${testsFromSWEContextBenchList(row.FAIL_TO_PASS).join(", ")}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n\n") || row.instance_id,
     files,
   }
 }
@@ -5147,11 +5355,7 @@ function featureExample(
   }
 }
 
-function featureValues(
-  item: Case,
-  budget: number,
-  policies: readonly SessionContextLedger.SelectionPolicy[],
-) {
+function featureValues(item: Case, budget: number, policies: readonly SessionContextLedger.SelectionPolicy[]) {
   const codeEvents = item.events.filter((event) => event.kind === "code-context" || event.kind === "diff")
   const evidenceEvents = item.events.filter((event) => event.kind === "test-evidence" || event.kind === "shell")
   const codeFiles = unique(codeEvents.flatMap(eventFiles))
@@ -5176,8 +5380,9 @@ function featureValues(
       noisyPathShare:
         pathBuckets.length === 0
           ? 0
-          : pathBuckets.filter((bucket) => bucket === "test" || bucket === "docs" || bucket === "generated" || bucket === "fixture")
-              .length / pathBuckets.length,
+          : pathBuckets.filter(
+              (bucket) => bucket === "test" || bucket === "docs" || bucket === "generated" || bucket === "fixture",
+            ).length / pathBuckets.length,
       spanCount: spans.length,
       spanLineCount,
       averageSpanLines: spans.length === 0 ? 0 : spanLineCount / spans.length,
@@ -5223,26 +5428,29 @@ function selectionFeatureEntries(
   const policyEntries = Array.from(metricsByPolicy.entries()).flatMap(([policy, values]) =>
     Object.entries(values).map(([metric, value]) => [`selection:${policy}:${metric}`, value] as const),
   )
-  const deltaPolicies = policies.filter((policy) =>
-    policy === "relevance-frontier" ||
-    policy === "coherence-frontier" ||
-    policy === "file-frontier" ||
-    policy === "adaptive-frontier" ||
-    policy === "fusion-frontier" ||
-    policy === "portfolio-frontier" ||
-    policy === "robust-frontier" ||
-    policy === "utility-frontier" ||
-    policy === "target-balanced-frontier" ||
-    policy === "official-frontier" ||
-    policy === "action-aware-frontier" ||
-    policy === "intent-frontier"
+  const deltaPolicies = policies.filter(
+    (policy) =>
+      policy === "relevance-frontier" ||
+      policy === "coherence-frontier" ||
+      policy === "file-frontier" ||
+      policy === "adaptive-frontier" ||
+      policy === "fusion-frontier" ||
+      policy === "portfolio-frontier" ||
+      policy === "robust-frontier" ||
+      policy === "utility-frontier" ||
+      policy === "target-balanced-frontier" ||
+      policy === "official-frontier" ||
+      policy === "action-aware-frontier" ||
+      policy === "intent-frontier",
   )
   const deltaEntries = deltaPolicies.flatMap((left, leftIndex) =>
     deltaPolicies.slice(leftIndex + 1).flatMap((right) => {
       const leftMetrics = metricsByPolicy.get(left)
       const rightMetrics = metricsByPolicy.get(right)
       if (!leftMetrics || !rightMetrics) return []
-      return metrics.map((metric) => [`delta:${left}-${right}:${metric}`, leftMetrics[metric] - rightMetrics[metric]] as const)
+      return metrics.map(
+        (metric) => [`delta:${left}-${right}:${metric}`, leftMetrics[metric] - rightMetrics[metric]] as const,
+      )
     }),
   )
   return [...policyEntries, ...deltaEntries]
@@ -5273,8 +5481,9 @@ function selectionMetrics(selection: SessionContextLedger.Selection, budget: num
     noisyPathShare:
       buckets.length === 0
         ? 0
-        : buckets.filter((bucket) => bucket === "test" || bucket === "docs" || bucket === "generated" || bucket === "fixture").length /
-          buckets.length,
+        : buckets.filter(
+            (bucket) => bucket === "test" || bucket === "docs" || bucket === "generated" || bucket === "fixture",
+          ).length / buckets.length,
     maxFileClusterShare: codeFileRefs.length === 0 ? 0 : maxFileCluster / codeFileRefs.length,
   }
 }
@@ -5317,7 +5526,9 @@ function featureRouterScores(input: {
       ),
     ),
     routerRegretF1: mean(
-      input.routed.map((result) => Math.max(0, exampleOracle(exampleByID(input.examples, result.instanceID), "event-f1").f1 - result.f1)),
+      input.routed.map((result) =>
+        Math.max(0, exampleOracle(exampleByID(input.examples, result.instanceID), "event-f1").f1 - result.f1),
+      ),
     ),
     bestFixedRegretTarget: mean(
       bestFixedResults.map((result) =>
@@ -5342,9 +5553,15 @@ function trainFeatureRule(
   target: RouterTarget,
 ) {
   const fixedPolicy = bestPolicyForExamples(examples, policies, target)
-  let best = constantFeatureRule(fixedPolicy, target, scoreRule(examples, constantFeatureRule(fixedPolicy, target, 0), target))
+  let best = constantFeatureRule(
+    fixedPolicy,
+    target,
+    scoreRule(examples, constantFeatureRule(fixedPolicy, target, 0), target),
+  )
 
-  const featureNames = Array.from(new Set(examples.flatMap((example) => Array.from(example.features.keys())))).toSorted()
+  const featureNames = Array.from(
+    new Set(examples.flatMap((example) => Array.from(example.features.keys()))),
+  ).toSorted()
   for (const feature of featureNames) {
     for (const threshold of splitThresholds(examples.map((example) => example.features.get(feature) ?? 0))) {
       const low = examples.filter((example) => (example.features.get(feature) ?? 0) <= threshold)
@@ -5417,36 +5634,44 @@ function bestPolicyForExamples(
     policies
       .map((policy) => ({
         policy,
-        score: mean(examples.map((example) => example.results.get(policy)).filter(isResult).map((result) => scoreResult(result, target))),
+        score: mean(
+          examples
+            .map((example) => example.results.get(policy))
+            .filter(isResult)
+            .map((result) => scoreResult(result, target)),
+        ),
       }))
-      .toSorted((a, b) => b.score - a.score || policiesOrder(a.policy) - policiesOrder(b.policy))[0]?.policy ?? "recency"
+      .toSorted((a, b) => b.score - a.score || policiesOrder(a.policy) - policiesOrder(b.policy))[0]?.policy ??
+    "recency"
   )
 }
 
 function exampleOracle(example: FeatureExample, target: RouterTarget) {
-  return maxBy(Array.from(example.results.values()), (result) => scoreResult(result, target)) ?? {
-    instanceID: example.instanceID,
-    policy: "recency",
-    budget: 0,
-    tokens: 0,
-    selected: 0,
-    recall: 0,
-    precision: 0,
-    f1: 0,
-    recallPerThousandTokens: 0,
-    fileRecall: 0,
-    filePrecision: 0,
-    fileF1: 0,
-    spanRecall: 0,
-    spanPrecision: 0,
-    spanF1: 0,
-    lineRecall: 0,
-    linePrecision: 0,
-    lineF1: 0,
-    aucFileCoverage: 0,
-    aucSpanCoverage: 0,
-    aucLineCoverage: 0,
-  }
+  return (
+    maxBy(Array.from(example.results.values()), (result) => scoreResult(result, target)) ?? {
+      instanceID: example.instanceID,
+      policy: "recency",
+      budget: 0,
+      tokens: 0,
+      selected: 0,
+      recall: 0,
+      precision: 0,
+      f1: 0,
+      recallPerThousandTokens: 0,
+      fileRecall: 0,
+      filePrecision: 0,
+      fileF1: 0,
+      spanRecall: 0,
+      spanPrecision: 0,
+      spanF1: 0,
+      lineRecall: 0,
+      linePrecision: 0,
+      lineF1: 0,
+      aucFileCoverage: 0,
+      aucSpanCoverage: 0,
+      aucLineCoverage: 0,
+    }
+  )
 }
 
 function scoreResult(result: Result, target: RouterTarget) {
@@ -5561,7 +5786,9 @@ function scoreAggregate(rows: readonly ScoreAggregateInput[]) {
 
 function uniqueTargets(targets: readonly RouterTarget[]) {
   const uniqueItems = Array.from(new Set(targets))
-  return uniqueItems.length ? uniqueItems : (["event-f1", "span-f1", "line-f1", "auc-line", "official-utility"] satisfies readonly RouterTarget[])
+  return uniqueItems.length
+    ? uniqueItems
+    : (["event-f1", "span-f1", "line-f1", "auc-line", "official-utility"] satisfies readonly RouterTarget[])
 }
 
 function dominatesTargets(
@@ -5579,7 +5806,10 @@ function dominatesTargets(
   return better
 }
 
-function targetScore(scores: readonly { readonly target: RouterTarget; readonly score: number }[], target: RouterTarget) {
+function targetScore(
+  scores: readonly { readonly target: RouterTarget; readonly score: number }[],
+  target: RouterTarget,
+) {
   return scores.find((score) => score.target === target)?.score ?? 0
 }
 

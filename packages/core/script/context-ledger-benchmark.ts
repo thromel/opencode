@@ -622,8 +622,17 @@ type NoisyCompactionLiveReportRow = {
   }
   readonly summaryTokens?: number
   readonly claimRecall?: number
+  readonly claimPrecision?: number
+  readonly falseClaimRate?: number
+  readonly unsupportedClaimRate?: number
+  readonly contradictedClaimRate?: number
+  readonly staleClaimRate?: number
   readonly survivedClaims?: readonly string[]
   readonly missingClaims?: readonly string[]
+  readonly falseClaims?: readonly string[]
+  readonly unsupportedClaims?: readonly string[]
+  readonly contradictedClaims?: readonly string[]
+  readonly staleClaims?: readonly string[]
   readonly artifacts: {
     readonly importStdout: string
     readonly importStderr: string
@@ -646,6 +655,11 @@ type NoisyCompactionLiveReport = {
     readonly lane: NoisyCompactionLiveLane
     readonly runs: number
     readonly meanClaimRecall?: number
+    readonly meanClaimPrecision?: number
+    readonly meanFalseClaimRate?: number
+    readonly meanUnsupportedClaimRate?: number
+    readonly meanContradictedClaimRate?: number
+    readonly meanStaleClaimRate?: number
     readonly meanSummaryTokens?: number
     readonly meanInputTokens?: number
   }[]
@@ -656,6 +670,11 @@ type NoisyCompactionLiveReport = {
     readonly precisionSessionID: string
     readonly delta: {
       readonly claimRecall?: number
+      readonly claimPrecision?: number
+      readonly falseClaimRate?: number
+      readonly unsupportedClaimRate?: number
+      readonly contradictedClaimRate?: number
+      readonly staleClaimRate?: number
       readonly summaryTokens?: number
       readonly inputTokens?: number
     }
@@ -871,7 +890,19 @@ async function runNoisyCompactionLiveManifest(manifestPath: string) {
   const exportRows: SessionContextLedgerBenchmark.OpenCodeExportManifestRow[] = []
   const reportRows: Omit<
     NoisyCompactionLiveReportRow,
-    "summaryTokens" | "claimRecall" | "survivedClaims" | "missingClaims"
+    | "summaryTokens"
+    | "claimRecall"
+    | "claimPrecision"
+    | "falseClaimRate"
+    | "unsupportedClaimRate"
+    | "contradictedClaimRate"
+    | "staleClaimRate"
+    | "survivedClaims"
+    | "missingClaims"
+    | "falseClaims"
+    | "unsupportedClaims"
+    | "contradictedClaims"
+    | "staleClaims"
   >[] = []
 
   for (const row of rows) {
@@ -1800,7 +1831,19 @@ function requiredStringField(input: unknown, field: string, index: number) {
 function enrichNoisyCompactionLiveRows(
   rows: readonly Omit<
     NoisyCompactionLiveReportRow,
-    "summaryTokens" | "claimRecall" | "survivedClaims" | "missingClaims"
+    | "summaryTokens"
+    | "claimRecall"
+    | "claimPrecision"
+    | "falseClaimRate"
+    | "unsupportedClaimRate"
+    | "contradictedClaimRate"
+    | "staleClaimRate"
+    | "survivedClaims"
+    | "missingClaims"
+    | "falseClaims"
+    | "unsupportedClaims"
+    | "contradictedClaims"
+    | "staleClaims"
   >[],
   summaryReport: SessionContextLedgerBenchmark.OpenCodeCompactionSummaryReport,
   reportDir: string,
@@ -1814,8 +1857,17 @@ function enrichNoisyCompactionLiveRows(
         ? {
             summaryTokens: summary.tokens,
             claimRecall: summary.recall,
+            claimPrecision: summary.precision,
+            falseClaimRate: summary.falseClaimRate,
+            unsupportedClaimRate: summary.unsupportedClaimRate,
+            contradictedClaimRate: summary.contradictedClaimRate,
+            staleClaimRate: summary.staleClaimRate,
             survivedClaims: summary.survived,
             missingClaims: summary.missing,
+            falseClaims: summary.falseClaims,
+            unsupportedClaims: summary.unsupported,
+            contradictedClaims: summary.contradicted,
+            staleClaims: summary.stale,
           }
         : {}),
       artifacts: {
@@ -1840,6 +1892,11 @@ function noisyCompactionLiveSummaries(
       lane,
       runs: items.length,
       meanClaimRecall: metricAverage(items, (row) => row.claimRecall),
+      meanClaimPrecision: metricAverage(items, (row) => row.claimPrecision),
+      meanFalseClaimRate: metricAverage(items, (row) => row.falseClaimRate),
+      meanUnsupportedClaimRate: metricAverage(items, (row) => row.unsupportedClaimRate),
+      meanContradictedClaimRate: metricAverage(items, (row) => row.contradictedClaimRate),
+      meanStaleClaimRate: metricAverage(items, (row) => row.staleClaimRate),
       meanSummaryTokens: metricAverage(items, (row) => row.summaryTokens),
       meanInputTokens: metricAverage(items, (row) => row.tokens?.input),
     }
@@ -1862,6 +1919,11 @@ function noisyCompactionLiveComparisons(
         precisionSessionID: precision.sessionID,
         delta: {
           claimRecall: metricDelta(precision.claimRecall, baseline.claimRecall),
+          claimPrecision: metricDelta(precision.claimPrecision, baseline.claimPrecision),
+          falseClaimRate: metricDelta(precision.falseClaimRate, baseline.falseClaimRate),
+          unsupportedClaimRate: metricDelta(precision.unsupportedClaimRate, baseline.unsupportedClaimRate),
+          contradictedClaimRate: metricDelta(precision.contradictedClaimRate, baseline.contradictedClaimRate),
+          staleClaimRate: metricDelta(precision.staleClaimRate, baseline.staleClaimRate),
           summaryTokens: metricDelta(precision.summaryTokens, baseline.summaryTokens),
           inputTokens: metricDelta(precision.tokens?.input, baseline.tokens?.input),
         },
