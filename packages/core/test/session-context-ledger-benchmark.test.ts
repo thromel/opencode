@@ -3555,6 +3555,145 @@ describe("SessionContextLedgerBenchmark", () => {
     })
   })
 
+  test("CLI can derive isolated repeated continuation manifest from a noisy live report", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "context-ledger-noisy-continuation-from-live-report-"))
+    const liveDir = join(dir, "live")
+    mkdirSync(liveDir, { recursive: true })
+    const fixtureManifestPath = join(dir, "fixtures.jsonl")
+    const baselineExportPath = join(liveDir, "payment-retry-baseline.export.json")
+    const precisionExportPath = join(liveDir, "payment-retry-precision.export.json")
+    const liveReportPath = join(liveDir, "live-report.json")
+    const outputPath = join(dir, "continuation-repeats.jsonl")
+    await Bun.write(
+      fixtureManifestPath,
+      `${JSON.stringify({
+        scenario_id: "payment-retry",
+        instance_id: "live__ctxledger_noisy_payment_retry_gpt55",
+        baseline_session_id: "ses_payment_baseline",
+        precision_session_id: "ses_payment_precision",
+        baseline_import_path: "unused-baseline.json",
+        precision_import_path: "unused-precision.json",
+        continuation_prompt: "Return payment retry facts.",
+        continuation_answer_contains: ["attempts=2", "symbol=computeRetryPlan"],
+        gold_path: "gold.jsonl",
+        summarize_request: { providerID: "openai", modelID: "gpt-5.5", variant: "high" },
+        baseline_config: { compaction: { context_ledger: { enabled: false } } },
+        precision_config: { compaction: { context_ledger: { enabled: true, policy: "precision-frontier" } } },
+      })}\n`,
+    )
+    const exportJson = (sessionID: string) => ({
+      info: {
+        id: sessionID,
+        directory: "/tmp/repo-from-export",
+        model: { providerID: "openai", id: "gpt-5.5", variant: "high" },
+      },
+      messages: [{ info: { id: `msg_${sessionID}` }, parts: [] }],
+    })
+    await Bun.write(baselineExportPath, `${JSON.stringify(exportJson("ses_payment_baseline"))}\n`)
+    await Bun.write(precisionExportPath, `${JSON.stringify(exportJson("ses_payment_precision"))}\n`)
+    await Bun.write(
+      liveReportPath,
+      `${JSON.stringify({
+        generatedBy: "context-ledger-benchmark",
+        kind: "opencode-noisy-compaction-live-report",
+        manifestPath: fixtureManifestPath,
+        outputDir: liveDir,
+        rows: [
+          {
+            scenarioID: "payment-retry",
+            instanceID: "live__ctxledger_noisy_payment_retry_gpt55",
+            lane: "baseline",
+            sessionID: "ses_payment_baseline",
+            config: { compaction: { context_ledger: { enabled: false } } },
+            summarizeRequest: { providerID: "openai", modelID: "gpt-5.5", variant: "high" },
+            exportedModel: { providerID: "openai", modelID: "gpt-5.5", variant: "high" },
+            artifacts: {
+              importStdout: "payment-retry-baseline.import.stdout",
+              importStderr: "payment-retry-baseline.import.stderr",
+              serveStdout: "payment-retry-baseline.serve.stdout",
+              serveStderr: "payment-retry-baseline.serve.stderr",
+              summarizeResponse: "payment-retry-baseline.summarize.response",
+              exportJson: "payment-retry-baseline.export.json",
+              exportStderr: "payment-retry-baseline.export.stderr",
+            },
+          },
+          {
+            scenarioID: "payment-retry",
+            instanceID: "live__ctxledger_noisy_payment_retry_gpt55",
+            lane: "precision",
+            sessionID: "ses_payment_precision",
+            config: { compaction: { context_ledger: { enabled: true, policy: "precision-frontier" } } },
+            summarizeRequest: { providerID: "openai", modelID: "gpt-5.5", variant: "high" },
+            exportedModel: { providerID: "openai", modelID: "gpt-5.5", variant: "high" },
+            artifacts: {
+              importStdout: "payment-retry-precision.import.stdout",
+              importStderr: "payment-retry-precision.import.stderr",
+              serveStdout: "payment-retry-precision.serve.stdout",
+              serveStderr: "payment-retry-precision.serve.stderr",
+              summarizeResponse: "payment-retry-precision.summarize.response",
+              exportJson: "payment-retry-precision.export.json",
+              exportStderr: "payment-retry-precision.export.stderr",
+            },
+          },
+        ],
+        summaryReport: { cases: 2, rows: [], summary: { recall: 1, precision: 1, categoryRecall: [] } },
+        summaries: [],
+        pairedComparisons: [],
+      })}\n`,
+    )
+
+    const proc = Bun.spawn({
+      cmd: [
+        "bun",
+        "run",
+        "script/context-ledger-benchmark.ts",
+        "--opencode-noisy-continuation-live-report",
+        liveReportPath,
+        "--opencode-noisy-continuation-output",
+        outputPath,
+        "--opencode-noisy-continuation-repeats",
+        "3",
+      ],
+      cwd: process.cwd(),
+      stdout: "pipe",
+      stderr: "pipe",
+    })
+    const exit = await proc.exited
+    const stderr = await new Response(proc.stderr).text()
+
+    expect(exit, stderr).toBe(0)
+    const stdout = JSON.parse(await new Response(proc.stdout).text())
+    expect(stdout).toMatchObject({ outputPath, rows: 2, repeats: 3 })
+    const rows = readFileSync(outputPath, "utf8")
+      .trim()
+      .split(/\r?\n/)
+      .map((line) => JSON.parse(line))
+    expect(rows).toHaveLength(2)
+    expect(rows[0]).toMatchObject({
+      instance_id: "live__ctxledger_noisy_payment_retry_gpt55_continuation",
+      run_id: "payment-retry-baseline-continuation",
+      title: "baseline",
+      dir: "/tmp/repo-from-export",
+      model: "openai/gpt-5.5",
+      variant: "high",
+      extra_args: ["--pure"],
+      import_path: baselineExportPath,
+      import_session_id: "ses_payment_baseline",
+      repeats: 3,
+      isolate_repeats: true,
+      prompt: "Return payment retry facts.",
+      answer_contains: ["attempts=2", "symbol=computeRetryPlan"],
+      config: { compaction: { context_ledger: { enabled: false } } },
+    })
+    expect(rows[1]).toMatchObject({
+      run_id: "payment-retry-precision-continuation",
+      title: "ContextLedger-precision-replace",
+      import_path: precisionExportPath,
+      import_session_id: "ses_payment_precision",
+      config: { compaction: { context_ledger: { enabled: true, policy: "precision-frontier" } } },
+    })
+  })
+
   test("CLI can convert V2 session messages into prediction JSONL", async () => {
     const dir = mkdtempSync(join(tmpdir(), "context-ledger-opencode-messages-cli-"))
     const messagesPath = join(dir, "messages.json")

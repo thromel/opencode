@@ -73,6 +73,9 @@ const args = parseArgs({
     "opencode-noisy-compaction-live-env-json": { type: "string" },
     "opencode-noisy-compaction-live-manifest": { type: "string" },
     "opencode-noisy-compaction-live-output-dir": { type: "string" },
+    "opencode-noisy-continuation-live-report": { type: "string" },
+    "opencode-noisy-continuation-output": { type: "string" },
+    "opencode-noisy-continuation-repeats": { type: "string" },
     "opencode-run-command-json": { type: "string" },
     "opencode-run-config-json": { type: "string" },
     "opencode-run-env-json": { type: "string" },
@@ -603,6 +606,11 @@ type NoisyCompactionLiveManifestRow = {
   readonly precision_config: unknown
 }
 
+type NoisyCompactionFixtureManifestRow = NoisyCompactionLiveManifestRow & {
+  readonly continuation_prompt?: string
+  readonly continuation_answer_contains?: readonly string[]
+}
+
 type NoisyCompactionLiveLane = "baseline" | "precision"
 
 type NoisyCompactionLiveReportRow = {
@@ -850,6 +858,56 @@ function noisyContinuationRunManifestRow(input: {
     prompt: input.fixture.continuation.prompt,
     answer_contains: input.fixture.continuation.answerContains,
   } satisfies SessionContextLedgerBenchmark.OpenCodeRunManifestRow
+}
+
+async function emitNoisyContinuationManifestFromLiveReport(liveReportPath: string) {
+  if (!args.values["opencode-noisy-continuation-output"]) {
+    throw new Error("--opencode-noisy-continuation-output is required")
+  }
+  const outputPath = args.values["opencode-noisy-continuation-output"]
+  const repeats =
+    optionalIntegerAtLeast(
+      args.values["opencode-noisy-continuation-repeats"],
+      "--opencode-noisy-continuation-repeats",
+      1,
+    ) ?? 1
+  const report = (await Bun.file(liveReportPath).json()) as NoisyCompactionLiveReport
+  const manifestPath = resolveManifestPath(report.manifestPath, liveReportPath)
+  const fixtureRows = parseNoisyCompactionFixtureManifestJsonl(await Bun.file(manifestPath).text())
+  const fixtureByInstance = new Map(fixtureRows.map((row) => [row.instance_id, row]))
+  const rows = await Promise.all(
+    report.rows.map(async (row) => {
+      const fixture = fixtureByInstance.get(row.instanceID)
+      if (!fixture) throw new Error(`Missing fixture manifest row for ${row.instanceID}`)
+      if (!fixture.continuation_prompt) throw new Error(`Missing continuation_prompt for ${row.instanceID}`)
+      const exportPath = resolveManifestPath(row.artifacts.exportJson, liveReportPath)
+      const exported = (await Bun.file(exportPath).json()) as SessionContextLedgerBenchmark.OpenCodeExport
+      const laneTitle = row.lane === "baseline" ? "baseline" : "ContextLedger-precision-replace"
+      const model =
+        row.exportedModel?.providerID && row.exportedModel.modelID
+          ? `${row.exportedModel.providerID}/${row.exportedModel.modelID}`
+          : `${row.summarizeRequest.providerID}/${row.summarizeRequest.modelID}`
+      return {
+        instance_id: `${row.instanceID}_continuation`,
+        run_id: `${row.scenarioID}-${row.lane}-continuation`,
+        title: laneTitle,
+        dir: optionalStringField(exported.info, "directory") ?? process.cwd(),
+        model,
+        variant: row.exportedModel?.variant ?? row.summarizeRequest.variant ?? "high",
+        extra_args: ["--pure"],
+        import_path: exportPath,
+        import_session_id: row.sessionID,
+        repeats,
+        isolate_repeats: true,
+        config: row.config as SessionContextLedgerBenchmark.OpenCodeRunManifestRow["config"],
+        prompt: fixture.continuation_prompt,
+        answer_contains: fixture.continuation_answer_contains ?? [],
+      } satisfies SessionContextLedgerBenchmark.OpenCodeRunManifestRow
+    }),
+  )
+  mkdirSync(dirname(outputPath), { recursive: true })
+  await Bun.write(outputPath, rows.map((row) => JSON.stringify(row)).join("\n") + "\n")
+  process.stdout.write(`${JSON.stringify({ outputPath, rows: rows.length, repeats }, undefined, 2)}\n`)
 }
 
 async function runNoisyCompactionLiveManifest(manifestPath: string) {
@@ -1859,6 +1917,29 @@ function parseNoisyCompactionLiveManifestJsonl(text: string): NoisyCompactionLiv
     )
 }
 
+function parseNoisyCompactionFixtureManifestJsonl(text: string): NoisyCompactionFixtureManifestRow[] {
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line, index) =>
+      noisyCompactionFixtureManifestRow(parseJson(line, `noisy fixture manifest line ${index + 1}`), index),
+    )
+}
+
+function noisyCompactionFixtureManifestRow(input: unknown, index: number): NoisyCompactionFixtureManifestRow {
+  const row = noisyCompactionLiveManifestRow(input, index)
+  if (!isRecord(input)) throw new Error(`Noisy fixture manifest row ${index + 1} must be an object`)
+  const answerContains = input.continuation_answer_contains
+  return {
+    ...row,
+    ...(typeof input.continuation_prompt === "string" ? { continuation_prompt: input.continuation_prompt } : {}),
+    ...(Array.isArray(answerContains) && answerContains.every((item) => typeof item === "string")
+      ? { continuation_answer_contains: answerContains }
+      : {}),
+  }
+}
+
 function noisyCompactionLiveManifestRow(input: unknown, index: number): NoisyCompactionLiveManifestRow {
   if (!isRecord(input)) throw new Error(`Noisy compaction live manifest row ${index + 1} must be an object`)
   const summarize = input.summarize_request
@@ -2023,6 +2104,11 @@ if (args.values["opencode-noisy-compaction-live-manifest"]) {
   process.exit(0)
 }
 
+if (args.values["opencode-noisy-continuation-live-report"]) {
+  await emitNoisyContinuationManifestFromLiveReport(args.values["opencode-noisy-continuation-live-report"])
+  process.exit(0)
+}
+
 if (args.values["opencode-export"]) {
   const prediction = SessionContextLedgerBenchmark.toPredictionFromOpenCodeExport(
     await Bun.file(args.values["opencode-export"]).json(),
@@ -2088,6 +2174,12 @@ if (
 ) {
   throw new Error(
     "--opencode-noisy-compaction-live-command-json, --opencode-noisy-compaction-live-env-json, and --opencode-noisy-compaction-live-output-dir require --opencode-noisy-compaction-live-manifest",
+  )
+}
+
+if (args.values["opencode-noisy-continuation-output"] || args.values["opencode-noisy-continuation-repeats"]) {
+  throw new Error(
+    "--opencode-noisy-continuation-output and --opencode-noisy-continuation-repeats require --opencode-noisy-continuation-live-report",
   )
 }
 
