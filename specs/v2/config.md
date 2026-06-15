@@ -359,9 +359,17 @@ Retain the compaction capability but redesign the less clear limits. `keep.token
       "tokens": 2000,
     },
     "buffer": 10000,
+    "context_ledger": {
+      "enabled": true,
+      "policy": "official-frontier",
+      "budget": 2500,
+      "mode": "augment",
+    },
   },
 }
 ```
+
+`context_ledger` controls the provenance-preserving packet prepended to compaction prompts. It defaults to enabled with the runtime ContextLedger default policy, a 2500-token budget, and `mode: "augment"`, which keeps the raw old history in the summarizer request. Experiments can set `policy` to a benchmark candidate such as `intent-frontier` without changing the global default, or set `mode: "replace"` to use the ledger packet instead of sending the raw selected old-history body. The experimental `precision-frontier` policy is intended for replacement-mode tests where exact facts should survive but distractor/noise lines should not fill the packet.
 
 ## Group 11: Deprecated And Experimental Settings
 

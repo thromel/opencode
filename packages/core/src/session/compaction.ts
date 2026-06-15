@@ -7,6 +7,7 @@ import type { EventV2 } from "../event"
 import { SessionEvent } from "./event"
 import { SessionMessage } from "./message"
 import { SessionSchema } from "./schema"
+import { SessionContextLedger } from "./context-ledger"
 import { Token } from "../util/token"
 
 const DEFAULT_BUFFER = 20_000
@@ -59,6 +60,12 @@ type Settings = {
   readonly auto: boolean
   readonly buffer: number
   readonly tokens: number
+  readonly contextLedger: {
+    readonly enabled: boolean
+    readonly policy: SessionContextLedger.SelectionPolicy
+    readonly budget: number
+    readonly mode: SessionContextLedger.InputMode
+  }
 }
 
 type Dependencies = {
@@ -125,8 +132,24 @@ const settings = (documents: readonly Config.Entry[]) => {
       auto: current.auto ?? result.auto,
       buffer: current.buffer ?? result.buffer,
       tokens: current.keep?.tokens ?? result.tokens,
+      contextLedger: {
+        enabled: current.context_ledger?.enabled ?? result.contextLedger.enabled,
+        policy: current.context_ledger?.policy ?? result.contextLedger.policy,
+        budget: current.context_ledger?.budget ?? result.contextLedger.budget,
+        mode: current.context_ledger?.mode ?? result.contextLedger.mode,
+      },
     }),
-    { auto: true, buffer: DEFAULT_BUFFER, tokens: DEFAULT_KEEP_TOKENS },
+    {
+      auto: true,
+      buffer: DEFAULT_BUFFER,
+      tokens: DEFAULT_KEEP_TOKENS,
+      contextLedger: {
+        enabled: true,
+        policy: SessionContextLedger.DEFAULT_SELECTION_POLICY,
+        budget: Math.min(DEFAULT_KEEP_TOKENS, SessionContextLedger.DEFAULT_CONTEXT_BUDGET),
+        mode: SessionContextLedger.DEFAULT_INPUT_MODE,
+      },
+    },
   )
 }
 
@@ -138,7 +161,7 @@ const select = (
     .filter((entry) => entry.message.type !== "compaction")
     .map((entry) => serialize(entry.message))
     .filter(Boolean)
-  if (conversation.length === 0) return
+  if (conversation.length === 0) return undefined
   let total = 0
   let split = conversation.length
   let splitPrefix = ""
@@ -163,14 +186,23 @@ const select = (
   }
 }
 
-export const buildPrompt = (input: { readonly previousSummary?: string; readonly context: readonly string[] }) =>
+export const buildPrompt = (input: {
+  readonly previousSummary?: string
+  readonly context: readonly string[]
+  readonly ledger?: string
+}) =>
   [
     input.previousSummary
       ? `Update the anchored summary below using the conversation history above.\nPreserve still-true details, remove stale details, and merge in the new facts.\n<previous-summary>\n${input.previousSummary}\n</previous-summary>`
       : "Create a new anchored summary from the conversation history.",
+    input.ledger
+      ? `Use this provenance-preserving ContextLedger packet as the first source of truth for constraints, evidence, and active files.\n${input.ledger}`
+      : "",
     SUMMARY_TEMPLATE,
     ...input.context,
-  ].join("\n\n")
+  ]
+    .filter(Boolean)
+    .join("\n\n")
 
 export const make = (dependencies: Dependencies) => {
   const config = settings(dependencies.config)
@@ -181,9 +213,21 @@ export const make = (dependencies: Dependencies) => {
     const selected = select(input.entries, config.tokens)
     const previousSummary = input.entries.find((entry) => entry.message.type === "compaction")?.message
     if (!selected || (selected.head.length === 0 && previousSummary?.type !== "compaction")) return false
+    const ledger = config.contextLedger.enabled
+      ? SessionContextLedger.compile({
+          entries: input.entries.filter((entry) => entry.message.type !== "compaction"),
+          budget: config.contextLedger.budget,
+          policy: config.contextLedger.policy,
+        }).text
+      : undefined
+    const replaceRawHead = Boolean(ledger && config.contextLedger.mode === "replace")
     const summaryPrompt = buildPrompt({
       previousSummary: previousSummary?.type === "compaction" ? previousSummary.summary : undefined,
-      context: [previousSummary?.type === "compaction" ? previousSummary.recent : "", selected.head].filter(Boolean),
+      ledger,
+      context: [
+        previousSummary?.type === "compaction" ? previousSummary.recent : "",
+        replaceRawHead ? "" : selected.head,
+      ].filter(Boolean),
     })
     const summaryOutput = Math.min(output || SUMMARY_OUTPUT_TOKENS, SUMMARY_OUTPUT_TOKENS)
     if (Token.estimate(summaryPrompt) > context - summaryOutput) return false

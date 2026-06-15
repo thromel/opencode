@@ -578,14 +578,16 @@ describe("session.compaction.create", () => {
         yield* compact.create({
           sessionID: info.id,
           agent: "build",
-          model: ref,
+          model: { ...ref, variant: "high" },
           auto: true,
           overflow: true,
         })
 
         const msgs = yield* ssn.messages({ sessionID: info.id })
         expect(msgs).toHaveLength(1)
-        expect(msgs[0].info.role).toBe("user")
+        const msg = msgs[0]
+        if (msg.info.role !== "user") throw new Error(`Expected user compaction message, got ${msg.info.role}`)
+        expect(msg.info.model.variant).toBe("high")
         expect(msgs[0].parts).toHaveLength(1)
         expect(msgs[0].parts[0]).toMatchObject({
           type: "compaction",
@@ -1406,6 +1408,99 @@ describe("session.compaction.process", () => {
         expect(captured).not.toContain("and this one too")
         expect(captured).not.toContain("What did we do so far?")
       }).pipe(withCompaction({ llm: stub.layer }))
+    },
+    { git: true },
+  )
+
+  itCompaction.instance(
+    "includes a ContextLedger packet in the default summary prompt",
+    () => {
+      const stub = llm()
+      let captured = ""
+      stub.push(
+        reply("summary", (input) => {
+          captured = JSON.stringify(input.messages)
+        }),
+      )
+      return Effect.gen(function* () {
+        const ssn = yield* SessionNs.Service
+        const session = yield* ssn.create({})
+        yield* createUserMessage(session.id, "Fix src/app.ts after the failing test/app.test.ts run.")
+        yield* createCompactionMarker(session.id)
+
+        const msgs = yield* ssn.messages({ sessionID: session.id })
+        const parent = msgs.at(-1)?.info.id
+        expect(parent).toBeTruthy()
+        yield* SessionCompaction.use.process({ parentID: parent!, messages: msgs, sessionID: session.id, auto: false })
+
+        expect(captured).toContain("Use this provenance-preserving ContextLedger packet")
+        expect(captured).toContain("<context-ledger>")
+        expect(captured).toContain("## Constraints And Goals")
+        expect(captured).toContain("Fix src/app.ts")
+        expect(captured).toContain("source: serialized-context:0")
+        expect(captured).toContain("files: src/app.ts, test/app.test.ts")
+        expect(captured.indexOf("<context-ledger>")).toBeLessThan(captured.indexOf("Output exactly the Markdown"))
+      }).pipe(withCompaction({ llm: stub.layer }))
+    },
+    { git: true },
+  )
+
+  itCompaction.instance(
+    "can disable the ContextLedger packet from compaction config",
+    () => {
+      const stub = llm()
+      let captured = ""
+      stub.push(
+        reply("summary", (input) => {
+          captured = JSON.stringify(input.messages)
+        }),
+      )
+      return Effect.gen(function* () {
+        const ssn = yield* SessionNs.Service
+        const session = yield* ssn.create({})
+        yield* createUserMessage(session.id, "Fix src/app.ts after the failing test/app.test.ts run.")
+        yield* createCompactionMarker(session.id)
+
+        const msgs = yield* ssn.messages({ sessionID: session.id })
+        const parent = msgs.at(-1)?.info.id
+        expect(parent).toBeTruthy()
+        yield* SessionCompaction.use.process({ parentID: parent!, messages: msgs, sessionID: session.id, auto: false })
+
+        expect(captured).not.toContain("<context-ledger>")
+        expect(captured).toContain("Output exactly the Markdown")
+      }).pipe(withCompaction({ llm: stub.layer, config: cfg({ context_ledger: { enabled: false } }) }))
+    },
+    { git: true },
+  )
+
+  itCompaction.instance(
+    "can replace raw old compaction history with the ContextLedger packet",
+    () => {
+      const stub = llm()
+      let captured: LLM.StreamInput["messages"] | undefined
+      stub.push(
+        reply("summary", (input) => {
+          captured = input.messages
+        }),
+      )
+      return Effect.gen(function* () {
+        const ssn = yield* SessionNs.Service
+        const session = yield* ssn.create({})
+        yield* createUserMessage(session.id, "Fix src/app.ts after the failing test/app.test.ts run.")
+        yield* createCompactionMarker(session.id)
+
+        const msgs = yield* ssn.messages({ sessionID: session.id })
+        const parent = msgs.at(-1)?.info.id
+        expect(parent).toBeTruthy()
+        yield* SessionCompaction.use.process({ parentID: parent!, messages: msgs, sessionID: session.id, auto: false })
+
+        expect(captured).toBeDefined()
+        expect(captured).toHaveLength(1)
+        const prompt = JSON.stringify(captured)
+        expect(prompt).toContain("Use this provenance-preserving ContextLedger packet")
+        expect(prompt).toContain("<context-ledger>")
+        expect(prompt).toContain("Fix src/app.ts")
+      }).pipe(withCompaction({ llm: stub.layer, config: cfg({ context_ledger: { mode: "replace" } }) }))
     },
     { git: true },
   )

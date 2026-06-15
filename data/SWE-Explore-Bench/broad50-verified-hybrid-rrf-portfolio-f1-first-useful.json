@@ -1,0 +1,381 @@
+{
+  "target": "f1-first-useful",
+  "splitCount": 2,
+  "splits": [
+    {
+      "id": "broad50-verified-dev",
+      "path": "data/SWE-Explore-Bench/broad50-verified-dev-hybrid-rrf-ranker-sweep.json",
+      "instances": 49,
+      "rankers": [
+        "structural",
+        "hybrid-rrf"
+      ],
+      "policies": [
+        "budget-rank-frontier"
+      ],
+      "budgets": [
+        400,
+        1200
+      ]
+    },
+    {
+      "id": "broad50-verified-heldout",
+      "path": "data/SWE-Explore-Bench/broad50-verified-heldout-hybrid-rrf-ranker-sweep.json",
+      "instances": 50,
+      "rankers": [
+        "structural",
+        "hybrid-rrf"
+      ],
+      "policies": [
+        "budget-rank-frontier"
+      ],
+      "budgets": [
+        400,
+        1200
+      ]
+    }
+  ],
+  "budgets": [
+    {
+      "budget": 400,
+      "selectedRanker": "structural",
+      "selectedPolicy": "budget-rank-frontier",
+      "selectedScore": 0.24345351735160137,
+      "selectedMetrics": {
+        "f1": 0.14967617229864222,
+        "recall": 0.12262373801593689,
+        "precision": 0.345526364040059,
+        "firstUsefulHit": 0.6518775510204082
+      },
+      "robustRanker": "structural",
+      "robustPolicy": "budget-rank-frontier",
+      "robustMeanScore": 0.24345351735160137,
+      "robustMinScore": 0.1836819235173618,
+      "robustMetrics": {
+        "f1": 0.14967617229864222,
+        "recall": 0.12262373801593689,
+        "precision": 0.345526364040059,
+        "firstUsefulHit": 0.6518775510204082
+      },
+      "robustSplitScores": [
+        {
+          "split": "broad50-verified-dev",
+          "score": 0.30306726750989005,
+          "metrics": {
+            "f1": 0.1876255346158889,
+            "recall": 0.1415681743029873,
+            "precision": 0.4537805064657912,
+            "firstUsefulHit": 0.7877551020408162
+          }
+        },
+        {
+          "split": "broad50-verified-heldout",
+          "score": 0.1836819235173618,
+          "metrics": {
+            "f1": 0.11172680998139552,
+            "recall": 0.10367930172888648,
+            "precision": 0.23727222161432682,
+            "firstUsefulHit": 0.5160000000000001
+          }
+        }
+      ],
+      "splitWinners": [
+        {
+          "split": "broad50-verified-dev",
+          "ranker": "hybrid-rrf",
+          "policy": "budget-rank-frontier",
+          "score": 0.30561607583069594,
+          "metrics": {
+            "f1": 0.19170878342374745,
+            "recall": 0.14395602143019554,
+            "precision": 0.46083580966502563,
+            "firstUsefulHit": 0.7530612244897958
+          }
+        },
+        {
+          "split": "broad50-verified-heldout",
+          "ranker": "structural",
+          "policy": "budget-rank-frontier",
+          "score": 0.1836819235173618,
+          "metrics": {
+            "f1": 0.11172680998139552,
+            "recall": 0.10367930172888648,
+            "precision": 0.23727222161432682,
+            "firstUsefulHit": 0.5160000000000001
+          }
+        }
+      ],
+      "candidates": [
+        {
+          "ranker": "structural",
+          "policy": "budget-rank-frontier",
+          "score": 0.24345351735160137,
+          "metrics": {
+            "f1": 0.14967617229864222,
+            "recall": 0.12262373801593689,
+            "precision": 0.345526364040059,
+            "firstUsefulHit": 0.6518775510204082
+          },
+          "coveredSplits": 2,
+          "complete": true,
+          "splitScores": [
+            {
+              "split": "broad50-verified-dev",
+              "score": 0.30306726750989005,
+              "metrics": {
+                "f1": 0.1876255346158889,
+                "recall": 0.1415681743029873,
+                "precision": 0.4537805064657912,
+                "firstUsefulHit": 0.7877551020408162
+              }
+            },
+            {
+              "split": "broad50-verified-heldout",
+              "score": 0.1836819235173618,
+              "metrics": {
+                "f1": 0.11172680998139552,
+                "recall": 0.10367930172888648,
+                "precision": 0.23727222161432682,
+                "firstUsefulHit": 0.5160000000000001
+              }
+            }
+          ]
+        },
+        {
+          "ranker": "hybrid-rrf",
+          "policy": "budget-rank-frontier",
+          "score": 0.24197940992213407,
+          "metrics": {
+            "f1": 0.15101489564325932,
+            "recall": 0.12428753123931932,
+            "precision": 0.3408088196220344,
+            "firstUsefulHit": 0.6085306122448979
+          },
+          "coveredSplits": 2,
+          "complete": true,
+          "splitScores": [
+            {
+              "split": "broad50-verified-dev",
+              "score": 0.30561607583069594,
+              "metrics": {
+                "f1": 0.19170878342374745,
+                "recall": 0.14395602143019554,
+                "precision": 0.46083580966502563,
+                "firstUsefulHit": 0.7530612244897958
+              }
+            },
+            {
+              "split": "broad50-verified-heldout",
+              "score": 0.1782590117635292,
+              "metrics": {
+                "f1": 0.11032100786277121,
+                "recall": 0.10461904104844312,
+                "precision": 0.2207818295790432,
+                "firstUsefulHit": 0.46399999999999997
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "budget": 1200,
+      "selectedRanker": "hybrid-rrf",
+      "selectedPolicy": "budget-rank-frontier",
+      "selectedScore": 0.3321649468214172,
+      "selectedMetrics": {
+        "f1": 0.22123883613156195,
+        "recall": 0.24121282869661959,
+        "precision": 0.2991855891504139,
+        "firstUsefulHit": 0.6661768707482993
+      },
+      "robustRanker": "hybrid-rrf",
+      "robustPolicy": "budget-rank-frontier",
+      "robustMeanScore": 0.3321649468214172,
+      "robustMinScore": 0.24065259842217582,
+      "robustMetrics": {
+        "f1": 0.22123883613156195,
+        "recall": 0.24121282869661959,
+        "precision": 0.2991855891504139,
+        "firstUsefulHit": 0.6661768707482993
+      },
+      "robustSplitScores": [
+        {
+          "split": "broad50-verified-dev",
+          "score": 0.42315718699763527,
+          "metrics": {
+            "f1": 0.28543583622973184,
+            "recall": 0.29029284957848267,
+            "precision": 0.3923039446892171,
+            "firstUsefulHit": 0.8176870748299319
+          }
+        },
+        {
+          "split": "broad50-verified-heldout",
+          "score": 0.24065259842217582,
+          "metrics": {
+            "f1": 0.15704183603339206,
+            "recall": 0.19213280781475647,
+            "precision": 0.2060672336116107,
+            "firstUsefulHit": 0.5146666666666667
+          }
+        }
+      ],
+      "splitWinners": [
+        {
+          "split": "broad50-verified-dev",
+          "ranker": "hybrid-rrf",
+          "policy": "budget-rank-frontier",
+          "score": 0.42315718699763527,
+          "metrics": {
+            "f1": 0.28543583622973184,
+            "recall": 0.29029284957848267,
+            "precision": 0.3923039446892171,
+            "firstUsefulHit": 0.8176870748299319
+          }
+        },
+        {
+          "split": "broad50-verified-heldout",
+          "ranker": "hybrid-rrf",
+          "policy": "budget-rank-frontier",
+          "score": 0.24065259842217582,
+          "metrics": {
+            "f1": 0.15704183603339206,
+            "recall": 0.19213280781475647,
+            "precision": 0.2060672336116107,
+            "firstUsefulHit": 0.5146666666666667
+          }
+        }
+      ],
+      "candidates": [
+        {
+          "ranker": "hybrid-rrf",
+          "policy": "budget-rank-frontier",
+          "score": 0.3321649468214172,
+          "metrics": {
+            "f1": 0.22123883613156195,
+            "recall": 0.24121282869661959,
+            "precision": 0.2991855891504139,
+            "firstUsefulHit": 0.6661768707482993
+          },
+          "coveredSplits": 2,
+          "complete": true,
+          "splitScores": [
+            {
+              "split": "broad50-verified-dev",
+              "score": 0.42315718699763527,
+              "metrics": {
+                "f1": 0.28543583622973184,
+                "recall": 0.29029284957848267,
+                "precision": 0.3923039446892171,
+                "firstUsefulHit": 0.8176870748299319
+              }
+            },
+            {
+              "split": "broad50-verified-heldout",
+              "score": 0.24065259842217582,
+              "metrics": {
+                "f1": 0.15704183603339206,
+                "recall": 0.19213280781475647,
+                "precision": 0.2060672336116107,
+                "firstUsefulHit": 0.5146666666666667
+              }
+            }
+          ]
+        },
+        {
+          "ranker": "structural",
+          "policy": "budget-rank-frontier",
+          "score": 0.3218206477679622,
+          "metrics": {
+            "f1": 0.21242811024821298,
+            "recall": 0.23269664606401605,
+            "precision": 0.2915476656163057,
+            "firstUsefulHit": 0.6634965986394559
+          },
+          "coveredSplits": 2,
+          "complete": true,
+          "splitScores": [
+            {
+              "split": "broad50-verified-dev",
+              "score": 0.41978852103666114,
+              "metrics": {
+                "f1": 0.2825414509320501,
+                "recall": 0.2868640145342729,
+                "precision": 0.3914258197784859,
+                "firstUsefulHit": 0.816326530612245
+              }
+            },
+            {
+              "split": "broad50-verified-heldout",
+              "score": 0.22259563582803019,
+              "metrics": {
+                "f1": 0.1423147695643759,
+                "recall": 0.1785292775937592,
+                "precision": 0.1916695114541255,
+                "firstUsefulHit": 0.5106666666666668
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "portfolio": {
+    "selectedRankerCounts": [
+      {
+        "ranker": "structural",
+        "budgets": 1
+      },
+      {
+        "ranker": "hybrid-rrf",
+        "budgets": 1
+      }
+    ],
+    "selectedPairCounts": [
+      {
+        "ranker": "structural",
+        "policy": "budget-rank-frontier",
+        "budgets": 1
+      },
+      {
+        "ranker": "hybrid-rrf",
+        "policy": "budget-rank-frontier",
+        "budgets": 1
+      }
+    ],
+    "robustRankerCounts": [
+      {
+        "ranker": "structural",
+        "budgets": 1
+      },
+      {
+        "ranker": "hybrid-rrf",
+        "budgets": 1
+      }
+    ],
+    "robustPairCounts": [
+      {
+        "ranker": "structural",
+        "policy": "budget-rank-frontier",
+        "budgets": 1
+      },
+      {
+        "ranker": "hybrid-rrf",
+        "policy": "budget-rank-frontier",
+        "budgets": 1
+      }
+    ],
+    "meanScore": 0.28780923208650927,
+    "meanF1": 0.1854575042151021,
+    "meanRecall": 0.18191828335627824,
+    "meanPrecision": 0.3223559765952364,
+    "meanFirstUsefulHit": 0.6590272108843538,
+    "meanRobustScore": 0.28780923208650927,
+    "meanRobustMinScore": 0.2121672609697688,
+    "meanRobustF1": 0.1854575042151021,
+    "meanRobustRecall": 0.18191828335627824,
+    "meanRobustPrecision": 0.3223559765952364,
+    "meanRobustFirstUsefulHit": 0.6590272108843538
+  }
+}

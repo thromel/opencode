@@ -1,0 +1,585 @@
+{
+  "splitCount": 2,
+  "splits": [
+    {
+      "id": "broad50-verified-dev",
+      "path": "../../data/SWE-Explore-Bench/broad50-verified-dev-content-backfill-comparison-features-ranker-sweep.json",
+      "cases": 98
+    },
+    {
+      "id": "broad50-verified-heldout",
+      "path": "../../data/SWE-Explore-Bench/broad50-verified-heldout-content-backfill-comparison-features-ranker-sweep.json",
+      "cases": 100
+    }
+  ],
+  "gates": [
+    {
+      "trainSplit": "broad50-verified-dev",
+      "baselineRanker": "structural",
+      "ranker": "content-backfill",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "minimumGain": 0.005,
+      "trainCases": 49,
+      "rule": {
+        "type": "constant",
+        "ranker": "structural",
+        "trainF1": 0.18762553461588888
+      },
+      "train": {
+        "baseline": {
+          "f1": 0.18762553461588888,
+          "recall": 0.14156817430298724,
+          "precision": 0.45378050646579104,
+          "firstUsefulHit": 0.7877551020408163
+        },
+        "candidate": {
+          "f1": 0.18733598467872847,
+          "recall": 0.14148219163766104,
+          "precision": 0.4500269884265587,
+          "firstUsefulHit": 0.7816326530612245
+        },
+        "routed": {
+          "f1": 0.18762553461588888,
+          "recall": 0.14156817430298724,
+          "precision": 0.45378050646579104,
+          "firstUsefulHit": 0.7877551020408163
+        },
+        "oracle": {
+          "f1": 0.18851477920261245,
+          "recall": 0.14212883812895719,
+          "precision": 0.45592873417792856,
+          "firstUsefulHit": 0.7877551020408163
+        },
+        "routedDeltaVsBaseline": 0,
+        "routedDeltaVsCandidate": 0.0002895499371604049,
+        "routedDeltaVsBestFixed": 0,
+        "baselineRegretVsOracle": 0.0008892445867235699,
+        "candidateRegretVsOracle": 0.0011787945238839748,
+        "routedRegretVsOracle": 0.0008892445867235699,
+        "routedWinsVsBaseline": 0,
+        "routedLossesVsBaseline": 0,
+        "routedTiesVsBaseline": 49
+      },
+      "trainChoices": {
+        "baseline": 49,
+        "candidate": 0
+      },
+      "evalSplits": [
+        {
+          "evalSplit": "broad50-verified-dev",
+          "evalCases": 49,
+          "baseline": {
+            "f1": 0.18762553461588888,
+            "recall": 0.14156817430298724,
+            "precision": 0.45378050646579104,
+            "firstUsefulHit": 0.7877551020408163
+          },
+          "candidate": {
+            "f1": 0.18733598467872847,
+            "recall": 0.14148219163766104,
+            "precision": 0.4500269884265587,
+            "firstUsefulHit": 0.7816326530612245
+          },
+          "routed": {
+            "f1": 0.18762553461588888,
+            "recall": 0.14156817430298724,
+            "precision": 0.45378050646579104,
+            "firstUsefulHit": 0.7877551020408163
+          },
+          "oracle": {
+            "f1": 0.18851477920261245,
+            "recall": 0.14212883812895719,
+            "precision": 0.45592873417792856,
+            "firstUsefulHit": 0.7877551020408163
+          },
+          "routedDeltaVsBaseline": 0,
+          "routedDeltaVsCandidate": 0.0002895499371604049,
+          "routedDeltaVsBestFixed": 0,
+          "baselineRegretVsOracle": 0.0008892445867235699,
+          "candidateRegretVsOracle": 0.0011787945238839748,
+          "routedRegretVsOracle": 0.0008892445867235699,
+          "routedWinsVsBaseline": 0,
+          "routedLossesVsBaseline": 0,
+          "routedTiesVsBaseline": 49,
+          "routedChoices": {
+            "baseline": 49,
+            "candidate": 0
+          }
+        },
+        {
+          "evalSplit": "broad50-verified-heldout",
+          "evalCases": 50,
+          "baseline": {
+            "f1": 0.11172680998139552,
+            "recall": 0.10367930172888647,
+            "precision": 0.23727222161432682,
+            "firstUsefulHit": 0.5159999999999999
+          },
+          "candidate": {
+            "f1": 0.10921011783618473,
+            "recall": 0.10106587024195546,
+            "precision": 0.23520567835041514,
+            "firstUsefulHit": 0.516
+          },
+          "routed": {
+            "f1": 0.11172680998139552,
+            "recall": 0.10367930172888647,
+            "precision": 0.23727222161432682,
+            "firstUsefulHit": 0.5159999999999999
+          },
+          "oracle": {
+            "f1": 0.11449640476359489,
+            "recall": 0.10536857781543459,
+            "precision": 0.24545953544637747,
+            "firstUsefulHit": 0.53
+          },
+          "routedDeltaVsBaseline": 0,
+          "routedDeltaVsCandidate": 0.0025166921452107888,
+          "routedDeltaVsBestFixed": 0,
+          "baselineRegretVsOracle": 0.002769594782199375,
+          "candidateRegretVsOracle": 0.005286286927410164,
+          "routedRegretVsOracle": 0.002769594782199375,
+          "routedWinsVsBaseline": 0,
+          "routedLossesVsBaseline": 0,
+          "routedTiesVsBaseline": 50,
+          "routedChoices": {
+            "baseline": 50,
+            "candidate": 0
+          }
+        }
+      ],
+      "heldout": {
+        "splits": 1,
+        "minRoutedDeltaVsBaseline": 0,
+        "minRoutedDeltaVsBestFixed": 0
+      }
+    },
+    {
+      "trainSplit": "broad50-verified-heldout",
+      "baselineRanker": "structural",
+      "ranker": "content-backfill",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "minimumGain": 0.005,
+      "trainCases": 50,
+      "rule": {
+        "type": "constant",
+        "ranker": "structural",
+        "trainF1": 0.11172680998139552
+      },
+      "train": {
+        "baseline": {
+          "f1": 0.11172680998139552,
+          "recall": 0.10367930172888647,
+          "precision": 0.23727222161432682,
+          "firstUsefulHit": 0.5159999999999999
+        },
+        "candidate": {
+          "f1": 0.10921011783618473,
+          "recall": 0.10106587024195546,
+          "precision": 0.23520567835041514,
+          "firstUsefulHit": 0.516
+        },
+        "routed": {
+          "f1": 0.11172680998139552,
+          "recall": 0.10367930172888647,
+          "precision": 0.23727222161432682,
+          "firstUsefulHit": 0.5159999999999999
+        },
+        "oracle": {
+          "f1": 0.11449640476359489,
+          "recall": 0.10536857781543459,
+          "precision": 0.24545953544637747,
+          "firstUsefulHit": 0.53
+        },
+        "routedDeltaVsBaseline": 0,
+        "routedDeltaVsCandidate": 0.0025166921452107888,
+        "routedDeltaVsBestFixed": 0,
+        "baselineRegretVsOracle": 0.002769594782199375,
+        "candidateRegretVsOracle": 0.005286286927410164,
+        "routedRegretVsOracle": 0.002769594782199375,
+        "routedWinsVsBaseline": 0,
+        "routedLossesVsBaseline": 0,
+        "routedTiesVsBaseline": 50
+      },
+      "trainChoices": {
+        "baseline": 50,
+        "candidate": 0
+      },
+      "evalSplits": [
+        {
+          "evalSplit": "broad50-verified-dev",
+          "evalCases": 49,
+          "baseline": {
+            "f1": 0.18762553461588888,
+            "recall": 0.14156817430298724,
+            "precision": 0.45378050646579104,
+            "firstUsefulHit": 0.7877551020408163
+          },
+          "candidate": {
+            "f1": 0.18733598467872847,
+            "recall": 0.14148219163766104,
+            "precision": 0.4500269884265587,
+            "firstUsefulHit": 0.7816326530612245
+          },
+          "routed": {
+            "f1": 0.18762553461588888,
+            "recall": 0.14156817430298724,
+            "precision": 0.45378050646579104,
+            "firstUsefulHit": 0.7877551020408163
+          },
+          "oracle": {
+            "f1": 0.18851477920261245,
+            "recall": 0.14212883812895719,
+            "precision": 0.45592873417792856,
+            "firstUsefulHit": 0.7877551020408163
+          },
+          "routedDeltaVsBaseline": 0,
+          "routedDeltaVsCandidate": 0.0002895499371604049,
+          "routedDeltaVsBestFixed": 0,
+          "baselineRegretVsOracle": 0.0008892445867235699,
+          "candidateRegretVsOracle": 0.0011787945238839748,
+          "routedRegretVsOracle": 0.0008892445867235699,
+          "routedWinsVsBaseline": 0,
+          "routedLossesVsBaseline": 0,
+          "routedTiesVsBaseline": 49,
+          "routedChoices": {
+            "baseline": 49,
+            "candidate": 0
+          }
+        },
+        {
+          "evalSplit": "broad50-verified-heldout",
+          "evalCases": 50,
+          "baseline": {
+            "f1": 0.11172680998139552,
+            "recall": 0.10367930172888647,
+            "precision": 0.23727222161432682,
+            "firstUsefulHit": 0.5159999999999999
+          },
+          "candidate": {
+            "f1": 0.10921011783618473,
+            "recall": 0.10106587024195546,
+            "precision": 0.23520567835041514,
+            "firstUsefulHit": 0.516
+          },
+          "routed": {
+            "f1": 0.11172680998139552,
+            "recall": 0.10367930172888647,
+            "precision": 0.23727222161432682,
+            "firstUsefulHit": 0.5159999999999999
+          },
+          "oracle": {
+            "f1": 0.11449640476359489,
+            "recall": 0.10536857781543459,
+            "precision": 0.24545953544637747,
+            "firstUsefulHit": 0.53
+          },
+          "routedDeltaVsBaseline": 0,
+          "routedDeltaVsCandidate": 0.0025166921452107888,
+          "routedDeltaVsBestFixed": 0,
+          "baselineRegretVsOracle": 0.002769594782199375,
+          "candidateRegretVsOracle": 0.005286286927410164,
+          "routedRegretVsOracle": 0.002769594782199375,
+          "routedWinsVsBaseline": 0,
+          "routedLossesVsBaseline": 0,
+          "routedTiesVsBaseline": 50,
+          "routedChoices": {
+            "baseline": 50,
+            "candidate": 0
+          }
+        }
+      ],
+      "heldout": {
+        "splits": 1,
+        "minRoutedDeltaVsBaseline": 0,
+        "minRoutedDeltaVsBestFixed": 0
+      }
+    },
+    {
+      "trainSplit": "broad50-verified-dev",
+      "baselineRanker": "structural",
+      "ranker": "content-backfill",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "minimumGain": 0.005,
+      "trainCases": 49,
+      "rule": {
+        "type": "constant",
+        "ranker": "structural",
+        "trainF1": 0.28254145093205
+      },
+      "train": {
+        "baseline": {
+          "f1": 0.28254145093205,
+          "recall": 0.286864014534273,
+          "precision": 0.3914258197784861,
+          "firstUsefulHit": 0.8163265306122449
+        },
+        "candidate": {
+          "f1": 0.28501030721281523,
+          "recall": 0.28954738673563063,
+          "precision": 0.39283651135612835,
+          "firstUsefulHit": 0.8163265306122449
+        },
+        "routed": {
+          "f1": 0.28254145093205,
+          "recall": 0.286864014534273,
+          "precision": 0.3914258197784861,
+          "firstUsefulHit": 0.8163265306122449
+        },
+        "oracle": {
+          "f1": 0.2875345087277338,
+          "recall": 0.29134932514203266,
+          "precision": 0.3970562443621127,
+          "firstUsefulHit": 0.8163265306122449
+        },
+        "routedDeltaVsBaseline": 0,
+        "routedDeltaVsCandidate": -0.002468856280765208,
+        "routedDeltaVsBestFixed": -0.002468856280765208,
+        "baselineRegretVsOracle": 0.004993057795683764,
+        "candidateRegretVsOracle": 0.002524201514918556,
+        "routedRegretVsOracle": 0.004993057795683764,
+        "routedWinsVsBaseline": 0,
+        "routedLossesVsBaseline": 0,
+        "routedTiesVsBaseline": 49
+      },
+      "trainChoices": {
+        "baseline": 49,
+        "candidate": 0
+      },
+      "evalSplits": [
+        {
+          "evalSplit": "broad50-verified-dev",
+          "evalCases": 49,
+          "baseline": {
+            "f1": 0.28254145093205,
+            "recall": 0.286864014534273,
+            "precision": 0.3914258197784861,
+            "firstUsefulHit": 0.8163265306122449
+          },
+          "candidate": {
+            "f1": 0.28501030721281523,
+            "recall": 0.28954738673563063,
+            "precision": 0.39283651135612835,
+            "firstUsefulHit": 0.8163265306122449
+          },
+          "routed": {
+            "f1": 0.28254145093205,
+            "recall": 0.286864014534273,
+            "precision": 0.3914258197784861,
+            "firstUsefulHit": 0.8163265306122449
+          },
+          "oracle": {
+            "f1": 0.2875345087277338,
+            "recall": 0.29134932514203266,
+            "precision": 0.3970562443621127,
+            "firstUsefulHit": 0.8163265306122449
+          },
+          "routedDeltaVsBaseline": 0,
+          "routedDeltaVsCandidate": -0.002468856280765208,
+          "routedDeltaVsBestFixed": -0.002468856280765208,
+          "baselineRegretVsOracle": 0.004993057795683764,
+          "candidateRegretVsOracle": 0.002524201514918556,
+          "routedRegretVsOracle": 0.004993057795683764,
+          "routedWinsVsBaseline": 0,
+          "routedLossesVsBaseline": 0,
+          "routedTiesVsBaseline": 49,
+          "routedChoices": {
+            "baseline": 49,
+            "candidate": 0
+          }
+        },
+        {
+          "evalSplit": "broad50-verified-heldout",
+          "evalCases": 50,
+          "baseline": {
+            "f1": 0.14231476956437594,
+            "recall": 0.17852927759375917,
+            "precision": 0.19166951145412553,
+            "firstUsefulHit": 0.5106666666666667
+          },
+          "candidate": {
+            "f1": 0.1323447730717025,
+            "recall": 0.1672472173424688,
+            "precision": 0.1791834760560058,
+            "firstUsefulHit": 0.5213333333333334
+          },
+          "routed": {
+            "f1": 0.14231476956437594,
+            "recall": 0.17852927759375917,
+            "precision": 0.19166951145412553,
+            "firstUsefulHit": 0.5106666666666667
+          },
+          "oracle": {
+            "f1": 0.14429851364251314,
+            "recall": 0.1803737077810037,
+            "precision": 0.19418994876825457,
+            "firstUsefulHit": 0.5346666666666667
+          },
+          "routedDeltaVsBaseline": 0,
+          "routedDeltaVsCandidate": 0.009969996492673439,
+          "routedDeltaVsBestFixed": 0,
+          "baselineRegretVsOracle": 0.0019837440781372007,
+          "candidateRegretVsOracle": 0.01195374057081064,
+          "routedRegretVsOracle": 0.0019837440781372007,
+          "routedWinsVsBaseline": 0,
+          "routedLossesVsBaseline": 0,
+          "routedTiesVsBaseline": 50,
+          "routedChoices": {
+            "baseline": 50,
+            "candidate": 0
+          }
+        }
+      ],
+      "heldout": {
+        "splits": 1,
+        "minRoutedDeltaVsBaseline": 0,
+        "minRoutedDeltaVsBestFixed": 0
+      }
+    },
+    {
+      "trainSplit": "broad50-verified-heldout",
+      "baselineRanker": "structural",
+      "ranker": "content-backfill",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "minimumGain": 0.005,
+      "trainCases": 50,
+      "rule": {
+        "type": "constant",
+        "ranker": "structural",
+        "trainF1": 0.14231476956437594
+      },
+      "train": {
+        "baseline": {
+          "f1": 0.14231476956437594,
+          "recall": 0.17852927759375917,
+          "precision": 0.19166951145412553,
+          "firstUsefulHit": 0.5106666666666667
+        },
+        "candidate": {
+          "f1": 0.1323447730717025,
+          "recall": 0.1672472173424688,
+          "precision": 0.1791834760560058,
+          "firstUsefulHit": 0.5213333333333334
+        },
+        "routed": {
+          "f1": 0.14231476956437594,
+          "recall": 0.17852927759375917,
+          "precision": 0.19166951145412553,
+          "firstUsefulHit": 0.5106666666666667
+        },
+        "oracle": {
+          "f1": 0.14429851364251314,
+          "recall": 0.1803737077810037,
+          "precision": 0.19418994876825457,
+          "firstUsefulHit": 0.5346666666666667
+        },
+        "routedDeltaVsBaseline": 0,
+        "routedDeltaVsCandidate": 0.009969996492673439,
+        "routedDeltaVsBestFixed": 0,
+        "baselineRegretVsOracle": 0.0019837440781372007,
+        "candidateRegretVsOracle": 0.01195374057081064,
+        "routedRegretVsOracle": 0.0019837440781372007,
+        "routedWinsVsBaseline": 0,
+        "routedLossesVsBaseline": 0,
+        "routedTiesVsBaseline": 50
+      },
+      "trainChoices": {
+        "baseline": 50,
+        "candidate": 0
+      },
+      "evalSplits": [
+        {
+          "evalSplit": "broad50-verified-dev",
+          "evalCases": 49,
+          "baseline": {
+            "f1": 0.28254145093205,
+            "recall": 0.286864014534273,
+            "precision": 0.3914258197784861,
+            "firstUsefulHit": 0.8163265306122449
+          },
+          "candidate": {
+            "f1": 0.28501030721281523,
+            "recall": 0.28954738673563063,
+            "precision": 0.39283651135612835,
+            "firstUsefulHit": 0.8163265306122449
+          },
+          "routed": {
+            "f1": 0.28254145093205,
+            "recall": 0.286864014534273,
+            "precision": 0.3914258197784861,
+            "firstUsefulHit": 0.8163265306122449
+          },
+          "oracle": {
+            "f1": 0.2875345087277338,
+            "recall": 0.29134932514203266,
+            "precision": 0.3970562443621127,
+            "firstUsefulHit": 0.8163265306122449
+          },
+          "routedDeltaVsBaseline": 0,
+          "routedDeltaVsCandidate": -0.002468856280765208,
+          "routedDeltaVsBestFixed": -0.002468856280765208,
+          "baselineRegretVsOracle": 0.004993057795683764,
+          "candidateRegretVsOracle": 0.002524201514918556,
+          "routedRegretVsOracle": 0.004993057795683764,
+          "routedWinsVsBaseline": 0,
+          "routedLossesVsBaseline": 0,
+          "routedTiesVsBaseline": 49,
+          "routedChoices": {
+            "baseline": 49,
+            "candidate": 0
+          }
+        },
+        {
+          "evalSplit": "broad50-verified-heldout",
+          "evalCases": 50,
+          "baseline": {
+            "f1": 0.14231476956437594,
+            "recall": 0.17852927759375917,
+            "precision": 0.19166951145412553,
+            "firstUsefulHit": 0.5106666666666667
+          },
+          "candidate": {
+            "f1": 0.1323447730717025,
+            "recall": 0.1672472173424688,
+            "precision": 0.1791834760560058,
+            "firstUsefulHit": 0.5213333333333334
+          },
+          "routed": {
+            "f1": 0.14231476956437594,
+            "recall": 0.17852927759375917,
+            "precision": 0.19166951145412553,
+            "firstUsefulHit": 0.5106666666666667
+          },
+          "oracle": {
+            "f1": 0.14429851364251314,
+            "recall": 0.1803737077810037,
+            "precision": 0.19418994876825457,
+            "firstUsefulHit": 0.5346666666666667
+          },
+          "routedDeltaVsBaseline": 0,
+          "routedDeltaVsCandidate": 0.009969996492673439,
+          "routedDeltaVsBestFixed": 0,
+          "baselineRegretVsOracle": 0.0019837440781372007,
+          "candidateRegretVsOracle": 0.01195374057081064,
+          "routedRegretVsOracle": 0.0019837440781372007,
+          "routedWinsVsBaseline": 0,
+          "routedLossesVsBaseline": 0,
+          "routedTiesVsBaseline": 50,
+          "routedChoices": {
+            "baseline": 50,
+            "candidate": 0
+          }
+        }
+      ],
+      "heldout": {
+        "splits": 1,
+        "minRoutedDeltaVsBaseline": 0,
+        "minRoutedDeltaVsBestFixed": -0.002468856280765208
+      }
+    }
+  ]
+}

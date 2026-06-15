@@ -26,6 +26,14 @@ target
 .scripts
 .direnv/
 
+# ContextLedger local benchmark scratch data
+.puku/
+data/SWE-Explore-Bench/repo-cache/
+data/SWE-Explore-Bench/repos/
+data/SWE-Explore-Bench/*.log
+data/SWE-Explore-Bench/*.out
+data/SWE-Explore-Bench/*.pid
+
 # Local dev files
 opencode-dev
 UPCOMING_CHANGELOG.md

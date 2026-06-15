@@ -1,0 +1,396 @@
+{
+  "repos": [
+    {
+      "instance_id": "pydata__xarray-4629",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-4629",
+      "base_commit": "a41edc7bf5302f2ea327943c0c48c532b12009bc",
+      "head": "a41edc7bf5302f2ea327943c0c48c532b12009bc"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-9288",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-9288",
+      "base_commit": "3eacf948e0f95ef957862568d87ce082f378e186",
+      "head": "3eacf948e0f95ef957862568d87ce082f378e186"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-13124",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-13124",
+      "base_commit": "9f0b959a8c9195d1b6e203f08b698e052b426ca9",
+      "head": "9f0b959a8c9195d1b6e203f08b698e052b426ca9"
+    },
+    {
+      "instance_id": "pydata__xarray-4966",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-4966",
+      "base_commit": "37522e991a32ee3c0ad1a5ff8afe8e3eb1885550",
+      "head": "37522e991a32ee3c0ad1a5ff8afe8e3eb1885550"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-13496",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-13496",
+      "base_commit": "3aefc834dce72e850bff48689bea3c7dff5f3fad",
+      "head": "3aefc834dce72e850bff48689bea3c7dff5f3fad"
+    },
+    {
+      "instance_id": "pydata__xarray-2905",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-2905",
+      "base_commit": "7c4e2ac83f7b4306296ff9b7b51aaf016e5ad614",
+      "head": "7c4e2ac83f7b4306296ff9b7b51aaf016e5ad614"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-14087",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-14087",
+      "base_commit": "a5743ed36fbd3fbc8e351bdab16561fbfca7dfa1",
+      "head": "a5743ed36fbd3fbc8e351bdab16561fbfca7dfa1"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-14496",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-14496",
+      "base_commit": "d49a6f13af2f22228d430ac64ac2b518937800d0",
+      "head": "d49a6f13af2f22228d430ac64ac2b518937800d0"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-13439",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-13439",
+      "base_commit": "a62775e99f2a5ea3d51db7160fad783f6cd8a4c5",
+      "head": "a62775e99f2a5ea3d51db7160fad783f6cd8a4c5"
+    },
+    {
+      "instance_id": "pydata__xarray-6938",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-6938",
+      "base_commit": "c4e40d991c28be51de9ac560ce895ac7f9b14924",
+      "head": "c4e40d991c28be51de9ac560ce895ac7f9b14924"
+    },
+    {
+      "instance_id": "pydata__xarray-7233",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-7233",
+      "base_commit": "51d37d1be95547059251076b3fadaa317750aab3",
+      "head": "51d37d1be95547059251076b3fadaa317750aab3"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-13328",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-13328",
+      "base_commit": "37b0e66c871e8fb032a9c7086b2a1d5419838154",
+      "head": "37b0e66c871e8fb032a9c7086b2a1d5419838154"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-13135",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-13135",
+      "base_commit": "a061ada48efccf0845acae17009553e01764452b",
+      "head": "a061ada48efccf0845acae17009553e01764452b"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-12585",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-12585",
+      "base_commit": "bfc4a566423e036fbdc9fb02765fd893e4860c85",
+      "head": "bfc4a566423e036fbdc9fb02765fd893e4860c85"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-14141",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-14141",
+      "base_commit": "3d997697fdd166eff428ea9fd35734b6a8ba113e",
+      "head": "3d997697fdd166eff428ea9fd35734b6a8ba113e"
+    },
+    {
+      "instance_id": "pydata__xarray-6992",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-6992",
+      "base_commit": "45c0a114e2b7b27b83c9618bc05b36afac82183c",
+      "head": "45c0a114e2b7b27b83c9618bc05b36afac82183c"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-14983",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-14983",
+      "base_commit": "06632c0d185128a53c57ccc73b25b6408e90bb89",
+      "head": "06632c0d185128a53c57ccc73b25b6408e90bb89"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-26194",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-26194",
+      "base_commit": "e886ce4e1444c61b865e7839c9cff5464ee20ace",
+      "head": "e886ce4e1444c61b865e7839c9cff5464ee20ace"
+    },
+    {
+      "instance_id": "pydata__xarray-6744",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-6744",
+      "base_commit": "7cc6cc991e586a6158bb656b8001234ccda25407",
+      "head": "7cc6cc991e586a6158bb656b8001234ccda25407"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-15100",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-15100",
+      "base_commit": "af8a6e592a1a15d92d77011856d5aa0ec4db4c6c",
+      "head": "af8a6e592a1a15d92d77011856d5aa0ec4db4c6c"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-25931",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-25931",
+      "base_commit": "e3d1f9ac39e4bf0f31430e779acc50fb05fe1b64",
+      "head": "e3d1f9ac39e4bf0f31430e779acc50fb05fe1b64"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-10908",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-10908",
+      "base_commit": "67d06b18c68ee4452768f8a1e868565dd4354abf",
+      "head": "67d06b18c68ee4452768f8a1e868565dd4354abf"
+    },
+    {
+      "instance_id": "pydata__xarray-3677",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-3677",
+      "base_commit": "ef6e6a7b86f8479b9a1fecf15ad5b88a2326b31e",
+      "head": "ef6e6a7b86f8479b9a1fecf15ad5b88a2326b31e"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-14629",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-14629",
+      "base_commit": "4aded39b5663d943f6a4809abacfa9cae3d7fb6a",
+      "head": "4aded39b5663d943f6a4809abacfa9cae3d7fb6a"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-10844",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-10844",
+      "base_commit": "97523985b39ecde369d83352d7c3baf403b60a22",
+      "head": "97523985b39ecde369d83352d7c3baf403b60a22"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-25102",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-25102",
+      "base_commit": "f9a1cf072da9d7375d6c2163f68a6038b13b310f",
+      "head": "f9a1cf072da9d7375d6c2163f68a6038b13b310f"
+    },
+    {
+      "instance_id": "pydata__xarray-6461",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-6461",
+      "base_commit": "851dadeb0338403e5021c3fbe80cbc9127ee672d",
+      "head": "851dadeb0338403e5021c3fbe80cbc9127ee672d"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-12682",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-12682",
+      "base_commit": "d360ffa7c5896a91ae498b3fb9cf464464ce8f34",
+      "head": "d360ffa7c5896a91ae498b3fb9cf464464ce8f34"
+    },
+    {
+      "instance_id": "pydata__xarray-6721",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-6721",
+      "base_commit": "cc183652bf6e1273e985e1c4b3cba79c896c1193",
+      "head": "cc183652bf6e1273e985e1c4b3cba79c896c1193"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-12973",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-12973",
+      "base_commit": "a7b8b9e9e16d4e15fabda5ae615086c2e1c47d8a",
+      "head": "a7b8b9e9e16d4e15fabda5ae615086c2e1c47d8a"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-25973",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-25973",
+      "base_commit": "10dbc142bd17ccf7bd38eec2ac04b52ce0d1009e",
+      "head": "10dbc142bd17ccf7bd38eec2ac04b52ce0d1009e"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-14053",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-14053",
+      "base_commit": "6ab8c86c383dd847a1be7103ad115f174fe23ffd",
+      "head": "6ab8c86c383dd847a1be7103ad115f174fe23ffd"
+    },
+    {
+      "instance_id": "pydata__xarray-7229",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-7229",
+      "base_commit": "3aa75c8d00a4a2d4acf10d80f76b937cadb666b7",
+      "head": "3aa75c8d00a4a2d4acf10d80f76b937cadb666b7"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-25232",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-25232",
+      "base_commit": "f7eea978097085a6781a0e92fc14ba7712a52d75",
+      "head": "f7eea978097085a6781a0e92fc14ba7712a52d75"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-14894",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-14894",
+      "base_commit": "fdbaa58acbead5a254f2e6d597dc1ab3b947f4c6",
+      "head": "fdbaa58acbead5a254f2e6d597dc1ab3b947f4c6"
+    },
+    {
+      "instance_id": "pydata__xarray-4687",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-4687",
+      "base_commit": "d3b6aa6d8b997df115a53c001d00222a0f92f63a",
+      "head": "d3b6aa6d8b997df115a53c001d00222a0f92f63a"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-11310",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-11310",
+      "base_commit": "553b5fb8f84ba05c8397f26dd079deece2b05029",
+      "head": "553b5fb8f84ba05c8397f26dd079deece2b05029"
+    },
+    {
+      "instance_id": "pydata__xarray-7393",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-7393",
+      "base_commit": "41fef6f1352be994cd90056d47440fe9aa4c068f",
+      "head": "41fef6f1352be994cd90056d47440fe9aa4c068f"
+    },
+    {
+      "instance_id": "pydata__xarray-4075",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-4075",
+      "base_commit": "19b088636eb7d3f65ab7a1046ac672e0689371d8",
+      "head": "19b088636eb7d3f65ab7a1046ac672e0689371d8"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-13779",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-13779",
+      "base_commit": "b34751b7ed02b2cfcc36037fb729d4360480a299",
+      "head": "b34751b7ed02b2cfcc36037fb729d4360480a299"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-13142",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-13142",
+      "base_commit": "1c8668b0a021832386470ddf740d834e02c66f69",
+      "head": "1c8668b0a021832386470ddf740d834e02c66f69"
+    },
+    {
+      "instance_id": "pydata__xarray-3993",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-3993",
+      "base_commit": "8cc34cb412ba89ebca12fc84f76a9e452628f1bc",
+      "head": "8cc34cb412ba89ebca12fc84f76a9e452628f1bc"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-10297",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-10297",
+      "base_commit": "b90661d6a46aa3619d3eec94d5281f5888add501",
+      "head": "b90661d6a46aa3619d3eec94d5281f5888add501"
+    },
+    {
+      "instance_id": "pydata__xarray-3305",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-3305",
+      "base_commit": "69c7e01e5167a3137c285cb50d1978252bb8bcbf",
+      "head": "69c7e01e5167a3137c285cb50d1978252bb8bcbf"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-14710",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-14710",
+      "base_commit": "4b6273b87442a4437d8b3873ea3022ae163f4fdf",
+      "head": "4b6273b87442a4437d8b3873ea3022ae163f4fdf"
+    },
+    {
+      "instance_id": "pydata__xarray-3095",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-3095",
+      "base_commit": "1757dffac2fa493d7b9a074b84cf8c830a706688",
+      "head": "1757dffac2fa493d7b9a074b84cf8c830a706688"
+    },
+    {
+      "instance_id": "pydata__xarray-4695",
+      "repo": "pydata/xarray",
+      "repo_url": "https://github.com/pydata/xarray.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pydata__xarray-4695",
+      "base_commit": "51ef2a66c4e0896eab7d2b03e3dfb3963e338e3c",
+      "head": "51ef2a66c4e0896eab7d2b03e3dfb3963e338e3c"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-11578",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-11578",
+      "base_commit": "dd69361a0d9c6ccde0d2353b00b86e0e7541a3e3",
+      "head": "dd69361a0d9c6ccde0d2353b00b86e0e7541a3e3"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-25747",
+      "repo": "scikit-learn/scikit-learn",
+      "repo_url": "https://github.com/scikit-learn/scikit-learn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/scikit-learn__scikit-learn-25747",
+      "base_commit": "2c867b8f822eb7a684f0d5c4359e4426e1c9cfe0",
+      "head": "2c867b8f822eb7a684f0d5c4359e4426e1c9cfe0"
+    }
+  ]
+}

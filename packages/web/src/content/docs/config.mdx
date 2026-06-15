@@ -730,7 +730,13 @@ You can control context compaction behavior through the `compaction` option.
   "compaction": {
     "auto": true,
     "prune": false,
-    "reserved": 10000
+    "reserved": 10000,
+    "context_ledger": {
+      "enabled": true,
+      "policy": "official-frontier",
+      "budget": 2500,
+      "mode": "augment"
+    }
   }
 }
 ```
@@ -738,6 +744,7 @@ You can control context compaction behavior through the `compaction` option.
 - `auto` - Automatically compact the session when context is full (default: `true`).
 - `prune` - Remove old tool outputs to save tokens (default: `false`). Set to `true` to enable pruning.
 - `reserved` - Token buffer for compaction. Leaves enough window to avoid overflow during compaction.
+- `context_ledger` - Include a provenance-preserving context packet in compaction prompts. `policy` selects the ContextLedger strategy and `budget` controls the packet token budget. `mode` defaults to `augment`, which adds the packet beside the raw old history; experimental `replace` mode uses the packet instead of sending that raw old history to the summarizer. Use `precision-frontier` for replacement-mode experiments that should keep exact facts while demoting distractor/noise lines.
 
 ---
 

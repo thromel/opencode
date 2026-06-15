@@ -1,0 +1,120 @@
+{
+  "instances": [
+    "pydata__xarray-2905",
+    "scikit-learn__scikit-learn-12585",
+    "scikit-learn__scikit-learn-10908",
+    "pydata__xarray-3677",
+    "scikit-learn__scikit-learn-10844",
+    "scikit-learn__scikit-learn-11310",
+    "pydata__xarray-4075",
+    "pydata__xarray-3993",
+    "scikit-learn__scikit-learn-10297",
+    "pydata__xarray-3305",
+    "pydata__xarray-3095",
+    "scikit-learn__scikit-learn-11578"
+  ],
+  "budgets": [
+    400,
+    1200
+  ],
+  "policies": [
+    "rank-portfolio-frontier"
+  ],
+  "results": [
+    {
+      "ranker": "hybrid-rrf",
+      "chunkSizes": [
+        {
+          "chunkLines": 40,
+          "chunkOverlap": 10
+        },
+        {
+          "chunkLines": 80,
+          "chunkOverlap": 20
+        }
+      ],
+      "maxFiles": 300,
+      "maxChunks": 800,
+      "cases": 12,
+      "summaries": [
+        {
+          "explorer": "context-ledger:rank-portfolio-frontier:b400",
+          "policy": "rank-portfolio-frontier",
+          "budget": 400,
+          "cases": 12,
+          "metrics": {
+            "precision": 0.49726235523449147,
+            "recall": 0.14473490675376133,
+            "f1_score": 0.18102428626856085,
+            "hit_file_rate": 0.4305555555555555,
+            "noise_file_rate": 0.4041666666666666,
+            "hit_region_rate": 0.40972222222222215,
+            "noise_region_rate": 0.3555555555555556,
+            "weighted_core_coverage": 0.12078278173784106,
+            "context_efficiency": 0.6601364522417155,
+            "optional_coverage": 0.027730346347541828,
+            "ndcg_at_100": 0.5,
+            "ndcg_at_300": 0.6890399186364605,
+            "ndcg_at_500": 0.7195850203860096,
+            "recall_at_100": 0.029196902690489985,
+            "recall_at_300": 0.1254062196331416,
+            "recall_at_500": 0.14473490675376133,
+            "first_useful_hit": 0.7694444444444445
+          }
+        },
+        {
+          "explorer": "context-ledger:rank-portfolio-frontier:b1200",
+          "policy": "rank-portfolio-frontier",
+          "budget": 1200,
+          "cases": 12,
+          "metrics": {
+            "precision": 0.350696273158093,
+            "recall": 0.2504460877363301,
+            "f1_score": 0.25167602819187224,
+            "hit_file_rate": 0.5625,
+            "noise_file_rate": 0.6104497354497355,
+            "hit_region_rate": 0.4861111111111111,
+            "noise_region_rate": 0.48888888888888893,
+            "weighted_core_coverage": 0.18387427146532132,
+            "context_efficiency": 0.5035549683269496,
+            "optional_coverage": 0.0766447872683914,
+            "ndcg_at_100": 0.4201388888888889,
+            "ndcg_at_300": 0.5805847406007795,
+            "ndcg_at_500": 0.5421939260974133,
+            "recall_at_100": 0.029196902690489985,
+            "recall_at_300": 0.12870982055814986,
+            "recall_at_500": 0.16314730535798597,
+            "first_useful_hit": 0.8333333333333335
+          }
+        }
+      ]
+    }
+  ],
+  "bestByBudget": [
+    {
+      "budget": 400,
+      "best": {
+        "ranker": "hybrid-rrf",
+        "policy": "rank-portfolio-frontier",
+        "f1": 0.18102428626856085,
+        "recall": 0.14473490675376133,
+        "precision": 0.49726235523449147,
+        "firstUsefulHit": 0.7694444444444445
+      }
+    },
+    {
+      "budget": 1200,
+      "best": {
+        "ranker": "hybrid-rrf",
+        "policy": "rank-portfolio-frontier",
+        "f1": 0.25167602819187224,
+        "recall": 0.2504460877363301,
+        "precision": 0.350696273158093,
+        "firstUsefulHit": 0.8333333333333335
+      }
+    }
+  ],
+  "comparisons": [],
+  "caseComparisons": [],
+  "gates": []
+}

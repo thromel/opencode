@@ -1,9 +1,7 @@
 import { PermissionV1 } from "@opencode-ai/core/v1/permission"
-import { Permission } from "@/permission"
 import { SessionV1 } from "@opencode-ai/core/v1/session"
 
 import { Session } from "@/session/session"
-import { MessageV2 } from "@/session/message-v2"
 import { SessionPrompt } from "@/session/prompt"
 import { SessionRevert } from "@/session/revert"
 import { SessionStatus } from "@/session/status"
@@ -65,6 +63,7 @@ export const InitPayload = Schema.Struct({
 export const SummarizePayload = Schema.Struct({
   providerID: ProviderV2.ID,
   modelID: ModelV2.ID,
+  variant: Schema.optional(ModelV2.VariantID),
   auto: Schema.optional(Schema.Boolean),
 })
 export const PromptPayload = Schema.Struct(Struct.omit(SessionPrompt.PromptInput.fields, ["sessionID"]))

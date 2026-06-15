@@ -1,0 +1,735 @@
+{
+  "target": "f1",
+  "maximumHeldoutLoss": 0.01,
+  "splitCount": 2,
+  "splits": [
+    {
+      "id": "broad50-verified-dev",
+      "path": "data/SWE-Explore-Bench/broad50-verified-dev-hybrid-rrf-ranker-sweep.json",
+      "instances": 49,
+      "rankers": [
+        "structural",
+        "hybrid-rrf"
+      ],
+      "policies": [
+        "budget-rank-frontier"
+      ],
+      "budgets": [
+        400,
+        1200
+      ]
+    },
+    {
+      "id": "broad50-verified-heldout",
+      "path": "data/SWE-Explore-Bench/broad50-verified-heldout-hybrid-rrf-ranker-sweep.json",
+      "instances": 50,
+      "rankers": [
+        "structural",
+        "hybrid-rrf"
+      ],
+      "policies": [
+        "budget-rank-frontier"
+      ],
+      "budgets": [
+        400,
+        1200
+      ]
+    }
+  ],
+  "fixedCandidates": [
+    {
+      "budget": 400,
+      "selectedRanker": "hybrid-rrf",
+      "selectedPolicy": "budget-rank-frontier",
+      "selectedScore": 0.15101489564325932,
+      "selectedMetrics": {
+        "f1": 0.15101489564325932,
+        "recall": 0.12428753123931932,
+        "precision": 0.3408088196220344,
+        "firstUsefulHit": 0.6085306122448979
+      },
+      "robustRanker": "structural",
+      "robustPolicy": "budget-rank-frontier",
+      "robustMeanScore": 0.14967617229864222,
+      "robustMinScore": 0.11172680998139552,
+      "robustMetrics": {
+        "f1": 0.14967617229864222,
+        "recall": 0.12262373801593689,
+        "precision": 0.345526364040059,
+        "firstUsefulHit": 0.6518775510204082
+      },
+      "robustSplitScores": [
+        {
+          "split": "broad50-verified-dev",
+          "score": 0.1876255346158889,
+          "metrics": {
+            "f1": 0.1876255346158889,
+            "recall": 0.1415681743029873,
+            "precision": 0.4537805064657912,
+            "firstUsefulHit": 0.7877551020408162
+          }
+        },
+        {
+          "split": "broad50-verified-heldout",
+          "score": 0.11172680998139552,
+          "metrics": {
+            "f1": 0.11172680998139552,
+            "recall": 0.10367930172888648,
+            "precision": 0.23727222161432682,
+            "firstUsefulHit": 0.5160000000000001
+          }
+        }
+      ]
+    },
+    {
+      "budget": 1200,
+      "selectedRanker": "hybrid-rrf",
+      "selectedPolicy": "budget-rank-frontier",
+      "selectedScore": 0.22123883613156195,
+      "selectedMetrics": {
+        "f1": 0.22123883613156195,
+        "recall": 0.24121282869661959,
+        "precision": 0.2991855891504139,
+        "firstUsefulHit": 0.6661768707482993
+      },
+      "robustRanker": "hybrid-rrf",
+      "robustPolicy": "budget-rank-frontier",
+      "robustMeanScore": 0.22123883613156195,
+      "robustMinScore": 0.15704183603339206,
+      "robustMetrics": {
+        "f1": 0.22123883613156195,
+        "recall": 0.24121282869661959,
+        "precision": 0.2991855891504139,
+        "firstUsefulHit": 0.6661768707482993
+      },
+      "robustSplitScores": [
+        {
+          "split": "broad50-verified-dev",
+          "score": 0.28543583622973184,
+          "metrics": {
+            "f1": 0.28543583622973184,
+            "recall": 0.29029284957848267,
+            "precision": 0.3923039446892171,
+            "firstUsefulHit": 0.8176870748299319
+          }
+        },
+        {
+          "split": "broad50-verified-heldout",
+          "score": 0.15704183603339206,
+          "metrics": {
+            "f1": 0.15704183603339206,
+            "recall": 0.19213280781475647,
+            "precision": 0.2060672336116107,
+            "firstUsefulHit": 0.5146666666666667
+          }
+        }
+      ]
+    }
+  ],
+  "budgets": [
+    {
+      "trainSplit": "broad50-verified-dev",
+      "budget": 400,
+      "selectedRanker": "hybrid-rrf",
+      "selectedPolicy": "budget-rank-frontier",
+      "selectedTrainScore": 0.19170878342374745,
+      "selectedTrainMetrics": {
+        "f1": 0.19170878342374745,
+        "recall": 0.14395602143019554,
+        "precision": 0.46083580966502563,
+        "firstUsefulHit": 0.7530612244897958
+      },
+      "selectedEvaluation": {
+        "evalSplits": [
+          {
+            "evalSplit": "broad50-verified-dev",
+            "score": 0.19170878342374745,
+            "metrics": {
+              "f1": 0.19170878342374745,
+              "recall": 0.14395602143019554,
+              "precision": 0.46083580966502563,
+              "firstUsefulHit": 0.7530612244897958
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.19170878342374745,
+            "bestMetrics": {
+              "f1": 0.19170878342374745,
+              "recall": 0.14395602143019554,
+              "precision": 0.46083580966502563,
+              "firstUsefulHit": 0.7530612244897958
+            },
+            "regretVsBest": 0
+          },
+          {
+            "evalSplit": "broad50-verified-heldout",
+            "score": 0.11032100786277121,
+            "metrics": {
+              "f1": 0.11032100786277121,
+              "recall": 0.10461904104844312,
+              "precision": 0.2207818295790432,
+              "firstUsefulHit": 0.46399999999999997
+            },
+            "bestRanker": "structural",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.11172680998139552,
+            "bestMetrics": {
+              "f1": 0.11172680998139552,
+              "recall": 0.10367930172888648,
+              "precision": 0.23727222161432682,
+              "firstUsefulHit": 0.5160000000000001
+            },
+            "regretVsBest": 0.0014058021186243025
+          }
+        ],
+        "missingSplits": [],
+        "heldout": {
+          "splits": 1,
+          "missingSplits": [],
+          "meanScore": 0.11032100786277121,
+          "meanRegretVsBest": 0.0014058021186243025,
+          "maxRegretVsBest": 0.0014058021186243025,
+          "minScoreDeltaVsBest": -0.0014058021186243025,
+          "stable": true
+        }
+      },
+      "selectedHeldout": {
+        "splits": 1,
+        "missingSplits": [],
+        "meanScore": 0.11032100786277121,
+        "meanRegretVsBest": 0.0014058021186243025,
+        "maxRegretVsBest": 0.0014058021186243025,
+        "minScoreDeltaVsBest": -0.0014058021186243025,
+        "stable": true
+      },
+      "robustRanker": "hybrid-rrf",
+      "robustPolicy": "budget-rank-frontier",
+      "robustTrainScore": 0.19170878342374745,
+      "robustTrainMinScore": 0.19170878342374745,
+      "robustTrainMetrics": {
+        "f1": 0.19170878342374745,
+        "recall": 0.14395602143019554,
+        "precision": 0.46083580966502563,
+        "firstUsefulHit": 0.7530612244897958
+      },
+      "robustEvaluation": {
+        "evalSplits": [
+          {
+            "evalSplit": "broad50-verified-dev",
+            "score": 0.19170878342374745,
+            "metrics": {
+              "f1": 0.19170878342374745,
+              "recall": 0.14395602143019554,
+              "precision": 0.46083580966502563,
+              "firstUsefulHit": 0.7530612244897958
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.19170878342374745,
+            "bestMetrics": {
+              "f1": 0.19170878342374745,
+              "recall": 0.14395602143019554,
+              "precision": 0.46083580966502563,
+              "firstUsefulHit": 0.7530612244897958
+            },
+            "regretVsBest": 0
+          },
+          {
+            "evalSplit": "broad50-verified-heldout",
+            "score": 0.11032100786277121,
+            "metrics": {
+              "f1": 0.11032100786277121,
+              "recall": 0.10461904104844312,
+              "precision": 0.2207818295790432,
+              "firstUsefulHit": 0.46399999999999997
+            },
+            "bestRanker": "structural",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.11172680998139552,
+            "bestMetrics": {
+              "f1": 0.11172680998139552,
+              "recall": 0.10367930172888648,
+              "precision": 0.23727222161432682,
+              "firstUsefulHit": 0.5160000000000001
+            },
+            "regretVsBest": 0.0014058021186243025
+          }
+        ],
+        "missingSplits": [],
+        "heldout": {
+          "splits": 1,
+          "missingSplits": [],
+          "meanScore": 0.11032100786277121,
+          "meanRegretVsBest": 0.0014058021186243025,
+          "maxRegretVsBest": 0.0014058021186243025,
+          "minScoreDeltaVsBest": -0.0014058021186243025,
+          "stable": true
+        }
+      },
+      "robustHeldout": {
+        "splits": 1,
+        "missingSplits": [],
+        "meanScore": 0.11032100786277121,
+        "meanRegretVsBest": 0.0014058021186243025,
+        "maxRegretVsBest": 0.0014058021186243025,
+        "minScoreDeltaVsBest": -0.0014058021186243025,
+        "stable": true
+      }
+    },
+    {
+      "trainSplit": "broad50-verified-dev",
+      "budget": 1200,
+      "selectedRanker": "hybrid-rrf",
+      "selectedPolicy": "budget-rank-frontier",
+      "selectedTrainScore": 0.28543583622973184,
+      "selectedTrainMetrics": {
+        "f1": 0.28543583622973184,
+        "recall": 0.29029284957848267,
+        "precision": 0.3923039446892171,
+        "firstUsefulHit": 0.8176870748299319
+      },
+      "selectedEvaluation": {
+        "evalSplits": [
+          {
+            "evalSplit": "broad50-verified-dev",
+            "score": 0.28543583622973184,
+            "metrics": {
+              "f1": 0.28543583622973184,
+              "recall": 0.29029284957848267,
+              "precision": 0.3923039446892171,
+              "firstUsefulHit": 0.8176870748299319
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.28543583622973184,
+            "bestMetrics": {
+              "f1": 0.28543583622973184,
+              "recall": 0.29029284957848267,
+              "precision": 0.3923039446892171,
+              "firstUsefulHit": 0.8176870748299319
+            },
+            "regretVsBest": 0
+          },
+          {
+            "evalSplit": "broad50-verified-heldout",
+            "score": 0.15704183603339206,
+            "metrics": {
+              "f1": 0.15704183603339206,
+              "recall": 0.19213280781475647,
+              "precision": 0.2060672336116107,
+              "firstUsefulHit": 0.5146666666666667
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.15704183603339206,
+            "bestMetrics": {
+              "f1": 0.15704183603339206,
+              "recall": 0.19213280781475647,
+              "precision": 0.2060672336116107,
+              "firstUsefulHit": 0.5146666666666667
+            },
+            "regretVsBest": 0
+          }
+        ],
+        "missingSplits": [],
+        "heldout": {
+          "splits": 1,
+          "missingSplits": [],
+          "meanScore": 0.15704183603339206,
+          "meanRegretVsBest": 0,
+          "maxRegretVsBest": 0,
+          "minScoreDeltaVsBest": 0,
+          "stable": true
+        }
+      },
+      "selectedHeldout": {
+        "splits": 1,
+        "missingSplits": [],
+        "meanScore": 0.15704183603339206,
+        "meanRegretVsBest": 0,
+        "maxRegretVsBest": 0,
+        "minScoreDeltaVsBest": 0,
+        "stable": true
+      },
+      "robustRanker": "hybrid-rrf",
+      "robustPolicy": "budget-rank-frontier",
+      "robustTrainScore": 0.28543583622973184,
+      "robustTrainMinScore": 0.28543583622973184,
+      "robustTrainMetrics": {
+        "f1": 0.28543583622973184,
+        "recall": 0.29029284957848267,
+        "precision": 0.3923039446892171,
+        "firstUsefulHit": 0.8176870748299319
+      },
+      "robustEvaluation": {
+        "evalSplits": [
+          {
+            "evalSplit": "broad50-verified-dev",
+            "score": 0.28543583622973184,
+            "metrics": {
+              "f1": 0.28543583622973184,
+              "recall": 0.29029284957848267,
+              "precision": 0.3923039446892171,
+              "firstUsefulHit": 0.8176870748299319
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.28543583622973184,
+            "bestMetrics": {
+              "f1": 0.28543583622973184,
+              "recall": 0.29029284957848267,
+              "precision": 0.3923039446892171,
+              "firstUsefulHit": 0.8176870748299319
+            },
+            "regretVsBest": 0
+          },
+          {
+            "evalSplit": "broad50-verified-heldout",
+            "score": 0.15704183603339206,
+            "metrics": {
+              "f1": 0.15704183603339206,
+              "recall": 0.19213280781475647,
+              "precision": 0.2060672336116107,
+              "firstUsefulHit": 0.5146666666666667
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.15704183603339206,
+            "bestMetrics": {
+              "f1": 0.15704183603339206,
+              "recall": 0.19213280781475647,
+              "precision": 0.2060672336116107,
+              "firstUsefulHit": 0.5146666666666667
+            },
+            "regretVsBest": 0
+          }
+        ],
+        "missingSplits": [],
+        "heldout": {
+          "splits": 1,
+          "missingSplits": [],
+          "meanScore": 0.15704183603339206,
+          "meanRegretVsBest": 0,
+          "maxRegretVsBest": 0,
+          "minScoreDeltaVsBest": 0,
+          "stable": true
+        }
+      },
+      "robustHeldout": {
+        "splits": 1,
+        "missingSplits": [],
+        "meanScore": 0.15704183603339206,
+        "meanRegretVsBest": 0,
+        "maxRegretVsBest": 0,
+        "minScoreDeltaVsBest": 0,
+        "stable": true
+      }
+    },
+    {
+      "trainSplit": "broad50-verified-heldout",
+      "budget": 400,
+      "selectedRanker": "structural",
+      "selectedPolicy": "budget-rank-frontier",
+      "selectedTrainScore": 0.11172680998139552,
+      "selectedTrainMetrics": {
+        "f1": 0.11172680998139552,
+        "recall": 0.10367930172888648,
+        "precision": 0.23727222161432682,
+        "firstUsefulHit": 0.5160000000000001
+      },
+      "selectedEvaluation": {
+        "evalSplits": [
+          {
+            "evalSplit": "broad50-verified-dev",
+            "score": 0.1876255346158889,
+            "metrics": {
+              "f1": 0.1876255346158889,
+              "recall": 0.1415681743029873,
+              "precision": 0.4537805064657912,
+              "firstUsefulHit": 0.7877551020408162
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.19170878342374745,
+            "bestMetrics": {
+              "f1": 0.19170878342374745,
+              "recall": 0.14395602143019554,
+              "precision": 0.46083580966502563,
+              "firstUsefulHit": 0.7530612244897958
+            },
+            "regretVsBest": 0.004083248807858542
+          },
+          {
+            "evalSplit": "broad50-verified-heldout",
+            "score": 0.11172680998139552,
+            "metrics": {
+              "f1": 0.11172680998139552,
+              "recall": 0.10367930172888648,
+              "precision": 0.23727222161432682,
+              "firstUsefulHit": 0.5160000000000001
+            },
+            "bestRanker": "structural",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.11172680998139552,
+            "bestMetrics": {
+              "f1": 0.11172680998139552,
+              "recall": 0.10367930172888648,
+              "precision": 0.23727222161432682,
+              "firstUsefulHit": 0.5160000000000001
+            },
+            "regretVsBest": 0
+          }
+        ],
+        "missingSplits": [],
+        "heldout": {
+          "splits": 1,
+          "missingSplits": [],
+          "meanScore": 0.1876255346158889,
+          "meanRegretVsBest": 0.004083248807858542,
+          "maxRegretVsBest": 0.004083248807858542,
+          "minScoreDeltaVsBest": -0.004083248807858542,
+          "stable": true
+        }
+      },
+      "selectedHeldout": {
+        "splits": 1,
+        "missingSplits": [],
+        "meanScore": 0.1876255346158889,
+        "meanRegretVsBest": 0.004083248807858542,
+        "maxRegretVsBest": 0.004083248807858542,
+        "minScoreDeltaVsBest": -0.004083248807858542,
+        "stable": true
+      },
+      "robustRanker": "structural",
+      "robustPolicy": "budget-rank-frontier",
+      "robustTrainScore": 0.11172680998139552,
+      "robustTrainMinScore": 0.11172680998139552,
+      "robustTrainMetrics": {
+        "f1": 0.11172680998139552,
+        "recall": 0.10367930172888648,
+        "precision": 0.23727222161432682,
+        "firstUsefulHit": 0.5160000000000001
+      },
+      "robustEvaluation": {
+        "evalSplits": [
+          {
+            "evalSplit": "broad50-verified-dev",
+            "score": 0.1876255346158889,
+            "metrics": {
+              "f1": 0.1876255346158889,
+              "recall": 0.1415681743029873,
+              "precision": 0.4537805064657912,
+              "firstUsefulHit": 0.7877551020408162
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.19170878342374745,
+            "bestMetrics": {
+              "f1": 0.19170878342374745,
+              "recall": 0.14395602143019554,
+              "precision": 0.46083580966502563,
+              "firstUsefulHit": 0.7530612244897958
+            },
+            "regretVsBest": 0.004083248807858542
+          },
+          {
+            "evalSplit": "broad50-verified-heldout",
+            "score": 0.11172680998139552,
+            "metrics": {
+              "f1": 0.11172680998139552,
+              "recall": 0.10367930172888648,
+              "precision": 0.23727222161432682,
+              "firstUsefulHit": 0.5160000000000001
+            },
+            "bestRanker": "structural",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.11172680998139552,
+            "bestMetrics": {
+              "f1": 0.11172680998139552,
+              "recall": 0.10367930172888648,
+              "precision": 0.23727222161432682,
+              "firstUsefulHit": 0.5160000000000001
+            },
+            "regretVsBest": 0
+          }
+        ],
+        "missingSplits": [],
+        "heldout": {
+          "splits": 1,
+          "missingSplits": [],
+          "meanScore": 0.1876255346158889,
+          "meanRegretVsBest": 0.004083248807858542,
+          "maxRegretVsBest": 0.004083248807858542,
+          "minScoreDeltaVsBest": -0.004083248807858542,
+          "stable": true
+        }
+      },
+      "robustHeldout": {
+        "splits": 1,
+        "missingSplits": [],
+        "meanScore": 0.1876255346158889,
+        "meanRegretVsBest": 0.004083248807858542,
+        "maxRegretVsBest": 0.004083248807858542,
+        "minScoreDeltaVsBest": -0.004083248807858542,
+        "stable": true
+      }
+    },
+    {
+      "trainSplit": "broad50-verified-heldout",
+      "budget": 1200,
+      "selectedRanker": "hybrid-rrf",
+      "selectedPolicy": "budget-rank-frontier",
+      "selectedTrainScore": 0.15704183603339206,
+      "selectedTrainMetrics": {
+        "f1": 0.15704183603339206,
+        "recall": 0.19213280781475647,
+        "precision": 0.2060672336116107,
+        "firstUsefulHit": 0.5146666666666667
+      },
+      "selectedEvaluation": {
+        "evalSplits": [
+          {
+            "evalSplit": "broad50-verified-dev",
+            "score": 0.28543583622973184,
+            "metrics": {
+              "f1": 0.28543583622973184,
+              "recall": 0.29029284957848267,
+              "precision": 0.3923039446892171,
+              "firstUsefulHit": 0.8176870748299319
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.28543583622973184,
+            "bestMetrics": {
+              "f1": 0.28543583622973184,
+              "recall": 0.29029284957848267,
+              "precision": 0.3923039446892171,
+              "firstUsefulHit": 0.8176870748299319
+            },
+            "regretVsBest": 0
+          },
+          {
+            "evalSplit": "broad50-verified-heldout",
+            "score": 0.15704183603339206,
+            "metrics": {
+              "f1": 0.15704183603339206,
+              "recall": 0.19213280781475647,
+              "precision": 0.2060672336116107,
+              "firstUsefulHit": 0.5146666666666667
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.15704183603339206,
+            "bestMetrics": {
+              "f1": 0.15704183603339206,
+              "recall": 0.19213280781475647,
+              "precision": 0.2060672336116107,
+              "firstUsefulHit": 0.5146666666666667
+            },
+            "regretVsBest": 0
+          }
+        ],
+        "missingSplits": [],
+        "heldout": {
+          "splits": 1,
+          "missingSplits": [],
+          "meanScore": 0.28543583622973184,
+          "meanRegretVsBest": 0,
+          "maxRegretVsBest": 0,
+          "minScoreDeltaVsBest": 0,
+          "stable": true
+        }
+      },
+      "selectedHeldout": {
+        "splits": 1,
+        "missingSplits": [],
+        "meanScore": 0.28543583622973184,
+        "meanRegretVsBest": 0,
+        "maxRegretVsBest": 0,
+        "minScoreDeltaVsBest": 0,
+        "stable": true
+      },
+      "robustRanker": "hybrid-rrf",
+      "robustPolicy": "budget-rank-frontier",
+      "robustTrainScore": 0.15704183603339206,
+      "robustTrainMinScore": 0.15704183603339206,
+      "robustTrainMetrics": {
+        "f1": 0.15704183603339206,
+        "recall": 0.19213280781475647,
+        "precision": 0.2060672336116107,
+        "firstUsefulHit": 0.5146666666666667
+      },
+      "robustEvaluation": {
+        "evalSplits": [
+          {
+            "evalSplit": "broad50-verified-dev",
+            "score": 0.28543583622973184,
+            "metrics": {
+              "f1": 0.28543583622973184,
+              "recall": 0.29029284957848267,
+              "precision": 0.3923039446892171,
+              "firstUsefulHit": 0.8176870748299319
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.28543583622973184,
+            "bestMetrics": {
+              "f1": 0.28543583622973184,
+              "recall": 0.29029284957848267,
+              "precision": 0.3923039446892171,
+              "firstUsefulHit": 0.8176870748299319
+            },
+            "regretVsBest": 0
+          },
+          {
+            "evalSplit": "broad50-verified-heldout",
+            "score": 0.15704183603339206,
+            "metrics": {
+              "f1": 0.15704183603339206,
+              "recall": 0.19213280781475647,
+              "precision": 0.2060672336116107,
+              "firstUsefulHit": 0.5146666666666667
+            },
+            "bestRanker": "hybrid-rrf",
+            "bestPolicy": "budget-rank-frontier",
+            "bestScore": 0.15704183603339206,
+            "bestMetrics": {
+              "f1": 0.15704183603339206,
+              "recall": 0.19213280781475647,
+              "precision": 0.2060672336116107,
+              "firstUsefulHit": 0.5146666666666667
+            },
+            "regretVsBest": 0
+          }
+        ],
+        "missingSplits": [],
+        "heldout": {
+          "splits": 1,
+          "missingSplits": [],
+          "meanScore": 0.28543583622973184,
+          "meanRegretVsBest": 0,
+          "maxRegretVsBest": 0,
+          "minScoreDeltaVsBest": 0,
+          "stable": true
+        }
+      },
+      "robustHeldout": {
+        "splits": 1,
+        "missingSplits": [],
+        "meanScore": 0.28543583622973184,
+        "meanRegretVsBest": 0,
+        "maxRegretVsBest": 0,
+        "minScoreDeltaVsBest": 0,
+        "stable": true
+      }
+    }
+  ],
+  "stability": {
+    "selectedStableBudgets": 4,
+    "robustStableBudgets": 4,
+    "selectedMeanHeldoutRegret": 0.001372262731620711,
+    "robustMeanHeldoutRegret": 0.001372262731620711,
+    "selectedMaxHeldoutRegret": 0.004083248807858542,
+    "robustMaxHeldoutRegret": 0.004083248807858542
+  }
+}

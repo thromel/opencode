@@ -322,6 +322,12 @@ describe("Config", () => {
                   prune: false,
                   keep: { tokens: 2000 },
                   buffer: 10000,
+                  context_ledger: {
+                    enabled: true,
+                    policy: "intent-frontier",
+                    budget: 1200,
+                    mode: "replace",
+                  },
                 },
                 skills: ["./skills", "~/shared-skills", "https://example.com/.well-known/skills/"],
                 instructions: ["CONTRIBUTING.md", ".cursor/rules/*.md", "https://example.com/shared-rules.md"],
@@ -407,6 +413,12 @@ describe("Config", () => {
               prune: false,
               keep: { tokens: 2000 },
               buffer: 10000,
+              context_ledger: {
+                enabled: true,
+                policy: "intent-frontier",
+                budget: 1200,
+                mode: "replace",
+              },
             })
             expect(documents[0]?.info.skills).toEqual([
               "./skills",
@@ -539,7 +551,18 @@ describe("Config", () => {
                     },
                   },
                 },
-                compaction: { auto: true, tail_turns: 3, preserve_recent_tokens: 2000, reserved: 10000 },
+                compaction: {
+                  auto: true,
+                  tail_turns: 3,
+                  preserve_recent_tokens: 2000,
+                  reserved: 10000,
+                  context_ledger: {
+                    enabled: false,
+                    policy: "action-aware-frontier",
+                    budget: 800,
+                    mode: "augment",
+                  },
+                },
                 experimental: { mcp_timeout: 5000 },
                 mcp: {
                   local: { type: "local", command: ["node", "server.js"], enabled: false },
@@ -622,6 +645,12 @@ describe("Config", () => {
               prune: undefined,
               keep: { tokens: 2000 },
               buffer: 10000,
+              context_ledger: {
+                enabled: false,
+                policy: "action-aware-frontier",
+                budget: 800,
+                mode: "augment",
+              },
             })
             expect(documents[0]?.info.mcp).toMatchObject({
               timeout: 5000,

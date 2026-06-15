@@ -25,6 +25,7 @@ import { ProviderV2 } from "@opencode-ai/core/provider"
 import { ModelV2 } from "@opencode-ai/core/model"
 import { EventV2 } from "@opencode-ai/core/event"
 import { buildPrompt } from "@opencode-ai/core/session/compaction"
+import { SessionContextLedger } from "@opencode-ai/core/session/context-ledger"
 
 export const Event = {
   Compacted: EventV2.define({
@@ -69,6 +70,63 @@ function summaryText(message: SessionV1.WithParts) {
   return text || undefined
 }
 
+function serializeLedgerMessage(message: SessionV1.WithParts) {
+  if (message.info.role === "user")
+    return message.parts
+      .flatMap((part) => {
+        if (part.type === "text") return [`[User]: ${part.text}`]
+        if (part.type === "file") return [serializeLedgerFile(part)]
+        if (part.type === "subtask") return [`[User]: ${part.description}\n${part.prompt}`]
+        if (part.type === "agent") return [`[Synthetic context]: ${part.name}${part.source?.value ? `\n${part.source.value}` : ""}`]
+        return []
+      })
+      .join("\n")
+  return message.parts
+    .flatMap((part) => {
+      if (part.type === "text") return [`[Assistant]: ${part.text}`]
+      if (part.type === "reasoning") return part.text ? [`[Assistant reasoning]: ${part.text}`] : []
+      if (part.type === "tool") return serializeLedgerTool(part)
+      if (part.type === "file") return [serializeLedgerFile(part)]
+      return []
+    })
+    .join("\n")
+}
+
+function serializeLedgerTool(part: SessionV1.ToolPart) {
+  const input = stringifyLedgerValue(part.state.input)
+  const call = `[Assistant tool call]: ${part.tool}(${input})`
+  if (part.state.status === "completed")
+    return [
+      call,
+      [
+        `[Tool result]: ${truncateLedgerValue(part.state.output)}`,
+        ...(part.state.attachments ?? []).map((attachment) => serializeLedgerFile(attachment)),
+      ].join("\n"),
+    ]
+  if (part.state.status === "error") return [call, `[Tool error]: ${part.state.error}`]
+  return [call]
+}
+
+function serializeLedgerFile(part: SessionV1.FilePart) {
+  const source =
+    part.source?.type === "file" || part.source?.type === "symbol"
+      ? ` from ${part.source.path}`
+      : part.source?.type === "resource"
+        ? ` from ${part.source.uri}`
+        : ""
+  return `[Attached ${part.mime}: ${part.filename ?? part.url}${source}]`
+}
+
+function stringifyLedgerValue(value: unknown) {
+  if (typeof value === "string") return value
+  return JSON.stringify(value) ?? ""
+}
+
+function truncateLedgerValue(value: string) {
+  if (value.length <= TOOL_OUTPUT_MAX_CHARS) return value
+  return `${value.slice(0, TOOL_OUTPUT_MAX_CHARS)}\n[truncated]`
+}
+
 function completedCompactions(messages: SessionV1.WithParts[]) {
   const users = new Map<MessageID, number>()
   for (let i = 0; i < messages.length; i++) {
@@ -92,6 +150,16 @@ function preserveRecentBudget(input: { cfg: ConfigV1.Info; model: Provider.Model
     input.cfg.compaction?.preserve_recent_tokens ??
     Math.min(MAX_PRESERVE_RECENT_TOKENS, Math.max(MIN_PRESERVE_RECENT_TOKENS, Math.floor(usable(input) * 0.25)))
   )
+}
+
+function contextLedgerSettings(input: { cfg: ConfigV1.Info; model: Provider.Model }) {
+  const configured = input.cfg.compaction?.context_ledger
+  return {
+    enabled: configured?.enabled ?? true,
+    policy: configured?.policy ?? SessionContextLedger.DEFAULT_SELECTION_POLICY,
+    budget: configured?.budget ?? Math.min(preserveRecentBudget(input), SessionContextLedger.DEFAULT_CONTEXT_BUDGET),
+    mode: configured?.mode ?? SessionContextLedger.DEFAULT_INPUT_MODE,
+  }
 }
 
 function turns(messages: SessionV1.WithParts[]) {
@@ -130,7 +198,7 @@ function splitTurn(input: {
       if (size > input.budget) continue
       return {
         start,
-        id: input.messages[start]!.info.id,
+        id: input.messages[start].info.id,
       } satisfies Tail
     }
     return undefined
@@ -153,7 +221,7 @@ export interface Interface {
   readonly create: (input: {
     sessionID: SessionID
     agent: string
-    model: { providerID: ProviderV2.ID; modelID: ModelV2.ID }
+    model: { providerID: ProviderV2.ID; modelID: ModelV2.ID; variant?: string }
     auto: boolean
     overflow?: boolean
   }) => Effect.Effect<void>
@@ -219,7 +287,7 @@ export const layer = Layer.effect(
       let total = 0
       let keep: Tail | undefined
       for (let i = recent.length - 1; i >= 0; i--) {
-        const turn = recent[i]!
+        const turn = recent[i]
         const size = sizes[i]
         if (total + size <= budget) {
           total += size
@@ -257,7 +325,12 @@ export const layer = Layer.effect(
 
       const msgs = yield* session
         .messages({ sessionID: input.sessionID })
-        .pipe(Effect.catchIf(NotFoundError.isInstance, () => Effect.succeed(undefined)))
+        .pipe(
+          Effect.catchIf(
+            (error): error is NotFoundError => NotFoundError.isInstance(error),
+            () => Effect.succeed(undefined),
+          ),
+        )
       if (!msgs) return
 
       let total = 0
@@ -355,8 +428,22 @@ export const layer = Layer.effect(
         { sessionID: input.sessionID },
         { context: [], prompt: undefined },
       )
-      const nextPrompt = compacting.prompt ?? buildPrompt({ previousSummary, context: compacting.context })
-      const msgs = structuredClone(selected.head)
+      const ledgerSettings = contextLedgerSettings({ cfg, model })
+      const ledger = compacting.prompt
+        ? undefined
+        : ledgerSettings.enabled
+          ? SessionContextLedger.compileSerializedContext({
+              context: [
+                ...selected.head.map((message) => serializeLedgerMessage(message)).filter(Boolean),
+                ...compacting.context,
+              ],
+              budget: ledgerSettings.budget,
+              policy: ledgerSettings.policy,
+            }).text
+          : undefined
+      const nextPrompt = compacting.prompt ?? buildPrompt({ previousSummary, context: compacting.context, ledger })
+      const replaceRawHead = Boolean(ledger && ledgerSettings.mode === "replace")
+      const msgs = structuredClone(replaceRawHead ? [] : selected.head)
       yield* plugin.trigger("experimental.chat.messages.transform", {}, { messages: msgs })
       const modelMessages = yield* MessageV2.toModelMessagesEffect(msgs, model, {
         stripMedia: true,
@@ -554,7 +641,7 @@ export const layer = Layer.effect(
     const create = Effect.fn("SessionCompaction.create")(function* (input: {
       sessionID: SessionID
       agent: string
-      model: { providerID: ProviderV2.ID; modelID: ModelV2.ID }
+      model: { providerID: ProviderV2.ID; modelID: ModelV2.ID; variant?: string }
       auto: boolean
       overflow?: boolean
     }) {

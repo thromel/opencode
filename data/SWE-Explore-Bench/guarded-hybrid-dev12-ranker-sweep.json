@@ -1,0 +1,3775 @@
+{
+  "instances": [
+    "pydata__xarray-2905",
+    "scikit-learn__scikit-learn-12585",
+    "scikit-learn__scikit-learn-10908",
+    "pydata__xarray-3677",
+    "scikit-learn__scikit-learn-10844",
+    "scikit-learn__scikit-learn-11310",
+    "pydata__xarray-4075",
+    "pydata__xarray-3993",
+    "scikit-learn__scikit-learn-10297",
+    "pydata__xarray-3305",
+    "pydata__xarray-3095",
+    "scikit-learn__scikit-learn-11578"
+  ],
+  "budgets": [
+    400,
+    1200
+  ],
+  "policies": [
+    "budget-rank-frontier"
+  ],
+  "results": [
+    {
+      "ranker": "structural",
+      "chunkSizes": [
+        {
+          "chunkLines": 40,
+          "chunkOverlap": 10
+        },
+        {
+          "chunkLines": 80,
+          "chunkOverlap": 20
+        }
+      ],
+      "maxFiles": 300,
+      "maxChunks": 800,
+      "cases": 12,
+      "summaries": [
+        {
+          "explorer": "context-ledger:budget-rank-frontier:b400",
+          "policy": "budget-rank-frontier",
+          "budget": 400,
+          "cases": 12,
+          "metrics": {
+            "precision": 0.4209231498705183,
+            "recall": 0.10445879529546599,
+            "f1_score": 0.15428079988717336,
+            "hit_file_rate": 0.5277777777777778,
+            "noise_file_rate": 0.5800595238095237,
+            "hit_region_rate": 0.46527777777777773,
+            "noise_region_rate": 0.4166666666666667,
+            "weighted_core_coverage": 0.09189419936660488,
+            "context_efficiency": 0.5786010200483885,
+            "optional_coverage": 0.01959503945251682,
+            "ndcg_at_100": 0.5203397455280764,
+            "ndcg_at_300": 0.6293339139825961,
+            "ndcg_at_500": 0.6938917441787066,
+            "recall_at_100": 0.027331282271004394,
+            "recall_at_300": 0.09066103444781666,
+            "recall_at_500": 0.10445879529546599,
+            "first_useful_hit": 0.8250000000000001
+          }
+        },
+        {
+          "explorer": "context-ledger:budget-rank-frontier:b1200",
+          "policy": "budget-rank-frontier",
+          "budget": 1200,
+          "cases": 12,
+          "metrics": {
+            "precision": 0.34733356613723076,
+            "recall": 0.2351823897016844,
+            "f1_score": 0.23722178331569047,
+            "hit_file_rate": 0.5347222222222222,
+            "noise_file_rate": 0.6526424963924965,
+            "hit_region_rate": 0.4861111111111111,
+            "noise_region_rate": 0.5222222222222223,
+            "weighted_core_coverage": 0.1748082174418725,
+            "context_efficiency": 0.4703206740585492,
+            "optional_coverage": 0.05366296298296435,
+            "ndcg_at_100": 0.4201388888888889,
+            "ndcg_at_300": 0.46637025212916083,
+            "ndcg_at_500": 0.5218770398252478,
+            "recall_at_100": 0.02612527472500309,
+            "recall_at_300": 0.09011952665232183,
+            "recall_at_500": 0.15789080179381473,
+            "first_useful_hit": 0.8166666666666668
+          }
+        }
+      ]
+    },
+    {
+      "ranker": "hybrid-rrf",
+      "chunkSizes": [
+        {
+          "chunkLines": 40,
+          "chunkOverlap": 10
+        },
+        {
+          "chunkLines": 80,
+          "chunkOverlap": 20
+        }
+      ],
+      "maxFiles": 300,
+      "maxChunks": 800,
+      "cases": 12,
+      "summaries": [
+        {
+          "explorer": "context-ledger:budget-rank-frontier:b400",
+          "policy": "budget-rank-frontier",
+          "budget": 400,
+          "cases": 12,
+          "metrics": {
+            "precision": 0.43666730929888825,
+            "recall": 0.10907734329078372,
+            "f1_score": 0.16228642410991,
+            "hit_file_rate": 0.5555555555555555,
+            "noise_file_rate": 0.5071428571428571,
+            "hit_region_rate": 0.46527777777777773,
+            "noise_region_rate": 0.375,
+            "weighted_core_coverage": 0.09427244235550454,
+            "context_efficiency": 0.6203834907782276,
+            "optional_coverage": 0.031376849357489404,
+            "ndcg_at_100": 0.5833333333333334,
+            "ndcg_at_300": 0.653586413083216,
+            "ndcg_at_500": 0.7331340513523071,
+            "recall_at_100": 0.031381081135316825,
+            "recall_at_300": 0.08570588407773173,
+            "recall_at_500": 0.10907734329078372,
+            "first_useful_hit": 0.8083333333333332
+          }
+        },
+        {
+          "explorer": "context-ledger:budget-rank-frontier:b1200",
+          "policy": "budget-rank-frontier",
+          "budget": 1200,
+          "cases": 12,
+          "metrics": {
+            "precision": 0.350696273158093,
+            "recall": 0.2504460877363301,
+            "f1_score": 0.25167602819187224,
+            "hit_file_rate": 0.5625,
+            "noise_file_rate": 0.6104497354497355,
+            "hit_region_rate": 0.4861111111111111,
+            "noise_region_rate": 0.48888888888888893,
+            "weighted_core_coverage": 0.18387427146532132,
+            "context_efficiency": 0.5035549683269496,
+            "optional_coverage": 0.0766447872683914,
+            "ndcg_at_100": 0.4201388888888889,
+            "ndcg_at_300": 0.5805847406007795,
+            "ndcg_at_500": 0.5421939260974133,
+            "recall_at_100": 0.029196902690489985,
+            "recall_at_300": 0.12870982055814986,
+            "recall_at_500": 0.16314730535798597,
+            "first_useful_hit": 0.8333333333333335
+          }
+        }
+      ]
+    },
+    {
+      "ranker": "guarded-hybrid-rrf",
+      "chunkSizes": [
+        {
+          "chunkLines": 40,
+          "chunkOverlap": 10
+        },
+        {
+          "chunkLines": 80,
+          "chunkOverlap": 20
+        }
+      ],
+      "maxFiles": 300,
+      "maxChunks": 800,
+      "cases": 12,
+      "summaries": [
+        {
+          "explorer": "context-ledger:budget-rank-frontier:b400",
+          "policy": "budget-rank-frontier",
+          "budget": 400,
+          "cases": 12,
+          "metrics": {
+            "precision": 0.43666730929888825,
+            "recall": 0.10907734329078372,
+            "f1_score": 0.16228642410991,
+            "hit_file_rate": 0.5555555555555555,
+            "noise_file_rate": 0.5071428571428571,
+            "hit_region_rate": 0.46527777777777773,
+            "noise_region_rate": 0.375,
+            "weighted_core_coverage": 0.09427244235550454,
+            "context_efficiency": 0.6203834907782276,
+            "optional_coverage": 0.031376849357489404,
+            "ndcg_at_100": 0.5833333333333334,
+            "ndcg_at_300": 0.653586413083216,
+            "ndcg_at_500": 0.7331340513523071,
+            "recall_at_100": 0.031087963536536197,
+            "recall_at_300": 0.08570588407773173,
+            "recall_at_500": 0.10907734329078372,
+            "first_useful_hit": 0.8083333333333332
+          }
+        },
+        {
+          "explorer": "context-ledger:budget-rank-frontier:b1200",
+          "policy": "budget-rank-frontier",
+          "budget": 1200,
+          "cases": 12,
+          "metrics": {
+            "precision": 0.35666311217014485,
+            "recall": 0.2512669036273257,
+            "f1_score": 0.25294381046043346,
+            "hit_file_rate": 0.5347222222222222,
+            "noise_file_rate": 0.6399470899470899,
+            "hit_region_rate": 0.4861111111111111,
+            "noise_region_rate": 0.5055555555555556,
+            "weighted_core_coverage": 0.18450228396277002,
+            "context_efficiency": 0.4853196208913088,
+            "optional_coverage": 0.060628702581034866,
+            "ndcg_at_100": 0.4201388888888889,
+            "ndcg_at_300": 0.46637025212916083,
+            "ndcg_at_500": 0.49443650847977777,
+            "recall_at_100": 0.02612527472500309,
+            "recall_at_300": 0.09011952665232183,
+            "recall_at_500": 0.15789080179381473,
+            "first_useful_hit": 0.8166666666666668
+          }
+        }
+      ]
+    }
+  ],
+  "bestByBudget": [
+    {
+      "budget": 400,
+      "best": {
+        "ranker": "hybrid-rrf",
+        "policy": "budget-rank-frontier",
+        "f1": 0.16228642410991,
+        "recall": 0.10907734329078372,
+        "precision": 0.43666730929888825,
+        "firstUsefulHit": 0.8083333333333332
+      }
+    },
+    {
+      "budget": 1200,
+      "best": {
+        "ranker": "guarded-hybrid-rrf",
+        "policy": "budget-rank-frontier",
+        "f1": 0.25294381046043346,
+        "recall": 0.2512669036273257,
+        "precision": 0.35666311217014485,
+        "firstUsefulHit": 0.8166666666666668
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "deltas": {
+        "f1": 0.008005624222736651,
+        "recall": 0.004618547995317732,
+        "precision": 0.01574415942836993,
+        "firstUsefulHit": -0.01666666666666683
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "deltas": {
+        "f1": 0.014454244876181771,
+        "recall": 0.015263698034645695,
+        "precision": 0.003362707020862221,
+        "firstUsefulHit": 0.01666666666666672
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "deltas": {
+        "f1": 0.008005624222736651,
+        "recall": 0.004618547995317732,
+        "precision": 0.01574415942836993,
+        "firstUsefulHit": -0.01666666666666683
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "deltas": {
+        "f1": 0.015722027144742995,
+        "recall": 0.01608451392564128,
+        "precision": 0.009329546032914082,
+        "firstUsefulHit": 0
+      }
+    }
+  ],
+  "caseComparisons": [
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-2905",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.21922956467272156,
+        "recall": 0.12310939148786493,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.21922956467272156,
+        "recall": 0.12310939148786493,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 89,
+        "totalLineCost": 52989,
+        "averageChunkLines": 66.23625,
+        "averageEventsPerFile": 8.98876404494382,
+        "maxFileClusterShare": 0.1775,
+        "smallChunkShare": 0.33625,
+        "mediumChunkShare": 0.66375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7752808988764045,
+        "testPathShare": 0.21348314606741572,
+        "noisyPathShare": 0.2247191011235955,
+        "queryTermCount": 171,
+        "queryCandidateTermOverlap": 0.8596491228070176
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 97,
+        "totalLineCost": 51565,
+        "averageChunkLines": 64.45625,
+        "averageEventsPerFile": 8.24742268041237,
+        "maxFileClusterShare": 0.1775,
+        "smallChunkShare": 0.37125,
+        "mediumChunkShare": 0.62875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7938144329896907,
+        "testPathShare": 0.1958762886597938,
+        "noisyPathShare": 0.20618556701030927,
+        "queryTermCount": 171,
+        "queryCandidateTermOverlap": 0.8771929824561403
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8979591836734694,
+        "baselineRetainedFileShare": 0.9887640449438202,
+        "candidateNewFileShare": 0.09278350515463918,
+        "eventJaccard": 0.8485549132947977,
+        "baselineRetainedEventShare": 0.9175,
+        "candidateNewEventShare": 0.0825
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-3095",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "win",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.003834355828220859,
+        "recall": 0.002254283137962128,
+        "precision": 0.01282051282051282,
+        "firstUsefulHit": 0.9
+      },
+      "metrics": {
+        "f1": 0.003849114703618168,
+        "recall": 0.002254283137962128,
+        "precision": 0.013157894736842105,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 67,
+        "totalLineCost": 50811,
+        "averageChunkLines": 63.51375,
+        "averageEventsPerFile": 11.940298507462687,
+        "maxFileClusterShare": 0.1325,
+        "smallChunkShare": 0.40125,
+        "mediumChunkShare": 0.59875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7014925373134329,
+        "testPathShare": 0.29850746268656714,
+        "noisyPathShare": 0.29850746268656714,
+        "queryTermCount": 42,
+        "queryCandidateTermOverlap": 1
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 64,
+        "totalLineCost": 50412,
+        "averageChunkLines": 63.015,
+        "averageEventsPerFile": 12.5,
+        "maxFileClusterShare": 0.1475,
+        "smallChunkShare": 0.41625,
+        "mediumChunkShare": 0.58375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.703125,
+        "testPathShare": 0.296875,
+        "noisyPathShare": 0.296875,
+        "queryTermCount": 42,
+        "queryCandidateTermOverlap": 1
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9552238805970149,
+        "baselineRetainedFileShare": 0.9552238805970149,
+        "candidateNewFileShare": 0,
+        "eventJaccard": 0.8106575963718821,
+        "baselineRetainedEventShare": 0.895,
+        "candidateNewEventShare": 0.105
+      },
+      "deltas": {
+        "f1": 0.000014758875397309027,
+        "recall": 0,
+        "precision": 0.00033738191632928446,
+        "firstUsefulHit": 0.09999999999999998
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-3305",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.009398496240601505,
+        "recall": 0.004924895345973898,
+        "precision": 0.10256410256410256,
+        "firstUsefulHit": 0.8
+      },
+      "metrics": {
+        "f1": 0.009398496240601505,
+        "recall": 0.004924895345973898,
+        "precision": 0.10256410256410256,
+        "firstUsefulHit": 0.7
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 99,
+        "totalLineCost": 53360,
+        "averageChunkLines": 66.7,
+        "averageEventsPerFile": 8.080808080808081,
+        "maxFileClusterShare": 0.08,
+        "smallChunkShare": 0.32,
+        "mediumChunkShare": 0.68,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6868686868686869,
+        "testPathShare": 0.26262626262626265,
+        "noisyPathShare": 0.31313131313131315,
+        "queryTermCount": 132,
+        "queryCandidateTermOverlap": 0.8787878787878788
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 102,
+        "totalLineCost": 52575,
+        "averageChunkLines": 65.71875,
+        "averageEventsPerFile": 7.8431372549019605,
+        "maxFileClusterShare": 0.07125,
+        "smallChunkShare": 0.3375,
+        "mediumChunkShare": 0.6625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6764705882352942,
+        "testPathShare": 0.2549019607843137,
+        "noisyPathShare": 0.3235294117647059,
+        "queryTermCount": 132,
+        "queryCandidateTermOverlap": 0.9015151515151515
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8962264150943396,
+        "baselineRetainedFileShare": 0.9595959595959596,
+        "candidateNewFileShare": 0.06862745098039216,
+        "eventJaccard": 0.7658862876254181,
+        "baselineRetainedEventShare": 0.86625,
+        "candidateNewEventShare": 0.13375
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": -0.10000000000000009
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-3677",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "win",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.29099678456591643,
+        "recall": 0.20709382151029748,
+        "precision": 0.4891891891891892,
+        "firstUsefulHit": 0.8
+      },
+      "metrics": {
+        "f1": 0.3284313725490196,
+        "recall": 0.2299771167048055,
+        "precision": 0.5742857142857143,
+        "firstUsefulHit": 0.8
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 69,
+        "totalLineCost": 49178,
+        "averageChunkLines": 61.4725,
+        "averageEventsPerFile": 11.594202898550725,
+        "maxFileClusterShare": 0.35625,
+        "smallChunkShare": 0.455,
+        "mediumChunkShare": 0.545,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8115942028985508,
+        "testPathShare": 0.18840579710144928,
+        "noisyPathShare": 0.18840579710144928,
+        "queryTermCount": 87,
+        "queryCandidateTermOverlap": 0.8850574712643678
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 67,
+        "totalLineCost": 49012,
+        "averageChunkLines": 61.265,
+        "averageEventsPerFile": 11.940298507462687,
+        "maxFileClusterShare": 0.35625,
+        "smallChunkShare": 0.46125,
+        "mediumChunkShare": 0.53875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7910447761194029,
+        "testPathShare": 0.19402985074626866,
+        "noisyPathShare": 0.208955223880597,
+        "queryTermCount": 87,
+        "queryCandidateTermOverlap": 0.896551724137931
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9428571428571428,
+        "baselineRetainedFileShare": 0.9565217391304348,
+        "candidateNewFileShare": 0.014925373134328358,
+        "eventJaccard": 0.9045346062052506,
+        "baselineRetainedEventShare": 0.95,
+        "candidateNewEventShare": 0.05
+      },
+      "deltas": {
+        "f1": 0.037434587983103174,
+        "recall": 0.02288329519450802,
+        "precision": 0.0850965250965251,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-3993",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "loss",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.03415008964398532,
+        "recall": 0.017678776628657297,
+        "precision": 0.5,
+        "firstUsefulHit": 0.9
+      },
+      "metrics": {
+        "f1": 0.027320071715188254,
+        "recall": 0.014143021302925838,
+        "precision": 0.4,
+        "firstUsefulHit": 0.9
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 80,
+        "totalLineCost": 52578,
+        "averageChunkLines": 65.7225,
+        "averageEventsPerFile": 10,
+        "maxFileClusterShare": 0.16375,
+        "smallChunkShare": 0.34875,
+        "mediumChunkShare": 0.65125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7375,
+        "testPathShare": 0.2375,
+        "noisyPathShare": 0.2625,
+        "queryTermCount": 90,
+        "queryCandidateTermOverlap": 0.8111111111111111
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 85,
+        "totalLineCost": 51335,
+        "averageChunkLines": 64.16875,
+        "averageEventsPerFile": 9.411764705882353,
+        "maxFileClusterShare": 0.16,
+        "smallChunkShare": 0.37875,
+        "mediumChunkShare": 0.62125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7411764705882353,
+        "testPathShare": 0.21176470588235294,
+        "noisyPathShare": 0.25882352941176473,
+        "queryTermCount": 90,
+        "queryCandidateTermOverlap": 0.8444444444444444
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.896551724137931,
+        "baselineRetainedFileShare": 0.975,
+        "candidateNewFileShare": 0.08235294117647059,
+        "eventJaccard": 0.8015783540022547,
+        "baselineRetainedEventShare": 0.88875,
+        "candidateNewEventShare": 0.11125
+      },
+      "deltas": {
+        "f1": -0.006830017928797064,
+        "recall": -0.003535755325731459,
+        "precision": -0.09999999999999998,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-4075",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "win",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.1230769230769231,
+        "recall": 0.15384615384615385,
+        "precision": 0.10256410256410256,
+        "firstUsefulHit": 0.5
+      },
+      "metrics": {
+        "f1": 0.125,
+        "recall": 0.15384615384615385,
+        "precision": 0.10526315789473684,
+        "firstUsefulHit": 0.30000000000000004
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 103,
+        "totalLineCost": 53616,
+        "averageChunkLines": 67.02,
+        "averageEventsPerFile": 7.766990291262136,
+        "maxFileClusterShare": 0.1025,
+        "smallChunkShare": 0.30625,
+        "mediumChunkShare": 0.69375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6990291262135923,
+        "testPathShare": 0.2912621359223301,
+        "noisyPathShare": 0.30097087378640774,
+        "queryTermCount": 162,
+        "queryCandidateTermOverlap": 0.8765432098765432
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 106,
+        "totalLineCost": 51934,
+        "averageChunkLines": 64.9175,
+        "averageEventsPerFile": 7.547169811320755,
+        "maxFileClusterShare": 0.09875,
+        "smallChunkShare": 0.34875,
+        "mediumChunkShare": 0.65125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6981132075471698,
+        "testPathShare": 0.27358490566037735,
+        "noisyPathShare": 0.3018867924528302,
+        "queryTermCount": 162,
+        "queryCandidateTermOverlap": 0.8888888888888888
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9351851851851852,
+        "baselineRetainedFileShare": 0.9805825242718447,
+        "candidateNewFileShare": 0.04716981132075472,
+        "eventJaccard": 0.8145620022753128,
+        "baselineRetainedEventShare": 0.89625,
+        "candidateNewEventShare": 0.10375
+      },
+      "deltas": {
+        "f1": 0.0019230769230769024,
+        "recall": 0,
+        "precision": 0.0026990553306342757,
+        "firstUsefulHit": -0.19999999999999996
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10297",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "win",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.25900900900900903,
+        "recall": 0.16594516594516595,
+        "precision": 0.5897435897435898,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.3207331042382589,
+        "recall": 0.20202020202020202,
+        "precision": 0.7777777777777778,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 147,
+        "totalLineCost": 56152,
+        "averageChunkLines": 70.19,
+        "averageEventsPerFile": 5.442176870748299,
+        "maxFileClusterShare": 0.08875,
+        "smallChunkShare": 0.2375,
+        "mediumChunkShare": 0.7625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.3333333333333333,
+        "testPathShare": 0.5510204081632653,
+        "noisyPathShare": 0.6666666666666666,
+        "queryTermCount": 121,
+        "queryCandidateTermOverlap": 0.8925619834710744
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 139,
+        "totalLineCost": 54393,
+        "averageChunkLines": 67.99125,
+        "averageEventsPerFile": 5.755395683453237,
+        "maxFileClusterShare": 0.0925,
+        "smallChunkShare": 0.29125,
+        "mediumChunkShare": 0.70875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.3381294964028777,
+        "testPathShare": 0.5323741007194245,
+        "noisyPathShare": 0.6618705035971223,
+        "queryTermCount": 121,
+        "queryCandidateTermOverlap": 0.8925619834710744
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8940397350993378,
+        "baselineRetainedFileShare": 0.9183673469387755,
+        "candidateNewFileShare": 0.02877697841726619,
+        "eventJaccard": 0.8058690744920993,
+        "baselineRetainedEventShare": 0.8925,
+        "candidateNewEventShare": 0.1075
+      },
+      "deltas": {
+        "f1": 0.061724095229249876,
+        "recall": 0.036075036075036065,
+        "precision": 0.18803418803418803,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10844",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      },
+      "metrics": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 161,
+        "totalLineCost": 56348,
+        "averageChunkLines": 70.435,
+        "averageEventsPerFile": 4.968944099378882,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.2275,
+        "mediumChunkShare": 0.7725,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.4782608695652174,
+        "testPathShare": 0.14285714285714285,
+        "noisyPathShare": 0.5217391304347826,
+        "queryTermCount": 167,
+        "queryCandidateTermOverlap": 0.8862275449101796
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 160,
+        "totalLineCost": 54541,
+        "averageChunkLines": 68.17625,
+        "averageEventsPerFile": 5,
+        "maxFileClusterShare": 0.055,
+        "smallChunkShare": 0.27875,
+        "mediumChunkShare": 0.72125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.48125,
+        "testPathShare": 0.14375,
+        "noisyPathShare": 0.51875,
+        "queryTermCount": 167,
+        "queryCandidateTermOverlap": 0.8982035928143712
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9573170731707317,
+        "baselineRetainedFileShare": 0.9751552795031055,
+        "candidateNewFileShare": 0.01875,
+        "eventJaccard": 0.8314220183486238,
+        "baselineRetainedEventShare": 0.9075,
+        "candidateNewEventShare": 0.0925
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10908",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.17204301075268816,
+        "recall": 0.1095890410958904,
+        "precision": 0.4,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.17204301075268816,
+        "recall": 0.1095890410958904,
+        "precision": 0.4,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 161,
+        "totalLineCost": 54921,
+        "averageChunkLines": 68.65125,
+        "averageEventsPerFile": 4.968944099378882,
+        "maxFileClusterShare": 0.055,
+        "smallChunkShare": 0.27,
+        "mediumChunkShare": 0.73,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7018633540372671,
+        "testPathShare": 0.2111801242236025,
+        "noisyPathShare": 0.2981366459627329,
+        "queryTermCount": 88,
+        "queryCandidateTermOverlap": 0.9545454545454546
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 156,
+        "totalLineCost": 53639,
+        "averageChunkLines": 67.04875,
+        "averageEventsPerFile": 5.128205128205129,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.31125,
+        "mediumChunkShare": 0.68875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7307692307692307,
+        "testPathShare": 0.17307692307692307,
+        "noisyPathShare": 0.2692307692307692,
+        "queryTermCount": 88,
+        "queryCandidateTermOverlap": 0.9545454545454546
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9447852760736196,
+        "baselineRetainedFileShare": 0.9565217391304348,
+        "candidateNewFileShare": 0.01282051282051282,
+        "eventJaccard": 0.8464203233256351,
+        "baselineRetainedEventShare": 0.91625,
+        "candidateNewEventShare": 0.08375
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-11310",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.1656543346217559,
+        "recall": 0.10482180293501048,
+        "precision": 0.39473684210526316,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.1656543346217559,
+        "recall": 0.10482180293501048,
+        "precision": 0.39473684210526316,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 53894,
+        "averageChunkLines": 67.3675,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.06,
+        "smallChunkShare": 0.3075,
+        "mediumChunkShare": 0.6925,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.45,
+        "testPathShare": 0.2,
+        "noisyPathShare": 0.55,
+        "queryTermCount": 98,
+        "queryCandidateTermOverlap": 0.9285714285714286
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 52885,
+        "averageChunkLines": 66.10625,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.3375,
+        "mediumChunkShare": 0.6625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.45714285714285713,
+        "testPathShare": 0.19285714285714287,
+        "noisyPathShare": 0.5428571428571428,
+        "queryTermCount": 98,
+        "queryCandidateTermOverlap": 0.9285714285714286
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.958041958041958,
+        "baselineRetainedFileShare": 0.9785714285714285,
+        "candidateNewFileShare": 0.02142857142857143,
+        "eventJaccard": 0.8646441073512252,
+        "baselineRetainedEventShare": 0.92625,
+        "candidateNewEventShare": 0.07375
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-11578",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.3274215552523875,
+        "recall": 0.19575856443719414,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.3274215552523875,
+        "recall": 0.19575856443719414,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 143,
+        "totalLineCost": 54012,
+        "averageChunkLines": 67.515,
+        "averageEventsPerFile": 5.594405594405594,
+        "maxFileClusterShare": 0.115,
+        "smallChunkShare": 0.30125,
+        "mediumChunkShare": 0.69875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.32867132867132864,
+        "testPathShare": 0.26573426573426573,
+        "noisyPathShare": 0.6713286713286714,
+        "queryTermCount": 329,
+        "queryCandidateTermOverlap": 0.8206686930091185
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 52954,
+        "averageChunkLines": 66.1925,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.115,
+        "smallChunkShare": 0.335,
+        "mediumChunkShare": 0.665,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.34285714285714286,
+        "testPathShare": 0.24285714285714285,
+        "noisyPathShare": 0.6571428571428571,
+        "queryTermCount": 329,
+        "queryCandidateTermOverlap": 0.817629179331307
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9121621621621622,
+        "baselineRetainedFileShare": 0.9440559440559441,
+        "candidateNewFileShare": 0.03571428571428571,
+        "eventJaccard": 0.8920521945432978,
+        "baselineRetainedEventShare": 0.9425,
+        "candidateNewEventShare": 0.0575
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-12585",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "win",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.24655547498187091,
+        "recall": 0.16848364717542122,
+        "precision": 0.4594594594594595,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.24835646457268082,
+        "recall": 0.16848364717542122,
+        "precision": 0.4722222222222222,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 144,
+        "totalLineCost": 54303,
+        "averageChunkLines": 67.87875,
+        "averageEventsPerFile": 5.555555555555555,
+        "maxFileClusterShare": 0.05,
+        "smallChunkShare": 0.2875,
+        "mediumChunkShare": 0.7125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8611111111111112,
+        "testPathShare": 0.08333333333333333,
+        "noisyPathShare": 0.1388888888888889,
+        "queryTermCount": 116,
+        "queryCandidateTermOverlap": 0.9310344827586207
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 124,
+        "totalLineCost": 51114,
+        "averageChunkLines": 63.8925,
+        "averageEventsPerFile": 6.451612903225806,
+        "maxFileClusterShare": 0.05875,
+        "smallChunkShare": 0.3825,
+        "mediumChunkShare": 0.6175,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8629032258064516,
+        "testPathShare": 0.06451612903225806,
+        "noisyPathShare": 0.13709677419354838,
+        "queryTermCount": 116,
+        "queryCandidateTermOverlap": 0.9310344827586207
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8356164383561644,
+        "baselineRetainedFileShare": 0.8472222222222222,
+        "candidateNewFileShare": 0.016129032258064516,
+        "eventJaccard": 0.7052518756698821,
+        "baselineRetainedEventShare": 0.825,
+        "candidateNewEventShare": 0.175
+      },
+      "deltas": {
+        "f1": 0.0018009895908099038,
+        "recall": 0,
+        "precision": 0.012762762762762725,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-2905",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.21922956467272156,
+        "recall": 0.12310939148786493,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.21922956467272156,
+        "recall": 0.12310939148786493,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 89,
+        "totalLineCost": 52989,
+        "averageChunkLines": 66.23625,
+        "averageEventsPerFile": 8.98876404494382,
+        "maxFileClusterShare": 0.1775,
+        "smallChunkShare": 0.33625,
+        "mediumChunkShare": 0.66375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7752808988764045,
+        "testPathShare": 0.21348314606741572,
+        "noisyPathShare": 0.2247191011235955,
+        "queryTermCount": 171,
+        "queryCandidateTermOverlap": 0.8596491228070176
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 97,
+        "totalLineCost": 51565,
+        "averageChunkLines": 64.45625,
+        "averageEventsPerFile": 8.24742268041237,
+        "maxFileClusterShare": 0.1775,
+        "smallChunkShare": 0.37125,
+        "mediumChunkShare": 0.62875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7938144329896907,
+        "testPathShare": 0.1958762886597938,
+        "noisyPathShare": 0.20618556701030927,
+        "queryTermCount": 171,
+        "queryCandidateTermOverlap": 0.8771929824561403
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8979591836734694,
+        "baselineRetainedFileShare": 0.9887640449438202,
+        "candidateNewFileShare": 0.09278350515463918,
+        "eventJaccard": 0.8485549132947977,
+        "baselineRetainedEventShare": 0.9175,
+        "candidateNewEventShare": 0.0825
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-3095",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "win",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.003834355828220859,
+        "recall": 0.002254283137962128,
+        "precision": 0.01282051282051282,
+        "firstUsefulHit": 0.9
+      },
+      "metrics": {
+        "f1": 0.003849114703618168,
+        "recall": 0.002254283137962128,
+        "precision": 0.013157894736842105,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 67,
+        "totalLineCost": 50811,
+        "averageChunkLines": 63.51375,
+        "averageEventsPerFile": 11.940298507462687,
+        "maxFileClusterShare": 0.1325,
+        "smallChunkShare": 0.40125,
+        "mediumChunkShare": 0.59875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7014925373134329,
+        "testPathShare": 0.29850746268656714,
+        "noisyPathShare": 0.29850746268656714,
+        "queryTermCount": 42,
+        "queryCandidateTermOverlap": 1
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 64,
+        "totalLineCost": 50412,
+        "averageChunkLines": 63.015,
+        "averageEventsPerFile": 12.5,
+        "maxFileClusterShare": 0.1475,
+        "smallChunkShare": 0.41625,
+        "mediumChunkShare": 0.58375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.703125,
+        "testPathShare": 0.296875,
+        "noisyPathShare": 0.296875,
+        "queryTermCount": 42,
+        "queryCandidateTermOverlap": 1
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9552238805970149,
+        "baselineRetainedFileShare": 0.9552238805970149,
+        "candidateNewFileShare": 0,
+        "eventJaccard": 0.8106575963718821,
+        "baselineRetainedEventShare": 0.895,
+        "candidateNewEventShare": 0.105
+      },
+      "deltas": {
+        "f1": 0.000014758875397309027,
+        "recall": 0,
+        "precision": 0.00033738191632928446,
+        "firstUsefulHit": 0.09999999999999998
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-3305",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.009398496240601505,
+        "recall": 0.004924895345973898,
+        "precision": 0.10256410256410256,
+        "firstUsefulHit": 0.8
+      },
+      "metrics": {
+        "f1": 0.009398496240601505,
+        "recall": 0.004924895345973898,
+        "precision": 0.10256410256410256,
+        "firstUsefulHit": 0.7
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 99,
+        "totalLineCost": 53360,
+        "averageChunkLines": 66.7,
+        "averageEventsPerFile": 8.080808080808081,
+        "maxFileClusterShare": 0.08,
+        "smallChunkShare": 0.32,
+        "mediumChunkShare": 0.68,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6868686868686869,
+        "testPathShare": 0.26262626262626265,
+        "noisyPathShare": 0.31313131313131315,
+        "queryTermCount": 132,
+        "queryCandidateTermOverlap": 0.8787878787878788
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 102,
+        "totalLineCost": 52575,
+        "averageChunkLines": 65.71875,
+        "averageEventsPerFile": 7.8431372549019605,
+        "maxFileClusterShare": 0.07125,
+        "smallChunkShare": 0.3375,
+        "mediumChunkShare": 0.6625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6764705882352942,
+        "testPathShare": 0.2549019607843137,
+        "noisyPathShare": 0.3235294117647059,
+        "queryTermCount": 132,
+        "queryCandidateTermOverlap": 0.9015151515151515
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8962264150943396,
+        "baselineRetainedFileShare": 0.9595959595959596,
+        "candidateNewFileShare": 0.06862745098039216,
+        "eventJaccard": 0.7658862876254181,
+        "baselineRetainedEventShare": 0.86625,
+        "candidateNewEventShare": 0.13375
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": -0.10000000000000009
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-3677",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "win",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.29099678456591643,
+        "recall": 0.20709382151029748,
+        "precision": 0.4891891891891892,
+        "firstUsefulHit": 0.8
+      },
+      "metrics": {
+        "f1": 0.3284313725490196,
+        "recall": 0.2299771167048055,
+        "precision": 0.5742857142857143,
+        "firstUsefulHit": 0.8
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 69,
+        "totalLineCost": 49178,
+        "averageChunkLines": 61.4725,
+        "averageEventsPerFile": 11.594202898550725,
+        "maxFileClusterShare": 0.35625,
+        "smallChunkShare": 0.455,
+        "mediumChunkShare": 0.545,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8115942028985508,
+        "testPathShare": 0.18840579710144928,
+        "noisyPathShare": 0.18840579710144928,
+        "queryTermCount": 87,
+        "queryCandidateTermOverlap": 0.8850574712643678
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 67,
+        "totalLineCost": 49012,
+        "averageChunkLines": 61.265,
+        "averageEventsPerFile": 11.940298507462687,
+        "maxFileClusterShare": 0.35625,
+        "smallChunkShare": 0.46125,
+        "mediumChunkShare": 0.53875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7910447761194029,
+        "testPathShare": 0.19402985074626866,
+        "noisyPathShare": 0.208955223880597,
+        "queryTermCount": 87,
+        "queryCandidateTermOverlap": 0.896551724137931
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9428571428571428,
+        "baselineRetainedFileShare": 0.9565217391304348,
+        "candidateNewFileShare": 0.014925373134328358,
+        "eventJaccard": 0.9045346062052506,
+        "baselineRetainedEventShare": 0.95,
+        "candidateNewEventShare": 0.05
+      },
+      "deltas": {
+        "f1": 0.037434587983103174,
+        "recall": 0.02288329519450802,
+        "precision": 0.0850965250965251,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-3993",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "loss",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.03415008964398532,
+        "recall": 0.017678776628657297,
+        "precision": 0.5,
+        "firstUsefulHit": 0.9
+      },
+      "metrics": {
+        "f1": 0.027320071715188254,
+        "recall": 0.014143021302925838,
+        "precision": 0.4,
+        "firstUsefulHit": 0.9
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 80,
+        "totalLineCost": 52578,
+        "averageChunkLines": 65.7225,
+        "averageEventsPerFile": 10,
+        "maxFileClusterShare": 0.16375,
+        "smallChunkShare": 0.34875,
+        "mediumChunkShare": 0.65125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7375,
+        "testPathShare": 0.2375,
+        "noisyPathShare": 0.2625,
+        "queryTermCount": 90,
+        "queryCandidateTermOverlap": 0.8111111111111111
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 85,
+        "totalLineCost": 51335,
+        "averageChunkLines": 64.16875,
+        "averageEventsPerFile": 9.411764705882353,
+        "maxFileClusterShare": 0.16,
+        "smallChunkShare": 0.37875,
+        "mediumChunkShare": 0.62125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7411764705882353,
+        "testPathShare": 0.21176470588235294,
+        "noisyPathShare": 0.25882352941176473,
+        "queryTermCount": 90,
+        "queryCandidateTermOverlap": 0.8444444444444444
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.896551724137931,
+        "baselineRetainedFileShare": 0.975,
+        "candidateNewFileShare": 0.08235294117647059,
+        "eventJaccard": 0.8015783540022547,
+        "baselineRetainedEventShare": 0.88875,
+        "candidateNewEventShare": 0.11125
+      },
+      "deltas": {
+        "f1": -0.006830017928797064,
+        "recall": -0.003535755325731459,
+        "precision": -0.09999999999999998,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-4075",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "win",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.1230769230769231,
+        "recall": 0.15384615384615385,
+        "precision": 0.10256410256410256,
+        "firstUsefulHit": 0.5
+      },
+      "metrics": {
+        "f1": 0.125,
+        "recall": 0.15384615384615385,
+        "precision": 0.10526315789473684,
+        "firstUsefulHit": 0.30000000000000004
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 103,
+        "totalLineCost": 53616,
+        "averageChunkLines": 67.02,
+        "averageEventsPerFile": 7.766990291262136,
+        "maxFileClusterShare": 0.1025,
+        "smallChunkShare": 0.30625,
+        "mediumChunkShare": 0.69375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6990291262135923,
+        "testPathShare": 0.2912621359223301,
+        "noisyPathShare": 0.30097087378640774,
+        "queryTermCount": 162,
+        "queryCandidateTermOverlap": 0.8765432098765432
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 106,
+        "totalLineCost": 51934,
+        "averageChunkLines": 64.9175,
+        "averageEventsPerFile": 7.547169811320755,
+        "maxFileClusterShare": 0.09875,
+        "smallChunkShare": 0.34875,
+        "mediumChunkShare": 0.65125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6981132075471698,
+        "testPathShare": 0.27358490566037735,
+        "noisyPathShare": 0.3018867924528302,
+        "queryTermCount": 162,
+        "queryCandidateTermOverlap": 0.8888888888888888
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9351851851851852,
+        "baselineRetainedFileShare": 0.9805825242718447,
+        "candidateNewFileShare": 0.04716981132075472,
+        "eventJaccard": 0.8145620022753128,
+        "baselineRetainedEventShare": 0.89625,
+        "candidateNewEventShare": 0.10375
+      },
+      "deltas": {
+        "f1": 0.0019230769230769024,
+        "recall": 0,
+        "precision": 0.0026990553306342757,
+        "firstUsefulHit": -0.19999999999999996
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10297",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "win",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.25900900900900903,
+        "recall": 0.16594516594516595,
+        "precision": 0.5897435897435898,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.3207331042382589,
+        "recall": 0.20202020202020202,
+        "precision": 0.7777777777777778,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 147,
+        "totalLineCost": 56152,
+        "averageChunkLines": 70.19,
+        "averageEventsPerFile": 5.442176870748299,
+        "maxFileClusterShare": 0.08875,
+        "smallChunkShare": 0.2375,
+        "mediumChunkShare": 0.7625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.3333333333333333,
+        "testPathShare": 0.5510204081632653,
+        "noisyPathShare": 0.6666666666666666,
+        "queryTermCount": 121,
+        "queryCandidateTermOverlap": 0.8925619834710744
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 139,
+        "totalLineCost": 54393,
+        "averageChunkLines": 67.99125,
+        "averageEventsPerFile": 5.755395683453237,
+        "maxFileClusterShare": 0.0925,
+        "smallChunkShare": 0.29125,
+        "mediumChunkShare": 0.70875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.3381294964028777,
+        "testPathShare": 0.5323741007194245,
+        "noisyPathShare": 0.6618705035971223,
+        "queryTermCount": 121,
+        "queryCandidateTermOverlap": 0.8925619834710744
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8940397350993378,
+        "baselineRetainedFileShare": 0.9183673469387755,
+        "candidateNewFileShare": 0.02877697841726619,
+        "eventJaccard": 0.8058690744920993,
+        "baselineRetainedEventShare": 0.8925,
+        "candidateNewEventShare": 0.1075
+      },
+      "deltas": {
+        "f1": 0.061724095229249876,
+        "recall": 0.036075036075036065,
+        "precision": 0.18803418803418803,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10844",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      },
+      "metrics": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 161,
+        "totalLineCost": 56348,
+        "averageChunkLines": 70.435,
+        "averageEventsPerFile": 4.968944099378882,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.2275,
+        "mediumChunkShare": 0.7725,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.4782608695652174,
+        "testPathShare": 0.14285714285714285,
+        "noisyPathShare": 0.5217391304347826,
+        "queryTermCount": 167,
+        "queryCandidateTermOverlap": 0.8862275449101796
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 160,
+        "totalLineCost": 54541,
+        "averageChunkLines": 68.17625,
+        "averageEventsPerFile": 5,
+        "maxFileClusterShare": 0.055,
+        "smallChunkShare": 0.27875,
+        "mediumChunkShare": 0.72125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.48125,
+        "testPathShare": 0.14375,
+        "noisyPathShare": 0.51875,
+        "queryTermCount": 167,
+        "queryCandidateTermOverlap": 0.8982035928143712
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9573170731707317,
+        "baselineRetainedFileShare": 0.9751552795031055,
+        "candidateNewFileShare": 0.01875,
+        "eventJaccard": 0.8314220183486238,
+        "baselineRetainedEventShare": 0.9075,
+        "candidateNewEventShare": 0.0925
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10908",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.17204301075268816,
+        "recall": 0.1095890410958904,
+        "precision": 0.4,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.17204301075268816,
+        "recall": 0.1095890410958904,
+        "precision": 0.4,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 161,
+        "totalLineCost": 54921,
+        "averageChunkLines": 68.65125,
+        "averageEventsPerFile": 4.968944099378882,
+        "maxFileClusterShare": 0.055,
+        "smallChunkShare": 0.27,
+        "mediumChunkShare": 0.73,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7018633540372671,
+        "testPathShare": 0.2111801242236025,
+        "noisyPathShare": 0.2981366459627329,
+        "queryTermCount": 88,
+        "queryCandidateTermOverlap": 0.9545454545454546
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 156,
+        "totalLineCost": 53639,
+        "averageChunkLines": 67.04875,
+        "averageEventsPerFile": 5.128205128205129,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.31125,
+        "mediumChunkShare": 0.68875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7307692307692307,
+        "testPathShare": 0.17307692307692307,
+        "noisyPathShare": 0.2692307692307692,
+        "queryTermCount": 88,
+        "queryCandidateTermOverlap": 0.9545454545454546
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9447852760736196,
+        "baselineRetainedFileShare": 0.9565217391304348,
+        "candidateNewFileShare": 0.01282051282051282,
+        "eventJaccard": 0.8464203233256351,
+        "baselineRetainedEventShare": 0.91625,
+        "candidateNewEventShare": 0.08375
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-11310",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.1656543346217559,
+        "recall": 0.10482180293501048,
+        "precision": 0.39473684210526316,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.1656543346217559,
+        "recall": 0.10482180293501048,
+        "precision": 0.39473684210526316,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 53894,
+        "averageChunkLines": 67.3675,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.06,
+        "smallChunkShare": 0.3075,
+        "mediumChunkShare": 0.6925,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.45,
+        "testPathShare": 0.2,
+        "noisyPathShare": 0.55,
+        "queryTermCount": 98,
+        "queryCandidateTermOverlap": 0.9285714285714286
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 52885,
+        "averageChunkLines": 66.10625,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.3375,
+        "mediumChunkShare": 0.6625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.45714285714285713,
+        "testPathShare": 0.19285714285714287,
+        "noisyPathShare": 0.5428571428571428,
+        "queryTermCount": 98,
+        "queryCandidateTermOverlap": 0.9285714285714286
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.958041958041958,
+        "baselineRetainedFileShare": 0.9785714285714285,
+        "candidateNewFileShare": 0.02142857142857143,
+        "eventJaccard": 0.8646441073512252,
+        "baselineRetainedEventShare": 0.92625,
+        "candidateNewEventShare": 0.07375
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-11578",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "tie",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.3274215552523875,
+        "recall": 0.19575856443719414,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.3274215552523875,
+        "recall": 0.19575856443719414,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 143,
+        "totalLineCost": 54012,
+        "averageChunkLines": 67.515,
+        "averageEventsPerFile": 5.594405594405594,
+        "maxFileClusterShare": 0.115,
+        "smallChunkShare": 0.30125,
+        "mediumChunkShare": 0.69875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.32867132867132864,
+        "testPathShare": 0.26573426573426573,
+        "noisyPathShare": 0.6713286713286714,
+        "queryTermCount": 329,
+        "queryCandidateTermOverlap": 0.8206686930091185
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 52954,
+        "averageChunkLines": 66.1925,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.115,
+        "smallChunkShare": 0.335,
+        "mediumChunkShare": 0.665,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.34285714285714286,
+        "testPathShare": 0.24285714285714285,
+        "noisyPathShare": 0.6571428571428571,
+        "queryTermCount": 329,
+        "queryCandidateTermOverlap": 0.817629179331307
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9121621621621622,
+        "baselineRetainedFileShare": 0.9440559440559441,
+        "candidateNewFileShare": 0.03571428571428571,
+        "eventJaccard": 0.8920521945432978,
+        "baselineRetainedEventShare": 0.9425,
+        "candidateNewEventShare": 0.0575
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-12585",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "outcome": "win",
+      "baselineRegions": 10,
+      "regions": 10,
+      "baselineMetrics": {
+        "f1": 0.24655547498187091,
+        "recall": 0.16848364717542122,
+        "precision": 0.4594594594594595,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.24835646457268082,
+        "recall": 0.16848364717542122,
+        "precision": 0.4722222222222222,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 144,
+        "totalLineCost": 54303,
+        "averageChunkLines": 67.87875,
+        "averageEventsPerFile": 5.555555555555555,
+        "maxFileClusterShare": 0.05,
+        "smallChunkShare": 0.2875,
+        "mediumChunkShare": 0.7125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8611111111111112,
+        "testPathShare": 0.08333333333333333,
+        "noisyPathShare": 0.1388888888888889,
+        "queryTermCount": 116,
+        "queryCandidateTermOverlap": 0.9310344827586207
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 124,
+        "totalLineCost": 51114,
+        "averageChunkLines": 63.8925,
+        "averageEventsPerFile": 6.451612903225806,
+        "maxFileClusterShare": 0.05875,
+        "smallChunkShare": 0.3825,
+        "mediumChunkShare": 0.6175,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8629032258064516,
+        "testPathShare": 0.06451612903225806,
+        "noisyPathShare": 0.13709677419354838,
+        "queryTermCount": 116,
+        "queryCandidateTermOverlap": 0.9310344827586207
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8356164383561644,
+        "baselineRetainedFileShare": 0.8472222222222222,
+        "candidateNewFileShare": 0.016129032258064516,
+        "eventJaccard": 0.7052518756698821,
+        "baselineRetainedEventShare": 0.825,
+        "candidateNewEventShare": 0.175
+      },
+      "deltas": {
+        "f1": 0.0018009895908099038,
+        "recall": 0,
+        "precision": 0.012762762762762725,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-2905",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "loss",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.5431719190366385,
+        "recall": 0.37284558564896236,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.5280869790318405,
+        "recall": 0.3587759409074921,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 89,
+        "totalLineCost": 52989,
+        "averageChunkLines": 66.23625,
+        "averageEventsPerFile": 8.98876404494382,
+        "maxFileClusterShare": 0.1775,
+        "smallChunkShare": 0.33625,
+        "mediumChunkShare": 0.66375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7752808988764045,
+        "testPathShare": 0.21348314606741572,
+        "noisyPathShare": 0.2247191011235955,
+        "queryTermCount": 171,
+        "queryCandidateTermOverlap": 0.8596491228070176
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 97,
+        "totalLineCost": 51565,
+        "averageChunkLines": 64.45625,
+        "averageEventsPerFile": 8.24742268041237,
+        "maxFileClusterShare": 0.1775,
+        "smallChunkShare": 0.37125,
+        "mediumChunkShare": 0.62875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7938144329896907,
+        "testPathShare": 0.1958762886597938,
+        "noisyPathShare": 0.20618556701030927,
+        "queryTermCount": 171,
+        "queryCandidateTermOverlap": 0.8771929824561403
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8979591836734694,
+        "baselineRetainedFileShare": 0.9887640449438202,
+        "candidateNewFileShare": 0.09278350515463918,
+        "eventJaccard": 0.8485549132947977,
+        "baselineRetainedEventShare": 0.9175,
+        "candidateNewEventShare": 0.0825
+      },
+      "deltas": {
+        "f1": -0.015084940004797986,
+        "recall": -0.014069644741470266,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-3095",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "loss",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.05062537224538415,
+        "recall": 0.03832281334535618,
+        "precision": 0.07456140350877193,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.05032563647128478,
+        "recall": 0.03832281334535618,
+        "precision": 0.07327586206896551,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 67,
+        "totalLineCost": 50811,
+        "averageChunkLines": 63.51375,
+        "averageEventsPerFile": 11.940298507462687,
+        "maxFileClusterShare": 0.1325,
+        "smallChunkShare": 0.40125,
+        "mediumChunkShare": 0.59875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7014925373134329,
+        "testPathShare": 0.29850746268656714,
+        "noisyPathShare": 0.29850746268656714,
+        "queryTermCount": 42,
+        "queryCandidateTermOverlap": 1
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 64,
+        "totalLineCost": 50412,
+        "averageChunkLines": 63.015,
+        "averageEventsPerFile": 12.5,
+        "maxFileClusterShare": 0.1475,
+        "smallChunkShare": 0.41625,
+        "mediumChunkShare": 0.58375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.703125,
+        "testPathShare": 0.296875,
+        "noisyPathShare": 0.296875,
+        "queryTermCount": 42,
+        "queryCandidateTermOverlap": 1
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9552238805970149,
+        "baselineRetainedFileShare": 0.9552238805970149,
+        "candidateNewFileShare": 0,
+        "eventJaccard": 0.8106575963718821,
+        "baselineRetainedEventShare": 0.895,
+        "candidateNewEventShare": 0.105
+      },
+      "deltas": {
+        "f1": -0.0002997357740993703,
+        "recall": 0,
+        "precision": -0.0012855414398064147,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-3305",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "loss",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.06924908028565246,
+        "recall": 0.039399162767791186,
+        "precision": 0.2857142857142857,
+        "firstUsefulHit": 0.33333333333333337
+      },
+      "metrics": {
+        "f1": 0.05204944697462589,
+        "recall": 0.029549372075843388,
+        "precision": 0.21818181818181817,
+        "firstUsefulHit": 0.33333333333333337
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 99,
+        "totalLineCost": 53360,
+        "averageChunkLines": 66.7,
+        "averageEventsPerFile": 8.080808080808081,
+        "maxFileClusterShare": 0.08,
+        "smallChunkShare": 0.32,
+        "mediumChunkShare": 0.68,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6868686868686869,
+        "testPathShare": 0.26262626262626265,
+        "noisyPathShare": 0.31313131313131315,
+        "queryTermCount": 132,
+        "queryCandidateTermOverlap": 0.8787878787878788
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 102,
+        "totalLineCost": 52575,
+        "averageChunkLines": 65.71875,
+        "averageEventsPerFile": 7.8431372549019605,
+        "maxFileClusterShare": 0.07125,
+        "smallChunkShare": 0.3375,
+        "mediumChunkShare": 0.6625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6764705882352942,
+        "testPathShare": 0.2549019607843137,
+        "noisyPathShare": 0.3235294117647059,
+        "queryTermCount": 132,
+        "queryCandidateTermOverlap": 0.9015151515151515
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8962264150943396,
+        "baselineRetainedFileShare": 0.9595959595959596,
+        "candidateNewFileShare": 0.06862745098039216,
+        "eventJaccard": 0.7658862876254181,
+        "baselineRetainedEventShare": 0.86625,
+        "candidateNewEventShare": 0.13375
+      },
+      "deltas": {
+        "f1": -0.01719963331102657,
+        "recall": -0.009849790691947798,
+        "precision": -0.06753246753246753,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-3677",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "win",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.3444782168186423,
+        "recall": 0.3890160183066362,
+        "precision": 0.3090909090909091,
+        "firstUsefulHit": 0.8666666666666667
+      },
+      "metrics": {
+        "f1": 0.4052684903748734,
+        "recall": 0.4576659038901602,
+        "precision": 0.36363636363636365,
+        "firstUsefulHit": 0.8666666666666667
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 69,
+        "totalLineCost": 49178,
+        "averageChunkLines": 61.4725,
+        "averageEventsPerFile": 11.594202898550725,
+        "maxFileClusterShare": 0.35625,
+        "smallChunkShare": 0.455,
+        "mediumChunkShare": 0.545,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8115942028985508,
+        "testPathShare": 0.18840579710144928,
+        "noisyPathShare": 0.18840579710144928,
+        "queryTermCount": 87,
+        "queryCandidateTermOverlap": 0.8850574712643678
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 67,
+        "totalLineCost": 49012,
+        "averageChunkLines": 61.265,
+        "averageEventsPerFile": 11.940298507462687,
+        "maxFileClusterShare": 0.35625,
+        "smallChunkShare": 0.46125,
+        "mediumChunkShare": 0.53875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7910447761194029,
+        "testPathShare": 0.19402985074626866,
+        "noisyPathShare": 0.208955223880597,
+        "queryTermCount": 87,
+        "queryCandidateTermOverlap": 0.896551724137931
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9428571428571428,
+        "baselineRetainedFileShare": 0.9565217391304348,
+        "candidateNewFileShare": 0.014925373134328358,
+        "eventJaccard": 0.9045346062052506,
+        "baselineRetainedEventShare": 0.95,
+        "candidateNewEventShare": 0.05
+      },
+      "deltas": {
+        "f1": 0.06079027355623107,
+        "recall": 0.06864988558352403,
+        "precision": 0.054545454545454564,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-3993",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "loss",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.0639335091504835,
+        "recall": 0.03535755325731459,
+        "precision": 0.3333333333333333,
+        "firstUsefulHit": 0.9333333333333333
+      },
+      "metrics": {
+        "f1": 0.0511468073203868,
+        "recall": 0.028286042605851675,
+        "precision": 0.26666666666666666,
+        "firstUsefulHit": 0.9333333333333333
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 80,
+        "totalLineCost": 52578,
+        "averageChunkLines": 65.7225,
+        "averageEventsPerFile": 10,
+        "maxFileClusterShare": 0.16375,
+        "smallChunkShare": 0.34875,
+        "mediumChunkShare": 0.65125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7375,
+        "testPathShare": 0.2375,
+        "noisyPathShare": 0.2625,
+        "queryTermCount": 90,
+        "queryCandidateTermOverlap": 0.8111111111111111
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 85,
+        "totalLineCost": 51335,
+        "averageChunkLines": 64.16875,
+        "averageEventsPerFile": 9.411764705882353,
+        "maxFileClusterShare": 0.16,
+        "smallChunkShare": 0.37875,
+        "mediumChunkShare": 0.62125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7411764705882353,
+        "testPathShare": 0.21176470588235294,
+        "noisyPathShare": 0.25882352941176473,
+        "queryTermCount": 90,
+        "queryCandidateTermOverlap": 0.8444444444444444
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.896551724137931,
+        "baselineRetainedFileShare": 0.975,
+        "candidateNewFileShare": 0.08235294117647059,
+        "eventJaccard": 0.8015783540022547,
+        "baselineRetainedEventShare": 0.88875,
+        "candidateNewEventShare": 0.11125
+      },
+      "deltas": {
+        "f1": -0.012786701830096697,
+        "recall": -0.007071510651462918,
+        "precision": -0.06666666666666665,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "pydata__xarray-4075",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "tie",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      },
+      "metrics": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 103,
+        "totalLineCost": 53616,
+        "averageChunkLines": 67.02,
+        "averageEventsPerFile": 7.766990291262136,
+        "maxFileClusterShare": 0.1025,
+        "smallChunkShare": 0.30625,
+        "mediumChunkShare": 0.69375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6990291262135923,
+        "testPathShare": 0.2912621359223301,
+        "noisyPathShare": 0.30097087378640774,
+        "queryTermCount": 162,
+        "queryCandidateTermOverlap": 0.8765432098765432
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 106,
+        "totalLineCost": 51934,
+        "averageChunkLines": 64.9175,
+        "averageEventsPerFile": 7.547169811320755,
+        "maxFileClusterShare": 0.09875,
+        "smallChunkShare": 0.34875,
+        "mediumChunkShare": 0.65125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6981132075471698,
+        "testPathShare": 0.27358490566037735,
+        "noisyPathShare": 0.3018867924528302,
+        "queryTermCount": 162,
+        "queryCandidateTermOverlap": 0.8888888888888888
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9351851851851852,
+        "baselineRetainedFileShare": 0.9805825242718447,
+        "candidateNewFileShare": 0.04716981132075472,
+        "eventJaccard": 0.8145620022753128,
+        "baselineRetainedEventShare": 0.89625,
+        "candidateNewEventShare": 0.10375
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10297",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "tie",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.2850356294536817,
+        "recall": 0.2597402597402597,
+        "precision": 0.3157894736842105,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.2850356294536817,
+        "recall": 0.2597402597402597,
+        "precision": 0.3157894736842105,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 147,
+        "totalLineCost": 56152,
+        "averageChunkLines": 70.19,
+        "averageEventsPerFile": 5.442176870748299,
+        "maxFileClusterShare": 0.08875,
+        "smallChunkShare": 0.2375,
+        "mediumChunkShare": 0.7625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.3333333333333333,
+        "testPathShare": 0.5510204081632653,
+        "noisyPathShare": 0.6666666666666666,
+        "queryTermCount": 121,
+        "queryCandidateTermOverlap": 0.8925619834710744
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 139,
+        "totalLineCost": 54393,
+        "averageChunkLines": 67.99125,
+        "averageEventsPerFile": 5.755395683453237,
+        "maxFileClusterShare": 0.0925,
+        "smallChunkShare": 0.29125,
+        "mediumChunkShare": 0.70875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.3381294964028777,
+        "testPathShare": 0.5323741007194245,
+        "noisyPathShare": 0.6618705035971223,
+        "queryTermCount": 121,
+        "queryCandidateTermOverlap": 0.8925619834710744
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8940397350993378,
+        "baselineRetainedFileShare": 0.9183673469387755,
+        "candidateNewFileShare": 0.02877697841726619,
+        "eventJaccard": 0.8058690744920993,
+        "baselineRetainedEventShare": 0.8925,
+        "candidateNewEventShare": 0.1075
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10844",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "win",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.019538188277087032,
+        "recall": 0.4230769230769231,
+        "precision": 0.01,
+        "firstUsefulHit": 0.8
+      },
+      "metrics": {
+        "f1": 0.020637898686679174,
+        "recall": 0.4230769230769231,
+        "precision": 0.010576923076923078,
+        "firstUsefulHit": 0.8
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 161,
+        "totalLineCost": 56348,
+        "averageChunkLines": 70.435,
+        "averageEventsPerFile": 4.968944099378882,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.2275,
+        "mediumChunkShare": 0.7725,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.4782608695652174,
+        "testPathShare": 0.14285714285714285,
+        "noisyPathShare": 0.5217391304347826,
+        "queryTermCount": 167,
+        "queryCandidateTermOverlap": 0.8862275449101796
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 160,
+        "totalLineCost": 54541,
+        "averageChunkLines": 68.17625,
+        "averageEventsPerFile": 5,
+        "maxFileClusterShare": 0.055,
+        "smallChunkShare": 0.27875,
+        "mediumChunkShare": 0.72125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.48125,
+        "testPathShare": 0.14375,
+        "noisyPathShare": 0.51875,
+        "queryTermCount": 167,
+        "queryCandidateTermOverlap": 0.8982035928143712
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9573170731707317,
+        "baselineRetainedFileShare": 0.9751552795031055,
+        "candidateNewFileShare": 0.01875,
+        "eventJaccard": 0.8314220183486238,
+        "baselineRetainedEventShare": 0.9075,
+        "candidateNewEventShare": 0.0925
+      },
+      "deltas": {
+        "f1": 0.0010997104095921417,
+        "recall": 0,
+        "precision": 0.0005769230769230773,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10908",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "win",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.2424242424242424,
+        "recall": 0.2191780821917808,
+        "precision": 0.2711864406779661,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.35114503816793896,
+        "recall": 0.3150684931506849,
+        "precision": 0.39655172413793105,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 161,
+        "totalLineCost": 54921,
+        "averageChunkLines": 68.65125,
+        "averageEventsPerFile": 4.968944099378882,
+        "maxFileClusterShare": 0.055,
+        "smallChunkShare": 0.27,
+        "mediumChunkShare": 0.73,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7018633540372671,
+        "testPathShare": 0.2111801242236025,
+        "noisyPathShare": 0.2981366459627329,
+        "queryTermCount": 88,
+        "queryCandidateTermOverlap": 0.9545454545454546
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 156,
+        "totalLineCost": 53639,
+        "averageChunkLines": 67.04875,
+        "averageEventsPerFile": 5.128205128205129,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.31125,
+        "mediumChunkShare": 0.68875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7307692307692307,
+        "testPathShare": 0.17307692307692307,
+        "noisyPathShare": 0.2692307692307692,
+        "queryTermCount": 88,
+        "queryCandidateTermOverlap": 0.9545454545454546
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9447852760736196,
+        "baselineRetainedFileShare": 0.9565217391304348,
+        "candidateNewFileShare": 0.01282051282051282,
+        "eventJaccard": 0.8464203233256351,
+        "baselineRetainedEventShare": 0.91625,
+        "candidateNewEventShare": 0.08375
+      },
+      "deltas": {
+        "f1": 0.10872079574369656,
+        "recall": 0.0958904109589041,
+        "precision": 0.12536528345996495,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-11310",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "tie",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.2933230412967966,
+        "recall": 0.2655485674353599,
+        "precision": 0.3275862068965517,
+        "firstUsefulHit": 0.8666666666666667
+      },
+      "metrics": {
+        "f1": 0.2933230412967966,
+        "recall": 0.2655485674353599,
+        "precision": 0.3275862068965517,
+        "firstUsefulHit": 0.8666666666666667
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 53894,
+        "averageChunkLines": 67.3675,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.06,
+        "smallChunkShare": 0.3075,
+        "mediumChunkShare": 0.6925,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.45,
+        "testPathShare": 0.2,
+        "noisyPathShare": 0.55,
+        "queryTermCount": 98,
+        "queryCandidateTermOverlap": 0.9285714285714286
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 52885,
+        "averageChunkLines": 66.10625,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.3375,
+        "mediumChunkShare": 0.6625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.45714285714285713,
+        "testPathShare": 0.19285714285714287,
+        "noisyPathShare": 0.5428571428571428,
+        "queryTermCount": 98,
+        "queryCandidateTermOverlap": 0.9285714285714286
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.958041958041958,
+        "baselineRetainedFileShare": 0.9785714285714285,
+        "candidateNewFileShare": 0.02142857142857143,
+        "eventJaccard": 0.8646441073512252,
+        "baselineRetainedEventShare": 0.92625,
+        "candidateNewEventShare": 0.07375
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-11578",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "tie",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.6859592711682744,
+        "recall": 0.5220228384991843,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.6859592711682744,
+        "recall": 0.5220228384991843,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 143,
+        "totalLineCost": 54012,
+        "averageChunkLines": 67.515,
+        "averageEventsPerFile": 5.594405594405594,
+        "maxFileClusterShare": 0.115,
+        "smallChunkShare": 0.30125,
+        "mediumChunkShare": 0.69875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.32867132867132864,
+        "testPathShare": 0.26573426573426573,
+        "noisyPathShare": 0.6713286713286714,
+        "queryTermCount": 329,
+        "queryCandidateTermOverlap": 0.8206686930091185
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 52954,
+        "averageChunkLines": 66.1925,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.115,
+        "smallChunkShare": 0.335,
+        "mediumChunkShare": 0.665,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.34285714285714286,
+        "testPathShare": 0.24285714285714285,
+        "noisyPathShare": 0.6571428571428571,
+        "queryTermCount": 329,
+        "queryCandidateTermOverlap": 0.817629179331307
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9121621621621622,
+        "baselineRetainedFileShare": 0.9440559440559441,
+        "candidateNewFileShare": 0.03571428571428571,
+        "eventJaccard": 0.8920521945432978,
+        "baselineRetainedEventShare": 0.9425,
+        "candidateNewEventShare": 0.0575
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-12585",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "win",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.24892292963140258,
+        "recall": 0.2576808721506442,
+        "precision": 0.24074074074074073,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.31234748657881894,
+        "recall": 0.31714568880079286,
+        "precision": 0.3076923076923077,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 144,
+        "totalLineCost": 54303,
+        "averageChunkLines": 67.87875,
+        "averageEventsPerFile": 5.555555555555555,
+        "maxFileClusterShare": 0.05,
+        "smallChunkShare": 0.2875,
+        "mediumChunkShare": 0.7125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8611111111111112,
+        "testPathShare": 0.08333333333333333,
+        "noisyPathShare": 0.1388888888888889,
+        "queryTermCount": 116,
+        "queryCandidateTermOverlap": 0.9310344827586207
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 124,
+        "totalLineCost": 51114,
+        "averageChunkLines": 63.8925,
+        "averageEventsPerFile": 6.451612903225806,
+        "maxFileClusterShare": 0.05875,
+        "smallChunkShare": 0.3825,
+        "mediumChunkShare": 0.6175,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8629032258064516,
+        "testPathShare": 0.06451612903225806,
+        "noisyPathShare": 0.13709677419354838,
+        "queryTermCount": 116,
+        "queryCandidateTermOverlap": 0.9310344827586207
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8356164383561644,
+        "baselineRetainedFileShare": 0.8472222222222222,
+        "candidateNewFileShare": 0.016129032258064516,
+        "eventJaccard": 0.7052518756698821,
+        "baselineRetainedEventShare": 0.825,
+        "candidateNewEventShare": 0.175
+      },
+      "deltas": {
+        "f1": 0.06342455694741636,
+        "recall": 0.05946481665014863,
+        "precision": 0.06695156695156698,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-2905",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "loss",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.5431719190366385,
+        "recall": 0.37284558564896236,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.5280869790318405,
+        "recall": 0.3587759409074921,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 89,
+        "totalLineCost": 52989,
+        "averageChunkLines": 66.23625,
+        "averageEventsPerFile": 8.98876404494382,
+        "maxFileClusterShare": 0.1775,
+        "smallChunkShare": 0.33625,
+        "mediumChunkShare": 0.66375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7752808988764045,
+        "testPathShare": 0.21348314606741572,
+        "noisyPathShare": 0.2247191011235955,
+        "queryTermCount": 171,
+        "queryCandidateTermOverlap": 0.8596491228070176
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 97,
+        "totalLineCost": 51565,
+        "averageChunkLines": 64.45625,
+        "averageEventsPerFile": 8.24742268041237,
+        "maxFileClusterShare": 0.1775,
+        "smallChunkShare": 0.37125,
+        "mediumChunkShare": 0.62875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7938144329896907,
+        "testPathShare": 0.1958762886597938,
+        "noisyPathShare": 0.20618556701030927,
+        "queryTermCount": 171,
+        "queryCandidateTermOverlap": 0.8771929824561403
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8979591836734694,
+        "baselineRetainedFileShare": 0.9887640449438202,
+        "candidateNewFileShare": 0.09278350515463918,
+        "eventJaccard": 0.8485549132947977,
+        "baselineRetainedEventShare": 0.9175,
+        "candidateNewEventShare": 0.0825
+      },
+      "deltas": {
+        "f1": -0.015084940004797986,
+        "recall": -0.014069644741470266,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-3095",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "loss",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.05062537224538415,
+        "recall": 0.03832281334535618,
+        "precision": 0.07456140350877193,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.05032563647128478,
+        "recall": 0.03832281334535618,
+        "precision": 0.07327586206896551,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 67,
+        "totalLineCost": 50811,
+        "averageChunkLines": 63.51375,
+        "averageEventsPerFile": 11.940298507462687,
+        "maxFileClusterShare": 0.1325,
+        "smallChunkShare": 0.40125,
+        "mediumChunkShare": 0.59875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7014925373134329,
+        "testPathShare": 0.29850746268656714,
+        "noisyPathShare": 0.29850746268656714,
+        "queryTermCount": 42,
+        "queryCandidateTermOverlap": 1
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 64,
+        "totalLineCost": 50412,
+        "averageChunkLines": 63.015,
+        "averageEventsPerFile": 12.5,
+        "maxFileClusterShare": 0.1475,
+        "smallChunkShare": 0.41625,
+        "mediumChunkShare": 0.58375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.703125,
+        "testPathShare": 0.296875,
+        "noisyPathShare": 0.296875,
+        "queryTermCount": 42,
+        "queryCandidateTermOverlap": 1
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9552238805970149,
+        "baselineRetainedFileShare": 0.9552238805970149,
+        "candidateNewFileShare": 0,
+        "eventJaccard": 0.8106575963718821,
+        "baselineRetainedEventShare": 0.895,
+        "candidateNewEventShare": 0.105
+      },
+      "deltas": {
+        "f1": -0.0002997357740993703,
+        "recall": 0,
+        "precision": -0.0012855414398064147,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-3305",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "loss",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.06924908028565246,
+        "recall": 0.039399162767791186,
+        "precision": 0.2857142857142857,
+        "firstUsefulHit": 0.33333333333333337
+      },
+      "metrics": {
+        "f1": 0.03469963131641726,
+        "recall": 0.019699581383895593,
+        "precision": 0.14545454545454545,
+        "firstUsefulHit": 0.2666666666666667
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 99,
+        "totalLineCost": 53360,
+        "averageChunkLines": 66.7,
+        "averageEventsPerFile": 8.080808080808081,
+        "maxFileClusterShare": 0.08,
+        "smallChunkShare": 0.32,
+        "mediumChunkShare": 0.68,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6868686868686869,
+        "testPathShare": 0.26262626262626265,
+        "noisyPathShare": 0.31313131313131315,
+        "queryTermCount": 132,
+        "queryCandidateTermOverlap": 0.8787878787878788
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 102,
+        "totalLineCost": 52575,
+        "averageChunkLines": 65.71875,
+        "averageEventsPerFile": 7.8431372549019605,
+        "maxFileClusterShare": 0.07125,
+        "smallChunkShare": 0.3375,
+        "mediumChunkShare": 0.6625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6764705882352942,
+        "testPathShare": 0.2549019607843137,
+        "noisyPathShare": 0.3235294117647059,
+        "queryTermCount": 132,
+        "queryCandidateTermOverlap": 0.9015151515151515
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8962264150943396,
+        "baselineRetainedFileShare": 0.9595959595959596,
+        "candidateNewFileShare": 0.06862745098039216,
+        "eventJaccard": 0.7658862876254181,
+        "baselineRetainedEventShare": 0.86625,
+        "candidateNewEventShare": 0.13375
+      },
+      "deltas": {
+        "f1": -0.0345494489692352,
+        "recall": -0.019699581383895593,
+        "precision": -0.14025974025974025,
+        "firstUsefulHit": -0.06666666666666665
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-3677",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "win",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.3444782168186423,
+        "recall": 0.3890160183066362,
+        "precision": 0.3090909090909091,
+        "firstUsefulHit": 0.8666666666666667
+      },
+      "metrics": {
+        "f1": 0.4052684903748734,
+        "recall": 0.4576659038901602,
+        "precision": 0.36363636363636365,
+        "firstUsefulHit": 0.9333333333333333
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 69,
+        "totalLineCost": 49178,
+        "averageChunkLines": 61.4725,
+        "averageEventsPerFile": 11.594202898550725,
+        "maxFileClusterShare": 0.35625,
+        "smallChunkShare": 0.455,
+        "mediumChunkShare": 0.545,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8115942028985508,
+        "testPathShare": 0.18840579710144928,
+        "noisyPathShare": 0.18840579710144928,
+        "queryTermCount": 87,
+        "queryCandidateTermOverlap": 0.8850574712643678
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 67,
+        "totalLineCost": 49012,
+        "averageChunkLines": 61.265,
+        "averageEventsPerFile": 11.940298507462687,
+        "maxFileClusterShare": 0.35625,
+        "smallChunkShare": 0.46125,
+        "mediumChunkShare": 0.53875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7910447761194029,
+        "testPathShare": 0.19402985074626866,
+        "noisyPathShare": 0.208955223880597,
+        "queryTermCount": 87,
+        "queryCandidateTermOverlap": 0.896551724137931
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9428571428571428,
+        "baselineRetainedFileShare": 0.9565217391304348,
+        "candidateNewFileShare": 0.014925373134328358,
+        "eventJaccard": 0.9045346062052506,
+        "baselineRetainedEventShare": 0.95,
+        "candidateNewEventShare": 0.05
+      },
+      "deltas": {
+        "f1": 0.06079027355623107,
+        "recall": 0.06864988558352403,
+        "precision": 0.054545454545454564,
+        "firstUsefulHit": 0.06666666666666665
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-3993",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "loss",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.0639335091504835,
+        "recall": 0.03535755325731459,
+        "precision": 0.3333333333333333,
+        "firstUsefulHit": 0.9333333333333333
+      },
+      "metrics": {
+        "f1": 0.0511468073203868,
+        "recall": 0.028286042605851675,
+        "precision": 0.26666666666666666,
+        "firstUsefulHit": 0.9333333333333333
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 80,
+        "totalLineCost": 52578,
+        "averageChunkLines": 65.7225,
+        "averageEventsPerFile": 10,
+        "maxFileClusterShare": 0.16375,
+        "smallChunkShare": 0.34875,
+        "mediumChunkShare": 0.65125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7375,
+        "testPathShare": 0.2375,
+        "noisyPathShare": 0.2625,
+        "queryTermCount": 90,
+        "queryCandidateTermOverlap": 0.8111111111111111
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 85,
+        "totalLineCost": 51335,
+        "averageChunkLines": 64.16875,
+        "averageEventsPerFile": 9.411764705882353,
+        "maxFileClusterShare": 0.16,
+        "smallChunkShare": 0.37875,
+        "mediumChunkShare": 0.62125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7411764705882353,
+        "testPathShare": 0.21176470588235294,
+        "noisyPathShare": 0.25882352941176473,
+        "queryTermCount": 90,
+        "queryCandidateTermOverlap": 0.8444444444444444
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.896551724137931,
+        "baselineRetainedFileShare": 0.975,
+        "candidateNewFileShare": 0.08235294117647059,
+        "eventJaccard": 0.8015783540022547,
+        "baselineRetainedEventShare": 0.88875,
+        "candidateNewEventShare": 0.11125
+      },
+      "deltas": {
+        "f1": -0.012786701830096697,
+        "recall": -0.007071510651462918,
+        "precision": -0.06666666666666665,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "pydata__xarray-4075",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "tie",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      },
+      "metrics": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 103,
+        "totalLineCost": 53616,
+        "averageChunkLines": 67.02,
+        "averageEventsPerFile": 7.766990291262136,
+        "maxFileClusterShare": 0.1025,
+        "smallChunkShare": 0.30625,
+        "mediumChunkShare": 0.69375,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6990291262135923,
+        "testPathShare": 0.2912621359223301,
+        "noisyPathShare": 0.30097087378640774,
+        "queryTermCount": 162,
+        "queryCandidateTermOverlap": 0.8765432098765432
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 106,
+        "totalLineCost": 51934,
+        "averageChunkLines": 64.9175,
+        "averageEventsPerFile": 7.547169811320755,
+        "maxFileClusterShare": 0.09875,
+        "smallChunkShare": 0.34875,
+        "mediumChunkShare": 0.65125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.6981132075471698,
+        "testPathShare": 0.27358490566037735,
+        "noisyPathShare": 0.3018867924528302,
+        "queryTermCount": 162,
+        "queryCandidateTermOverlap": 0.8888888888888888
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9351851851851852,
+        "baselineRetainedFileShare": 0.9805825242718447,
+        "candidateNewFileShare": 0.04716981132075472,
+        "eventJaccard": 0.8145620022753128,
+        "baselineRetainedEventShare": 0.89625,
+        "candidateNewEventShare": 0.10375
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10297",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "tie",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.2850356294536817,
+        "recall": 0.2597402597402597,
+        "precision": 0.3157894736842105,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.2850356294536817,
+        "recall": 0.2597402597402597,
+        "precision": 0.3157894736842105,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 147,
+        "totalLineCost": 56152,
+        "averageChunkLines": 70.19,
+        "averageEventsPerFile": 5.442176870748299,
+        "maxFileClusterShare": 0.08875,
+        "smallChunkShare": 0.2375,
+        "mediumChunkShare": 0.7625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.3333333333333333,
+        "testPathShare": 0.5510204081632653,
+        "noisyPathShare": 0.6666666666666666,
+        "queryTermCount": 121,
+        "queryCandidateTermOverlap": 0.8925619834710744
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 139,
+        "totalLineCost": 54393,
+        "averageChunkLines": 67.99125,
+        "averageEventsPerFile": 5.755395683453237,
+        "maxFileClusterShare": 0.0925,
+        "smallChunkShare": 0.29125,
+        "mediumChunkShare": 0.70875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.3381294964028777,
+        "testPathShare": 0.5323741007194245,
+        "noisyPathShare": 0.6618705035971223,
+        "queryTermCount": 121,
+        "queryCandidateTermOverlap": 0.8925619834710744
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8940397350993378,
+        "baselineRetainedFileShare": 0.9183673469387755,
+        "candidateNewFileShare": 0.02877697841726619,
+        "eventJaccard": 0.8058690744920993,
+        "baselineRetainedEventShare": 0.8925,
+        "candidateNewEventShare": 0.1075
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10844",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "win",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.019538188277087032,
+        "recall": 0.4230769230769231,
+        "precision": 0.01,
+        "firstUsefulHit": 0.8
+      },
+      "metrics": {
+        "f1": 0.022774327122153208,
+        "recall": 0.4230769230769231,
+        "precision": 0.011702127659574468,
+        "firstUsefulHit": 0.9333333333333333
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 161,
+        "totalLineCost": 56348,
+        "averageChunkLines": 70.435,
+        "averageEventsPerFile": 4.968944099378882,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.2275,
+        "mediumChunkShare": 0.7725,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.4782608695652174,
+        "testPathShare": 0.14285714285714285,
+        "noisyPathShare": 0.5217391304347826,
+        "queryTermCount": 167,
+        "queryCandidateTermOverlap": 0.8862275449101796
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 160,
+        "totalLineCost": 54541,
+        "averageChunkLines": 68.17625,
+        "averageEventsPerFile": 5,
+        "maxFileClusterShare": 0.055,
+        "smallChunkShare": 0.27875,
+        "mediumChunkShare": 0.72125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.48125,
+        "testPathShare": 0.14375,
+        "noisyPathShare": 0.51875,
+        "queryTermCount": 167,
+        "queryCandidateTermOverlap": 0.8982035928143712
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9573170731707317,
+        "baselineRetainedFileShare": 0.9751552795031055,
+        "candidateNewFileShare": 0.01875,
+        "eventJaccard": 0.8314220183486238,
+        "baselineRetainedEventShare": 0.9075,
+        "candidateNewEventShare": 0.0925
+      },
+      "deltas": {
+        "f1": 0.0032361388450661763,
+        "recall": 0,
+        "precision": 0.0017021276595744674,
+        "firstUsefulHit": 0.1333333333333333
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-10908",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "win",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.2424242424242424,
+        "recall": 0.2191780821917808,
+        "precision": 0.2711864406779661,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.35114503816793896,
+        "recall": 0.3150684931506849,
+        "precision": 0.39655172413793105,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 161,
+        "totalLineCost": 54921,
+        "averageChunkLines": 68.65125,
+        "averageEventsPerFile": 4.968944099378882,
+        "maxFileClusterShare": 0.055,
+        "smallChunkShare": 0.27,
+        "mediumChunkShare": 0.73,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7018633540372671,
+        "testPathShare": 0.2111801242236025,
+        "noisyPathShare": 0.2981366459627329,
+        "queryTermCount": 88,
+        "queryCandidateTermOverlap": 0.9545454545454546
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 156,
+        "totalLineCost": 53639,
+        "averageChunkLines": 67.04875,
+        "averageEventsPerFile": 5.128205128205129,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.31125,
+        "mediumChunkShare": 0.68875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.7307692307692307,
+        "testPathShare": 0.17307692307692307,
+        "noisyPathShare": 0.2692307692307692,
+        "queryTermCount": 88,
+        "queryCandidateTermOverlap": 0.9545454545454546
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9447852760736196,
+        "baselineRetainedFileShare": 0.9565217391304348,
+        "candidateNewFileShare": 0.01282051282051282,
+        "eventJaccard": 0.8464203233256351,
+        "baselineRetainedEventShare": 0.91625,
+        "candidateNewEventShare": 0.08375
+      },
+      "deltas": {
+        "f1": 0.10872079574369656,
+        "recall": 0.0958904109589041,
+        "precision": 0.12536528345996495,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-11310",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "tie",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.2933230412967966,
+        "recall": 0.2655485674353599,
+        "precision": 0.3275862068965517,
+        "firstUsefulHit": 0.8666666666666667
+      },
+      "metrics": {
+        "f1": 0.2933230412967966,
+        "recall": 0.2655485674353599,
+        "precision": 0.3275862068965517,
+        "firstUsefulHit": 0.9333333333333333
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 53894,
+        "averageChunkLines": 67.3675,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.06,
+        "smallChunkShare": 0.3075,
+        "mediumChunkShare": 0.6925,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.45,
+        "testPathShare": 0.2,
+        "noisyPathShare": 0.55,
+        "queryTermCount": 98,
+        "queryCandidateTermOverlap": 0.9285714285714286
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 52885,
+        "averageChunkLines": 66.10625,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.06375,
+        "smallChunkShare": 0.3375,
+        "mediumChunkShare": 0.6625,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.45714285714285713,
+        "testPathShare": 0.19285714285714287,
+        "noisyPathShare": 0.5428571428571428,
+        "queryTermCount": 98,
+        "queryCandidateTermOverlap": 0.9285714285714286
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.958041958041958,
+        "baselineRetainedFileShare": 0.9785714285714285,
+        "candidateNewFileShare": 0.02142857142857143,
+        "eventJaccard": 0.8646441073512252,
+        "baselineRetainedEventShare": 0.92625,
+        "candidateNewEventShare": 0.07375
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0.06666666666666665
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-11578",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "tie",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.6859592711682744,
+        "recall": 0.5220228384991843,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.6859592711682744,
+        "recall": 0.5220228384991843,
+        "precision": 1,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 143,
+        "totalLineCost": 54012,
+        "averageChunkLines": 67.515,
+        "averageEventsPerFile": 5.594405594405594,
+        "maxFileClusterShare": 0.115,
+        "smallChunkShare": 0.30125,
+        "mediumChunkShare": 0.69875,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.32867132867132864,
+        "testPathShare": 0.26573426573426573,
+        "noisyPathShare": 0.6713286713286714,
+        "queryTermCount": 329,
+        "queryCandidateTermOverlap": 0.8206686930091185
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 140,
+        "totalLineCost": 52954,
+        "averageChunkLines": 66.1925,
+        "averageEventsPerFile": 5.714285714285714,
+        "maxFileClusterShare": 0.115,
+        "smallChunkShare": 0.335,
+        "mediumChunkShare": 0.665,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.34285714285714286,
+        "testPathShare": 0.24285714285714285,
+        "noisyPathShare": 0.6571428571428571,
+        "queryTermCount": 329,
+        "queryCandidateTermOverlap": 0.817629179331307
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.9121621621621622,
+        "baselineRetainedFileShare": 0.9440559440559441,
+        "candidateNewFileShare": 0.03571428571428571,
+        "eventJaccard": 0.8920521945432978,
+        "baselineRetainedEventShare": 0.9425,
+        "candidateNewEventShare": 0.0575
+      },
+      "deltas": {
+        "f1": 0,
+        "recall": 0,
+        "precision": 0,
+        "firstUsefulHit": 0
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "instanceID": "scikit-learn__scikit-learn-12585",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "outcome": "win",
+      "baselineRegions": 15,
+      "regions": 15,
+      "baselineMetrics": {
+        "f1": 0.24892292963140258,
+        "recall": 0.2576808721506442,
+        "precision": 0.24074074074074073,
+        "firstUsefulHit": 1
+      },
+      "metrics": {
+        "f1": 0.31234748657881894,
+        "recall": 0.31714568880079286,
+        "precision": 0.3076923076923077,
+        "firstUsefulHit": 1
+      },
+      "baselineFeatures": {
+        "eventCount": 800,
+        "fileCount": 144,
+        "totalLineCost": 54303,
+        "averageChunkLines": 67.87875,
+        "averageEventsPerFile": 5.555555555555555,
+        "maxFileClusterShare": 0.05,
+        "smallChunkShare": 0.2875,
+        "mediumChunkShare": 0.7125,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8611111111111112,
+        "testPathShare": 0.08333333333333333,
+        "noisyPathShare": 0.1388888888888889,
+        "queryTermCount": 116,
+        "queryCandidateTermOverlap": 0.9310344827586207
+      },
+      "features": {
+        "eventCount": 800,
+        "fileCount": 124,
+        "totalLineCost": 51114,
+        "averageChunkLines": 63.8925,
+        "averageEventsPerFile": 6.451612903225806,
+        "maxFileClusterShare": 0.05875,
+        "smallChunkShare": 0.3825,
+        "mediumChunkShare": 0.6175,
+        "largeChunkShare": 0,
+        "implementationPathShare": 0.8629032258064516,
+        "testPathShare": 0.06451612903225806,
+        "noisyPathShare": 0.13709677419354838,
+        "queryTermCount": 116,
+        "queryCandidateTermOverlap": 0.9310344827586207
+      },
+      "comparisonFeatures": {
+        "fileJaccard": 0.8356164383561644,
+        "baselineRetainedFileShare": 0.8472222222222222,
+        "candidateNewFileShare": 0.016129032258064516,
+        "eventJaccard": 0.7052518756698821,
+        "baselineRetainedEventShare": 0.825,
+        "candidateNewEventShare": 0.175
+      },
+      "deltas": {
+        "f1": 0.06342455694741636,
+        "recall": 0.05946481665014863,
+        "precision": 0.06695156695156698,
+        "firstUsefulHit": 0
+      }
+    }
+  ],
+  "gates": [
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "cases": 12,
+      "minimumGain": 0,
+      "rule": {
+        "type": "threshold",
+        "feature": "baseline:queryCandidateTermOverlap",
+        "threshold": 0.8158899020601148,
+        "candidateWhen": "gt",
+        "baselineRanker": "structural",
+        "ranker": "guarded-hybrid-rrf",
+        "trainF1": 0.1628555922706431
+      },
+      "baseline": {
+        "f1": 0.15428079988717336,
+        "recall": 0.10445879529546598,
+        "precision": 0.4209231498705184,
+        "firstUsefulHit": 0.8250000000000001
+      },
+      "candidate": {
+        "f1": 0.16228642410991004,
+        "recall": 0.10907734329078371,
+        "precision": 0.43666730929888825,
+        "firstUsefulHit": 0.8083333333333332
+      },
+      "oracle": {
+        "f1": 0.1628555922706431,
+        "recall": 0.10937198956792799,
+        "precision": 0.44500064263222155,
+        "firstUsefulHit": 0.8166666666666668
+      },
+      "routed": {
+        "f1": 0.1628555922706431,
+        "recall": 0.10937198956792799,
+        "precision": 0.44500064263222155,
+        "firstUsefulHit": 0.8083333333333332
+      },
+      "leaveOneOut": {
+        "f1": 0.15916687511131808,
+        "recall": 0.10717040202457472,
+        "precision": 0.42957593220751117,
+        "firstUsefulHit": 0.8083333333333332
+      },
+      "routedChoices": {
+        "baseline": 1,
+        "candidate": 11
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "policy": "budget-rank-frontier",
+      "budget": 400,
+      "cases": 12,
+      "minimumGain": 0,
+      "rule": {
+        "type": "threshold",
+        "feature": "baseline:queryCandidateTermOverlap",
+        "threshold": 0.8158899020601148,
+        "candidateWhen": "gt",
+        "baselineRanker": "structural",
+        "ranker": "hybrid-rrf",
+        "trainF1": 0.1628555922706431
+      },
+      "baseline": {
+        "f1": 0.15428079988717336,
+        "recall": 0.10445879529546598,
+        "precision": 0.4209231498705184,
+        "firstUsefulHit": 0.8250000000000001
+      },
+      "candidate": {
+        "f1": 0.16228642410991004,
+        "recall": 0.10907734329078371,
+        "precision": 0.43666730929888825,
+        "firstUsefulHit": 0.8083333333333332
+      },
+      "oracle": {
+        "f1": 0.1628555922706431,
+        "recall": 0.10937198956792799,
+        "precision": 0.44500064263222155,
+        "firstUsefulHit": 0.8166666666666668
+      },
+      "routed": {
+        "f1": 0.1628555922706431,
+        "recall": 0.10937198956792799,
+        "precision": 0.44500064263222155,
+        "firstUsefulHit": 0.8083333333333332
+      },
+      "leaveOneOut": {
+        "f1": 0.15916687511131808,
+        "recall": 0.10717040202457472,
+        "precision": 0.42957593220751117,
+        "firstUsefulHit": 0.8083333333333332
+      },
+      "routedChoices": {
+        "baseline": 1,
+        "candidate": 11
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "guarded-hybrid-rrf",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "cases": 12,
+      "minimumGain": 0,
+      "rule": {
+        "type": "threshold",
+        "feature": "baseline:testPathShare",
+        "threshold": 0.21233163514550912,
+        "candidateWhen": "lte",
+        "baselineRanker": "structural",
+        "ranker": "guarded-hybrid-rrf",
+        "trainF1": 0.25672472803710183
+      },
+      "baseline": {
+        "f1": 0.23722178331569047,
+        "recall": 0.23518238970168437,
+        "precision": 0.34733356613723076,
+        "firstUsefulHit": 0.8166666666666668
+      },
+      "candidate": {
+        "f1": 0.25294381046043346,
+        "recall": 0.2512669036273257,
+        "precision": 0.35666311217014485,
+        "firstUsefulHit": 0.8166666666666668
+      },
+      "oracle": {
+        "f1": 0.25672472803710183,
+        "recall": 0.2538494824677325,
+        "precision": 0.3679535018067232,
+        "firstUsefulHit": 0.8166666666666668
+      },
+      "routed": {
+        "f1": 0.25672472803710183,
+        "recall": 0.2538494824677325,
+        "precision": 0.3679535018067232,
+        "firstUsefulHit": 0.8166666666666668
+      },
+      "leaveOneOut": {
+        "f1": 0.24131674928053307,
+        "recall": 0.23896532069407425,
+        "precision": 0.35285381185295445,
+        "firstUsefulHit": 0.8166666666666668
+      },
+      "routedChoices": {
+        "baseline": 7,
+        "candidate": 5
+      }
+    },
+    {
+      "baselineRanker": "structural",
+      "ranker": "hybrid-rrf",
+      "policy": "budget-rank-frontier",
+      "budget": 1200,
+      "cases": 12,
+      "minimumGain": 0,
+      "rule": {
+        "type": "threshold",
+        "feature": "baseline:testPathShare",
+        "threshold": 0.21233163514550912,
+        "candidateWhen": "lte",
+        "baselineRanker": "structural",
+        "ranker": "hybrid-rrf",
+        "trainF1": 0.256902763740058
+      },
+      "baseline": {
+        "f1": 0.23722178331569047,
+        "recall": 0.23518238970168437,
+        "precision": 0.34733356613723076,
+        "firstUsefulHit": 0.8166666666666668
+      },
+      "candidate": {
+        "f1": 0.25167602819187224,
+        "recall": 0.25044608773633004,
+        "precision": 0.3506962731580931,
+        "firstUsefulHit": 0.8333333333333334
+      },
+      "oracle": {
+        "f1": 0.256902763740058,
+        "recall": 0.2538494824677325,
+        "precision": 0.36804726885527744,
+        "firstUsefulHit": 0.8333333333333334
+      },
+      "routed": {
+        "f1": 0.256902763740058,
+        "recall": 0.2538494824677325,
+        "precision": 0.36804726885527744,
+        "firstUsefulHit": 0.8388888888888889
+      },
+      "leaveOneOut": {
+        "f1": 0.24149478498348922,
+        "recall": 0.23896532069407425,
+        "precision": 0.3529475789015087,
+        "firstUsefulHit": 0.8333333333333334
+      },
+      "routedChoices": {
+        "baseline": 7,
+        "candidate": 5
+      }
+    }
+  ]
+}

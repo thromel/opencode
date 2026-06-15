@@ -16,6 +16,7 @@ import { ConfigPluginV1 } from "./plugin"
 import { ConfigProviderV1 } from "./provider"
 import { ConfigServerV1 } from "./server"
 import { ConfigSkillsV1 } from "./skills"
+import { SessionContextLedgerPolicy } from "../../session/context-ledger-policy"
 
 export type Layout = ConfigLayoutV1.Layout
 
@@ -161,6 +162,23 @@ export const Info = Schema.Struct({
       reserved: Schema.optional(NonNegativeInt).annotate({
         description: "Token buffer for compaction. Leaves enough window to avoid overflow during compaction.",
       }),
+      context_ledger: Schema.optional(
+        Schema.Struct({
+          enabled: Schema.optional(Schema.Boolean).annotate({
+            description: "Include a provenance-preserving ContextLedger packet in compaction prompts",
+          }),
+          policy: Schema.optional(Schema.Literals(SessionContextLedgerPolicy.SELECTION_POLICIES)).annotate({
+            description: "ContextLedger selection policy used for compaction packets",
+          }),
+          budget: Schema.optional(NonNegativeInt).annotate({
+            description: "Token budget for the ContextLedger packet inside compaction prompts",
+          }),
+          mode: Schema.optional(Schema.Literals(SessionContextLedgerPolicy.INPUT_MODES)).annotate({
+            description:
+              "How ContextLedger participates in compaction: augment the raw old history or replace it with the ledger packet",
+          }),
+        }),
+      ),
     }),
   ),
   experimental: Schema.optional(

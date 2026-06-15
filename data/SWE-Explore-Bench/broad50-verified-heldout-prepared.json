@@ -1,0 +1,404 @@
+{
+  "repos": [
+    {
+      "instance_id": "sphinx-doc__sphinx-8056",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-8056",
+      "base_commit": "e188d56ed1248dead58f3f8018c0e9a3f99193f7",
+      "head": "e188d56ed1248dead58f3f8018c0e9a3f99193f7"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8475",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-8475",
+      "base_commit": "3ea1ec84cc610f7a9f4f6b354e264565254923ff",
+      "head": "3ea1ec84cc610f7a9f4f6b354e264565254923ff"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7440",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-7440",
+      "base_commit": "9bb204dcabe6ba0fc422bf4a45ad0c79c680d90b",
+      "head": "9bb204dcabe6ba0fc422bf4a45ad0c79c680d90b"
+    },
+    {
+      "instance_id": "pallets__flask-5014",
+      "repo": "pallets/flask",
+      "repo_url": "https://github.com/pallets/flask.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pallets__flask-5014",
+      "base_commit": "7ee9ceb71e868944a46e1ff00b506772a53a4f1d",
+      "head": "7ee9ceb71e868944a46e1ff00b506772a53a4f1d"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-9320",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-9320",
+      "base_commit": "e05cef574b8f23ab1b57f57e7da6dee509a4e230",
+      "head": "e05cef574b8f23ab1b57f57e7da6dee509a4e230"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-4970",
+      "repo": "pylint-dev/pylint",
+      "repo_url": "https://github.com/pylint-dev/pylint.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pylint-dev__pylint-4970",
+      "base_commit": "40cc2ffd7887959157aaf469e09585ec2be7f528",
+      "head": "40cc2ffd7887959157aaf469e09585ec2be7f528"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-9673",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-9673",
+      "base_commit": "5fb51fb1467dc5eea7505402c3c5d9b378d3b441",
+      "head": "5fb51fb1467dc5eea7505402c3c5d9b378d3b441"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10614",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-10614",
+      "base_commit": "ac2b7599d212af7d04649959ce6926c63c3133fa",
+      "head": "ac2b7599d212af7d04649959ce6926c63c3133fa"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7454",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-7454",
+      "base_commit": "aca3f825f2e4a8817190f3c885a242a285aa0dba",
+      "head": "aca3f825f2e4a8817190f3c885a242a285aa0dba"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7748",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-7748",
+      "base_commit": "9988d5ce267bf0df4791770b469431b1fb00dcdd",
+      "head": "9988d5ce267bf0df4791770b469431b1fb00dcdd"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-9658",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-9658",
+      "base_commit": "232dbe41c5250eb7d559d40438c4743483e95f15",
+      "head": "232dbe41c5250eb7d559d40438c4743483e95f15"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8269",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-8269",
+      "base_commit": "1e2ccd8f0eca0870cf6f8fce6934e2da8eba9b72",
+      "head": "1e2ccd8f0eca0870cf6f8fce6934e2da8eba9b72"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-9258",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-9258",
+      "base_commit": "06107f838c28ab6ca6bfc2cc208e15997fcb2146",
+      "head": "06107f838c28ab6ca6bfc2cc208e15997fcb2146"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-7277",
+      "repo": "pylint-dev/pylint",
+      "repo_url": "https://github.com/pylint-dev/pylint.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pylint-dev__pylint-7277",
+      "base_commit": "684a1d6aa0a6791e20078bc524f97c8906332390",
+      "head": "684a1d6aa0a6791e20078bc524f97c8906332390"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7462",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-7462",
+      "base_commit": "b3e26a6c851133b82b50f4b68b53692076574d13",
+      "head": "b3e26a6c851133b82b50f4b68b53692076574d13"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-9602",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-9602",
+      "base_commit": "6c38f68dae221e8cfc70c137974b8b88bd3baaab",
+      "head": "6c38f68dae221e8cfc70c137974b8b88bd3baaab"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10323",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-10323",
+      "base_commit": "31eba1a76dd485dc633cae48227b46879eda5df4",
+      "head": "31eba1a76dd485dc633cae48227b46879eda5df4"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8595",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-8595",
+      "base_commit": "b19bce971e82f2497d67fdacdeca8db08ae0ba56",
+      "head": "b19bce971e82f2497d67fdacdeca8db08ae0ba56"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-4604",
+      "repo": "pylint-dev/pylint",
+      "repo_url": "https://github.com/pylint-dev/pylint.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pylint-dev__pylint-4604",
+      "base_commit": "1e55ae64624d28c5fe8b63ad7979880ee2e6ef3f",
+      "head": "1e55ae64624d28c5fe8b63ad7979880ee2e6ef3f"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-9230",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-9230",
+      "base_commit": "567ff22716ac258b9edd2c1711d766b440ac0b11",
+      "head": "567ff22716ac258b9edd2c1711d766b440ac0b11"
+    },
+    {
+      "instance_id": "mwaskom__seaborn-3187",
+      "repo": "mwaskom/seaborn",
+      "repo_url": "https://github.com/mwaskom/seaborn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/mwaskom__seaborn-3187",
+      "base_commit": "22cdfb0c93f8ec78492d87edb810f10cb7f57a31",
+      "head": "22cdfb0c93f8ec78492d87edb810f10cb7f57a31"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-8898",
+      "repo": "pylint-dev/pylint",
+      "repo_url": "https://github.com/pylint-dev/pylint.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pylint-dev__pylint-8898",
+      "base_commit": "1f8c4d9eb185c16a2c1d881c054f015e1c2eb334",
+      "head": "1f8c4d9eb185c16a2c1d881c054f015e1c2eb334"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8265",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-8265",
+      "base_commit": "b428cd2404675475a5c3dc2a2b0790ba57676202",
+      "head": "b428cd2404675475a5c3dc2a2b0790ba57676202"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-4661",
+      "repo": "pylint-dev/pylint",
+      "repo_url": "https://github.com/pylint-dev/pylint.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pylint-dev__pylint-4661",
+      "base_commit": "1d1619ef913b99b06647d2030bddff4800abdf63",
+      "head": "1d1619ef913b99b06647d2030bddff4800abdf63"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8621",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-8621",
+      "base_commit": "21698c14461d27933864d73e6fba568a154e83b3",
+      "head": "21698c14461d27933864d73e6fba568a154e83b3"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7590",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-7590",
+      "base_commit": "2e506c5ab457cba743bb47eb5b8c8eb9dd51d23d",
+      "head": "2e506c5ab457cba743bb47eb5b8c8eb9dd51d23d"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-9461",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-9461",
+      "base_commit": "939c7bb7ff7c53a4d27df067cea637540f0e1dad",
+      "head": "939c7bb7ff7c53a4d27df067cea637540f0e1dad"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-4551",
+      "repo": "pylint-dev/pylint",
+      "repo_url": "https://github.com/pylint-dev/pylint.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pylint-dev__pylint-4551",
+      "base_commit": "99589b08de8c5a2c6cc61e13a37420a868c80599",
+      "head": "99589b08de8c5a2c6cc61e13a37420a868c80599"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8548",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-8548",
+      "base_commit": "dd1615c59dc6fff633e27dbb3861f2d27e1fb976",
+      "head": "dd1615c59dc6fff633e27dbb3861f2d27e1fb976"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-9698",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-9698",
+      "base_commit": "f050a7775dfc9000f55d023d36d925a8d02ccfa8",
+      "head": "f050a7775dfc9000f55d023d36d925a8d02ccfa8"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8721",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-8721",
+      "base_commit": "82ef497a8c88f0f6e50d84520e7276bfbf65025d",
+      "head": "82ef497a8c88f0f6e50d84520e7276bfbf65025d"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-6528",
+      "repo": "pylint-dev/pylint",
+      "repo_url": "https://github.com/pylint-dev/pylint.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pylint-dev__pylint-6528",
+      "base_commit": "273a8b25620467c1e5686aa8d2a1dbb8c02c78d0",
+      "head": "273a8b25620467c1e5686aa8d2a1dbb8c02c78d0"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10435",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-10435",
+      "base_commit": "f1061c012e214f16fd8790dec3c283d787e3daa8",
+      "head": "f1061c012e214f16fd8790dec3c283d787e3daa8"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-9591",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-9591",
+      "base_commit": "9ed054279aeffd5b1d0642e2d24a8800389de29f",
+      "head": "9ed054279aeffd5b1d0642e2d24a8800389de29f"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7889",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-7889",
+      "base_commit": "ec9af606c6cfa515f946d74da9b51574f2f9b16f",
+      "head": "ec9af606c6cfa515f946d74da9b51574f2f9b16f"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-9281",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-9281",
+      "base_commit": "8ec06e9a1bd862cd713b9db748e039ccc7b3e15b",
+      "head": "8ec06e9a1bd862cd713b9db748e039ccc7b3e15b"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7985",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-7985",
+      "base_commit": "f30284ef926ebaf04b176f21b421e2dffc679792",
+      "head": "f30284ef926ebaf04b176f21b421e2dffc679792"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10673",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-10673",
+      "base_commit": "f35d2a6cc726f97d0e859ca7a0e1729f7da8a6c8",
+      "head": "f35d2a6cc726f97d0e859ca7a0e1729f7da8a6c8"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-6903",
+      "repo": "pylint-dev/pylint",
+      "repo_url": "https://github.com/pylint-dev/pylint.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pylint-dev__pylint-6903",
+      "base_commit": "ca80f03a43bc39e4cc2c67dc99817b3c9f13b8a6",
+      "head": "ca80f03a43bc39e4cc2c67dc99817b3c9f13b8a6"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7910",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-7910",
+      "base_commit": "27ac10de04697e2372d31db5548e56a7c6d9265d",
+      "head": "27ac10de04697e2372d31db5548e56a7c6d9265d"
+    },
+    {
+      "instance_id": "mwaskom__seaborn-3069",
+      "repo": "mwaskom/seaborn",
+      "repo_url": "https://github.com/mwaskom/seaborn.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/mwaskom__seaborn-3069",
+      "base_commit": "54cab15bdacfaa05a88fbc5502a5b322d99f148e",
+      "head": "54cab15bdacfaa05a88fbc5502a5b322d99f148e"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8035",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-8035",
+      "base_commit": "5e6da19f0e44a0ae83944fb6ce18f18f781e1a6e",
+      "head": "5e6da19f0e44a0ae83944fb6ce18f18f781e1a6e"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10466",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-10466",
+      "base_commit": "cab2d93076d0cca7c53fac885f927dde3e2a5fec",
+      "head": "cab2d93076d0cca7c53fac885f927dde3e2a5fec"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-7080",
+      "repo": "pylint-dev/pylint",
+      "repo_url": "https://github.com/pylint-dev/pylint.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pylint-dev__pylint-7080",
+      "base_commit": "3c5eca2ded3dd2b59ebaf23eb289453b5d2930f0",
+      "head": "3c5eca2ded3dd2b59ebaf23eb289453b5d2930f0"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7757",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-7757",
+      "base_commit": "212fd67b9f0b4fae6a7c3501fdf1a9a5b2801329",
+      "head": "212fd67b9f0b4fae6a7c3501fdf1a9a5b2801329"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-9711",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-9711",
+      "base_commit": "81a4fd973d4cfcb25d01a7b0be62cdb28f82406d",
+      "head": "81a4fd973d4cfcb25d01a7b0be62cdb28f82406d"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10449",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-10449",
+      "base_commit": "36367765fe780f962bba861bf368a765380bbc68",
+      "head": "36367765fe780f962bba861bf368a765380bbc68"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-11510",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-11510",
+      "base_commit": "6cb783c0024a873722952a67ebb9f41771c8eb6d",
+      "head": "6cb783c0024a873722952a67ebb9f41771c8eb6d"
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8459",
+      "repo": "sphinx-doc/sphinx",
+      "repo_url": "https://github.com/sphinx-doc/sphinx.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/sphinx-doc__sphinx-8459",
+      "base_commit": "68aa4fb29e7dfe521749e1e14f750d7afabb3481",
+      "head": "68aa4fb29e7dfe521749e1e14f750d7afabb3481"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-6386",
+      "repo": "pylint-dev/pylint",
+      "repo_url": "https://github.com/pylint-dev/pylint.git",
+      "repo_dir": "/Users/romel/Documents/GitHub/opencode/data/SWE-Explore-Bench/repos/pylint-dev__pylint-6386",
+      "base_commit": "754b487f4d892e3d4872b6fc7468a71db4e31c13",
+      "head": "754b487f4d892e3d4872b6fc7468a71db4e31c13"
+    }
+  ]
+}
