@@ -223,9 +223,9 @@ describe("SessionContextLedgerBenchmark", () => {
     expect(registry.entries.find((entry) => entry.id === "contextbench")?.status).toBe("integrated")
     expect(registry.entries.find((entry) => entry.id === "swe-contextbench")?.status).toBe("partial")
     expect(
-      registry.entries.find((entry) => entry.id === "contextbench")?.evidenceCannotSupport.some((item) =>
-        item.includes("solve rate"),
-      ),
+      registry.entries
+        .find((entry) => entry.id === "contextbench")
+        ?.evidenceCannotSupport.some((item) => item.includes("solve rate")),
     ).toBe(true)
     expect(registry.entries.every((entry) => entry.evidenceCanSupport.length > 0)).toBe(true)
     expect(registry.entries.every((entry) => entry.evidenceCannotSupport.length > 0)).toBe(true)
@@ -235,21 +235,23 @@ describe("SessionContextLedgerBenchmark", () => {
     const report = SessionContextLedgerBenchmark.analyzeCompactionSurvival({
       budget: 35,
       policy: "official-frontier",
-      cases: [{
-        instance_id: "compaction-api-stability",
-        context: [
-          "[System update]: Keep public API stable in src/api.ts.",
-          "[User]: Fix the fallback behavior without changing loadConfig().",
-          `[Tool result]: ${"dependency install noise ".repeat(80)}`,
-          "[Shell]: bun test tests/api.test.ts\nFAILED tests/api.test.ts expected src/api.ts to preserve stable response",
-          "[Assistant]: Next inspect README.md for unrelated docs cleanup.",
-        ],
-        gold: [
-          { id: "constraint", category: "constraint", text: "Keep public API stable", file: "src/api.ts" },
-          { id: "latest-test", category: "latest-test", text: "FAILED tests/api.test.ts", file: "tests/api.test.ts" },
-          { id: "active-file", category: "file", file: "src/api.ts" },
-        ],
-      }],
+      cases: [
+        {
+          instance_id: "compaction-api-stability",
+          context: [
+            "[System update]: Keep public API stable in src/api.ts.",
+            "[User]: Fix the fallback behavior without changing loadConfig().",
+            `[Tool result]: ${"dependency install noise ".repeat(80)}`,
+            "[Shell]: bun test tests/api.test.ts\nFAILED tests/api.test.ts expected src/api.ts to preserve stable response",
+            "[Assistant]: Next inspect README.md for unrelated docs cleanup.",
+          ],
+          gold: [
+            { id: "constraint", category: "constraint", text: "Keep public API stable", file: "src/api.ts" },
+            { id: "latest-test", category: "latest-test", text: "FAILED tests/api.test.ts", file: "tests/api.test.ts" },
+            { id: "active-file", category: "file", file: "src/api.ts" },
+          ],
+        },
+      ],
     })
 
     const raw = report.rows.find((row) => row.variant === "raw-tail")
@@ -257,7 +259,7 @@ describe("SessionContextLedgerBenchmark", () => {
     const combined = report.rows.find((row) => row.variant === "context-ledger-plus-tail")
     expect(raw?.survived).not.toContain("constraint")
     expect(ledger?.survived).toContain("constraint")
-    expect((combined?.recall ?? 0)).toBeGreaterThan(raw?.recall ?? 0)
+    expect(combined?.recall ?? 0).toBeGreaterThan(raw?.recall ?? 0)
     expect(report.summaries.find((summary) => summary.variant === "context-ledger-plus-tail")?.recall).toBeGreaterThan(
       report.summaries.find((summary) => summary.variant === "raw-tail")?.recall ?? 0,
     )
@@ -286,8 +288,8 @@ describe("SessionContextLedgerBenchmark", () => {
     ])
   })
 
-	  test("injects top similar prior experience records as optional context", () => {
-	    const [enriched] = SessionContextLedgerBenchmark.withExperienceReplay(
+  test("injects top similar prior experience records as optional context", () => {
+    const [enriched] = SessionContextLedgerBenchmark.withExperienceReplay(
       [
         {
           instance_id: "current-parser-bug",
@@ -337,8 +339,8 @@ describe("SessionContextLedgerBenchmark", () => {
     expect(enriched?.events[0]?.id).toContain("old-parser-fallback")
     expect(enriched?.events.some((entry) => entry.id.includes("unrelated-ui"))).toBe(false)
     expect(enriched?.events[0]?.files).toEqual(["src/parser.ts"])
-	    expect(SessionContextLedger.render(enriched?.events ?? [])).toContain("## Reusable Experience")
-	  })
+    expect(SessionContextLedger.render(enriched?.events ?? [])).toContain("## Reusable Experience")
+  })
 
   test("converts SWE-ContextBench rows into relationship-filtered experience records", () => {
     const rows = SessionContextLedgerBenchmark.parseSWEContextBenchTaskJsonl(
@@ -347,11 +349,13 @@ describe("SessionContextLedgerBenchmark", () => {
           repo: "acme/parser",
           instance_id: "exp-parser",
           base_commit: "abc123",
-          patch: "diff --git a/src/parser.ts b/src/parser.ts\n--- a/src/parser.ts\n+++ b/src/parser.ts\n@@ -1,1 +1,1 @@\n-old\n+new\n",
-          test_patch: "diff --git a/tests/parser.test.ts b/tests/parser.test.ts\nnew file mode 100644\n--- /dev/null\n+++ b/tests/parser.test.ts\n@@ -0,0 +1,1 @@\n+test('fallback')\n",
+          patch:
+            "diff --git a/src/parser.ts b/src/parser.ts\n--- a/src/parser.ts\n+++ b/src/parser.ts\n@@ -1,1 +1,1 @@\n-old\n+new\n",
+          test_patch:
+            "diff --git a/tests/parser.test.ts b/tests/parser.test.ts\nnew file mode 100644\n--- /dev/null\n+++ b/tests/parser.test.ts\n@@ -0,0 +1,1 @@\n+test('fallback')\n",
           problem_statement: "Parser fallback drops empty input.",
           hints_text: null,
-          FAIL_TO_PASS: "[\"tests/parser.test.ts::fallback\"]",
+          FAIL_TO_PASS: '["tests/parser.test.ts::fallback"]',
           PASS_TO_PASS: "[]",
         },
         {
@@ -360,7 +364,9 @@ describe("SessionContextLedgerBenchmark", () => {
           patch: "diff --git a/src/ui.ts b/src/ui.ts\n--- a/src/ui.ts\n+++ b/src/ui.ts\n",
           problem_statement: "Unrelated UI task.",
         },
-      ].map((row) => JSON.stringify(row)).join("\n"),
+      ]
+        .map((row) => JSON.stringify(row))
+        .join("\n"),
     )
     const relationships = SessionContextLedgerBenchmark.parseSWEContextBenchRelationshipJsonl(
       `${JSON.stringify({
@@ -383,7 +389,7 @@ describe("SessionContextLedgerBenchmark", () => {
     expect(records[0]?.summary).toContain("tests/parser.test.ts::fallback")
   })
 
-	  test("reports paired experience replay deltas", () => {
+  test("reports paired experience replay deltas", () => {
     const report = SessionContextLedgerBenchmark.analyzeExperienceReplay(
       [
         {
@@ -1176,7 +1182,10 @@ describe("SessionContextLedgerBenchmark", () => {
     const fileFixed = minimaxPortfolio.fixedPolicies.find((policy) => policy.policy === "file-frontier")
 
     expect(eventPortfolio.target).toBe("event-f1")
-    expect(eventPortfolio.budgets.map((budget) => budget.selectedPolicy)).toEqual(["relevance-frontier", "file-frontier"])
+    expect(eventPortfolio.budgets.map((budget) => budget.selectedPolicy)).toEqual([
+      "relevance-frontier",
+      "file-frontier",
+    ])
     expect(eventPortfolio.portfolio.selectedPolicyCounts).toEqual([
       { policy: "relevance-frontier", budgets: 1 },
       { policy: "file-frontier", budgets: 1 },
@@ -1269,9 +1278,9 @@ describe("SessionContextLedgerBenchmark", () => {
     expect(
       converted.events.find((item) => item.id === "SWE-Bench-Verified__python__bug__abc123:gold:0")?.recoverability,
     ).toBe("medium")
-    expect(converted.events.find((item) => item.id === "SWE-Bench-Verified__python__bug__abc123:gold:0")?.spans).toEqual(
-      [{ file: "src/config.py", start: 10, end: 20 }],
-    )
+    expect(
+      converted.events.find((item) => item.id === "SWE-Bench-Verified__python__bug__abc123:gold:0")?.spans,
+    ).toEqual([{ file: "src/config.py", start: 10, end: 20 }])
     expect(converted.events.some((item) => item.id.includes("test-code-context"))).toBe(false)
     expect(goldRow).toMatchObject({
       inst_id: "SWE-Bench-Verified__python__bug__abc123",
@@ -1632,7 +1641,10 @@ describe("SessionContextLedgerBenchmark", () => {
         },
       },
     ])
-    const policies = ["official-frontier", "action-aware-frontier"] satisfies readonly SessionContextLedger.SelectionPolicy[]
+    const policies = [
+      "official-frontier",
+      "action-aware-frontier",
+    ] satisfies readonly SessionContextLedger.SelectionPolicy[]
     const results = policies.map((policy) =>
       SessionContextLedgerBenchmark.evaluateCase({
         item: converted,
@@ -1758,15 +1770,14 @@ describe("SessionContextLedgerBenchmark", () => {
     }))
 
     expect(converted.benchmark).toBe("swe-explore")
-    expect(converted.gold_ids).toEqual([
-      "example__repo-42:swe-explore:core:0",
-      "example__repo-42:swe-explore:core:1",
-    ])
+    expect(converted.gold_ids).toEqual(["example__repo-42:swe-explore:core:0", "example__repo-42:swe-explore:core:1"])
     expect(converted.gold_files).toEqual(["src/a.ts", "src/b.ts"])
     expect(converted.events.map((event) => event.files[0])).toEqual(["tests/a.test.ts", "src/b.ts", "src/a.ts"])
     expect(converted.events.find((event) => event.files[0] === "src/a.ts")?.tokens).toBe(6)
     expect(converted.events.some((event) => event.files[0] === "docs/a.md")).toBe(false)
-    expect(converted.events.filter((event) => converted.gold_ids.includes(event.id)).flatMap((event) => event.spans ?? [])).toEqual([
+    expect(
+      converted.events.filter((event) => converted.gold_ids.includes(event.id)).flatMap((event) => event.spans ?? []),
+    ).toEqual([
       { file: "src/b.ts", start: 1, end: 2 },
       { file: "src/a.ts", start: 10, end: 15 },
     ])
@@ -1854,9 +1865,7 @@ describe("SessionContextLedgerBenchmark", () => {
           { path: "src/main.ts", start: 5, end: 8, text: "export function parseWidget() {}" },
           { path: "src/noise.ts", start: 1, end: 20, text: "noise" },
         ],
-        example__missing: [
-          { path: "src/noise.ts", start: 1, end: 5, text: "noise" },
-        ],
+        example__missing: [{ path: "src/noise.ts", start: 1, end: 5, text: "noise" }],
       },
     })
 
@@ -2051,10 +2060,12 @@ describe("SessionContextLedgerBenchmark", () => {
         repo: "acme/parser",
         instance_id: "exp-parser",
         base_commit: "abc123",
-        patch: "diff --git a/src/parser.ts b/src/parser.ts\n--- a/src/parser.ts\n+++ b/src/parser.ts\n@@ -1,1 +1,1 @@\n-old\n+new\n",
-        test_patch: "diff --git a/tests/parser.test.ts b/tests/parser.test.ts\n--- a/tests/parser.test.ts\n+++ b/tests/parser.test.ts\n@@ -1,1 +1,1 @@\n-old\n+new\n",
+        patch:
+          "diff --git a/src/parser.ts b/src/parser.ts\n--- a/src/parser.ts\n+++ b/src/parser.ts\n@@ -1,1 +1,1 @@\n-old\n+new\n",
+        test_patch:
+          "diff --git a/tests/parser.test.ts b/tests/parser.test.ts\n--- a/tests/parser.test.ts\n+++ b/tests/parser.test.ts\n@@ -1,1 +1,1 @@\n-old\n+new\n",
         problem_statement: "Parser fallback drops empty input.",
-        FAIL_TO_PASS: "[\"tests/parser.test.ts::fallback\"]",
+        FAIL_TO_PASS: '["tests/parser.test.ts::fallback"]',
         PASS_TO_PASS: "[]",
       })}\n`,
     )
@@ -2087,7 +2098,9 @@ describe("SessionContextLedgerBenchmark", () => {
     const emitExit = await emitProc.exited
     const emitStderr = await new Response(emitProc.stderr).text()
     expect(emitExit, emitStderr).toBe(0)
-    const [generated] = SessionContextLedgerBenchmark.parseExperienceJsonl(readFileSync(generatedExperiencePath, "utf8"))
+    const [generated] = SessionContextLedgerBenchmark.parseExperienceJsonl(
+      readFileSync(generatedExperiencePath, "utf8"),
+    )
     expect(generated?.id).toBe("exp-parser")
     expect(generated?.files).toEqual(["src/parser.ts", "tests/parser.test.ts"])
 
@@ -2178,20 +2191,16 @@ describe("SessionContextLedgerBenchmark", () => {
     const report = JSON.parse(readFileSync(reportPath, "utf8"))
     expect(report.policy).toBe("official-frontier")
     expect(report.variants).toEqual(["raw-tail", "context-ledger", "context-ledger-plus-tail"])
-    expect(report.summaries.find((summary: { variant: string }) => summary.variant === "context-ledger")?.recall).toBeGreaterThan(0)
+    expect(
+      report.summaries.find((summary: { variant: string }) => summary.variant === "context-ledger")?.recall,
+    ).toBeGreaterThan(0)
   })
 
   test("CLI can emit the benchmark registry", async () => {
     const dir = mkdtempSync(join(tmpdir(), "context-ledger-benchmark-registry-cli-"))
     const reportPath = join(dir, "benchmark-registry.json")
     const proc = Bun.spawn({
-      cmd: [
-        "bun",
-        "run",
-        "script/context-ledger-benchmark.ts",
-        "--benchmark-registry-output",
-        reportPath,
-      ],
+      cmd: ["bun", "run", "script/context-ledger-benchmark.ts", "--benchmark-registry-output", reportPath],
       cwd: process.cwd(),
       stdout: "pipe",
       stderr: "pipe",
@@ -2329,7 +2338,10 @@ describe("SessionContextLedgerBenchmark", () => {
     expect(merged.results.map((item: { ranker: string }) => item.ranker)).toEqual(["bm25", "structural", "hybrid-rrf"])
     expect(merged.bestByBudget[0]?.best.ranker).toBe("hybrid-rrf")
     expect(merged.comparisons.map((item: { ranker: string }) => item.ranker)).toEqual(["bm25", "hybrid-rrf"])
-    expect(merged.caseComparisons.map((item: { ranker: string }) => item.ranker).toSorted()).toEqual(["bm25", "hybrid-rrf"])
+    expect(merged.caseComparisons.map((item: { ranker: string }) => item.ranker).toSorted()).toEqual([
+      "bm25",
+      "hybrid-rrf",
+    ])
     expect(merged.gates.map((item: { ranker: string }) => item.ranker).toSorted()).toEqual(["bm25", "hybrid-rrf"])
   })
 
@@ -2446,7 +2458,9 @@ describe("SessionContextLedgerBenchmark", () => {
         { instance_id: "owner__alpha-2", repo: "owner/alpha", problem_statement: "alpha second" },
         { instance_id: "owner__beta-3", repo: "owner/beta", problem_statement: "beta" },
         { instance_id: "owner__gamma-4", repo: "owner/gamma", problem_statement: "gamma" },
-      ].map((item) => JSON.stringify(item)).join("\n")}\n`,
+      ]
+        .map((item) => JSON.stringify(item))
+        .join("\n")}\n`,
     )
     const proc = Bun.spawn({
       cmd: [
@@ -2477,10 +2491,7 @@ describe("SessionContextLedgerBenchmark", () => {
     const manifest = JSON.parse(readFileSync(splitPath, "utf8"))
     expect(manifest.repoCount).toBe(4)
     expect(manifest.sourceMapCoverage).toBe(4)
-    expect(manifest.splits.map((split: { label: string }) => split.label)).toEqual([
-      "broad50-dev",
-      "broad50-heldout",
-    ])
+    expect(manifest.splits.map((split: { label: string }) => split.label)).toEqual(["broad50-dev", "broad50-heldout"])
     const [dev, heldout] = manifest.splits
     const devRepos = new Set(dev.repos)
     expect(heldout.repos.every((repo: string) => !devRepos.has(repo))).toBe(true)
@@ -2662,7 +2673,11 @@ describe("SessionContextLedgerBenchmark", () => {
       manifestPath,
       [
         JSON.stringify({ instance_id: "owner__repo-first", export_path: "first-export.json", session_id: "ses_first" }),
-        JSON.stringify({ instance_id: "owner__repo-second", export_path: "second-export.json", session_id: "ses_second" }),
+        JSON.stringify({
+          instance_id: "owner__repo-second",
+          export_path: "second-export.json",
+          session_id: "ses_second",
+        }),
       ].join("\n") + "\n",
     )
     await Bun.write(
@@ -2843,7 +2858,9 @@ describe("SessionContextLedgerBenchmark", () => {
             },
           ],
         },
-      ].map((row) => JSON.stringify(row)).join("\n") + "\n",
+      ]
+        .map((row) => JSON.stringify(row))
+        .join("\n") + "\n",
     )
     await Bun.write(
       goldPath,
@@ -2916,7 +2933,10 @@ describe("SessionContextLedgerBenchmark", () => {
       resumed: true,
     })
     expect("title" in contextLedgerTurns[1]).toBe(false)
-    const exportManifest = readFileSync(exportManifestPath, "utf8").trim().split(/\r?\n/).map((line) => JSON.parse(line))
+    const exportManifest = readFileSync(exportManifestPath, "utf8")
+      .trim()
+      .split(/\r?\n/)
+      .map((line) => JSON.parse(line))
     expect(exportManifest.map((row) => row.session_id)).toEqual(["ses_fake_baseline", "ses_fake_contextledger"])
     expect(exportManifest[1]?.export_path).toBe("runs/owner__repo-live-contextledger.export.json")
     expect(exportManifest[1]?.label).toBe("fake live contextledger")
@@ -2967,23 +2987,49 @@ describe("SessionContextLedgerBenchmark", () => {
       ],
       passed: true,
     })
-    expect(runReport.rows[1].commandChecks.checks[0].stdoutPath).toBe("runs/owner__repo-live-contextledger.command-0.stdout")
-    expect(runReport.rows[1].commandChecks.checks[0].stderrPath).toBe("runs/owner__repo-live-contextledger.command-0.stderr")
+    expect(runReport.rows[1].commandChecks.checks[0].stdoutPath).toBe(
+      "runs/owner__repo-live-contextledger.command-0.stdout",
+    )
+    expect(runReport.rows[1].commandChecks.checks[0].stderrPath).toBe(
+      "runs/owner__repo-live-contextledger.command-0.stderr",
+    )
     expect(runReport.summaries.map((row: { label: string; lineF1: number }) => [row.label, row.lineF1])).toEqual([
       ["fake live baseline", 1],
       ["fake live contextledger", 1],
     ])
-    expect(runReport.summaries.map((row: { label: string; answerPassRate: number }) => [row.label, row.answerPassRate])).toEqual([
+    expect(
+      runReport.summaries.map((row: { label: string; answerPassRate: number }) => [row.label, row.answerPassRate]),
+    ).toEqual([
       ["fake live baseline", 1],
       ["fake live contextledger", 1],
     ])
-    expect(runReport.summaries.map((row: { label: string; fileCheckPassRate: number }) => [row.label, row.fileCheckPassRate])).toEqual([
+    expect(
+      runReport.summaries.map((row: { label: string; fileCheckPassRate: number }) => [
+        row.label,
+        row.fileCheckPassRate,
+      ]),
+    ).toEqual([
       ["fake live baseline", 1],
       ["fake live contextledger", 1],
     ])
-    expect(runReport.summaries.map((row: { label: string; commandCheckPassRate: number }) => [row.label, row.commandCheckPassRate])).toEqual([
+    expect(
+      runReport.summaries.map((row: { label: string; commandCheckPassRate: number }) => [
+        row.label,
+        row.commandCheckPassRate,
+      ]),
+    ).toEqual([
       ["fake live baseline", 1],
       ["fake live contextledger", 1],
+    ])
+    expect(
+      runReport.summaries.map((row: { label: string; meanInputTokens: number; meanCacheReadTokens: number }) => [
+        row.label,
+        row.meanInputTokens,
+        row.meanCacheReadTokens,
+      ]),
+    ).toEqual([
+      ["fake live baseline", 100, 20],
+      ["fake live contextledger", 120, 20],
     ])
     expect(runReport.pairedComparisons).toEqual([
       {
@@ -3000,6 +3046,11 @@ describe("SessionContextLedgerBenchmark", () => {
           answerPassed: 0,
           fileChecksPassed: 0,
           commandChecksPassed: 0,
+          inputTokens: 20,
+          outputTokens: 0,
+          reasoningTokens: 0,
+          cacheReadTokens: 0,
+          cacheWriteTokens: 0,
         },
       },
     ])
@@ -3031,7 +3082,10 @@ describe("SessionContextLedgerBenchmark", () => {
         },
       ],
     })
-    await Bun.write(baselineExportPath, `${JSON.stringify(exportJson("ses_fake_baseline", "Preserve KEEP_ALPHA only."))}\n`)
+    await Bun.write(
+      baselineExportPath,
+      `${JSON.stringify(exportJson("ses_fake_baseline", "Preserve KEEP_ALPHA only."))}\n`,
+    )
     await Bun.write(
       contextLedgerExportPath,
       `${JSON.stringify(exportJson("ses_fake_contextledger", "Preserve KEEP_ALPHA and src/target.ts."))}\n`,
@@ -3051,7 +3105,9 @@ describe("SessionContextLedgerBenchmark", () => {
           session_id: "ses_fake_contextledger",
           label: "contextledger",
         },
-      ].map((row) => JSON.stringify(row)).join("\n") + "\n",
+      ]
+        .map((row) => JSON.stringify(row))
+        .join("\n") + "\n",
     )
     await Bun.write(
       goldPath,
@@ -3158,7 +3214,10 @@ describe("SessionContextLedgerBenchmark", () => {
     expect(existsSync(manifestPath)).toBe(true)
     expect(existsSync(goldPath)).toBe(true)
     expect(existsSync(continuationManifestPath)).toBe(true)
-    const rows = readFileSync(manifestPath, "utf8").trim().split(/\r?\n/).map((line) => JSON.parse(line))
+    const rows = readFileSync(manifestPath, "utf8")
+      .trim()
+      .split(/\r?\n/)
+      .map((line) => JSON.parse(line))
     expect(rows.map((row) => row.scenario_id)).toEqual(["payment-retry", "parser-fallback"])
     expect(rows[0].continuation_answer_contains).toContain("attempts=2")
     expect(rows[0].precision_config.compaction.context_ledger).toEqual({
@@ -3168,10 +3227,18 @@ describe("SessionContextLedgerBenchmark", () => {
       mode: "replace",
     })
     expect(existsSync(rows[1].precision_import_path)).toBe(true)
-    const goldRows = readFileSync(goldPath, "utf8").trim().split(/\r?\n/).map((line) => JSON.parse(line))
+    const goldRows = readFileSync(goldPath, "utf8")
+      .trim()
+      .split(/\r?\n/)
+      .map((line) => JSON.parse(line))
     expect(goldRows).toHaveLength(2)
-    expect(readFileSync(rows[0].baseline_import_path, "utf8")).toContain("ses_ctxledger_noisy_payment_retry_baseline_5678")
-    const continuationRows = readFileSync(continuationManifestPath, "utf8").trim().split(/\r?\n/).map((line) => JSON.parse(line))
+    expect(readFileSync(rows[0].baseline_import_path, "utf8")).toContain(
+      "ses_ctxledger_noisy_payment_retry_baseline_5678",
+    )
+    const continuationRows = readFileSync(continuationManifestPath, "utf8")
+      .trim()
+      .split(/\r?\n/)
+      .map((line) => JSON.parse(line))
     expect(continuationRows).toHaveLength(4)
     expect(continuationRows[0]).toMatchObject({
       run_id: "payment-retry-baseline-continuation",
@@ -3293,7 +3360,9 @@ describe("SessionContextLedgerBenchmark", () => {
             "src/main.py": [{ traj_path: "traj.json", step_idx: 2, start: 5, end: 8 }],
           },
         },
-      ].map((row) => JSON.stringify(row)).join("\n") + "\n",
+      ]
+        .map((row) => JSON.stringify(row))
+        .join("\n") + "\n",
     )
     const proc = Bun.spawn({
       cmd: [
@@ -3464,7 +3533,10 @@ describe("SessionContextLedgerBenchmark", () => {
     const [converted] = SessionContextLedgerBenchmark.parseJsonl(readFileSync(casesPath, "utf8"))
     const officialSummary = JSON.parse(readFileSync(officialSummaryPath, "utf8"))
     const oracleReport = JSON.parse(readFileSync(oracleReportPath, "utf8"))
-    const [sourceOutput] = readFileSync(sourceMapOutputPath, "utf8").trim().split(/\r?\n/).map((line) => JSON.parse(line))
+    const [sourceOutput] = readFileSync(sourceMapOutputPath, "utf8")
+      .trim()
+      .split(/\r?\n/)
+      .map((line) => JSON.parse(line))
     expect(converted?.query).toContain("parse_config")
     expect(converted?.events.some((event) => event.id.includes(":core:"))).toBe(false)
     expect(converted?.events.some((event) => event.id.includes(":optional:"))).toBe(false)
@@ -3568,7 +3640,9 @@ describe("SessionContextLedgerBenchmark", () => {
     )
     expect(dependencyCase?.baselineRanker).toBe("lexical")
     expect(dependencyCase?.instanceID).toBe("cli__swe-explore-repo")
-    expect(rankerSweep.caseComparisons.some((item: { ranker: string }) => item.ranker === "anchored-neighbor")).toBe(true)
+    expect(rankerSweep.caseComparisons.some((item: { ranker: string }) => item.ranker === "anchored-neighbor")).toBe(
+      true,
+    )
     expect(rankerSweep.caseComparisons.some((item: { ranker: string }) => item.ranker === "hybrid-rrf")).toBe(true)
     expect(["win", "loss", "tie"]).toContain(rankerSweep.caseComparisons[0]?.outcome)
     expect(typeof rankerSweep.caseComparisons[0]?.deltas.f1).toBe("number")
@@ -3839,22 +3913,13 @@ describe("SessionContextLedgerBenchmark", () => {
     mkdirSync(join(repoDir, "z_target"), { recursive: true })
     await Bun.write(
       join(repoDir, "a_noise/first.py"),
-      [
-        "public ",
-        "",
-        "",
-        "def unrelated():",
-        "    return 'noise'",
-      ].join("\n"),
+      ["public ", "", "", "def unrelated():", "    return 'noise'"].join("\n"),
     )
     await Bun.write(
       join(repoDir, "z_target/opaque.py"),
-      [
-        "def frobnicate_uuid(token):",
-        "    if token is None:",
-        "        return None",
-        "    return token.strip()",
-      ].join("\n"),
+      ["def frobnicate_uuid(token):", "    if token is None:", "        return None", "    return token.strip()"].join(
+        "\n",
+      ),
     )
     await Bun.write(
       sourceMapPath,

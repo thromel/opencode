@@ -17,11 +17,11 @@ Artifact root: `/tmp/ctxledger-noisy-live-gpt55-20260615130746/`
 
 ## Result
 
-| Scenario | Baseline input | Precision input | Input delta | Baseline summary tokens | Precision summary tokens | Claim recall |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| payment retry | 3834 | 719 | -3115 | 274 | 249 | both 6/6 |
-| cache invalidation | 3889 | 715 | -3174 | 360 | 330 | both 6/6 |
-| parser fallback | 3899 | 710 | -3189 | 462 | 318 | both 6/6 |
+| Scenario           | Baseline input | Precision input | Input delta | Baseline summary tokens | Precision summary tokens | Claim recall |
+| ------------------ | -------------: | --------------: | ----------: | ----------------------: | -----------------------: | -----------: |
+| payment retry      |           3834 |             719 |       -3115 |                     274 |                      249 |     both 6/6 |
+| cache invalidation |           3889 |             715 |       -3174 |                     360 |                      330 |     both 6/6 |
+| parser fallback    |           3899 |             710 |       -3189 |                     462 |                      318 |     both 6/6 |
 
 Aggregate:
 
@@ -35,4 +35,6 @@ Interpretation: precision replacement preserved every scored claim while using a
 
 ## Boundary
 
-This is a bounded live compaction-quality and token-efficiency result, not solve-rate evidence. A post-compaction continuation run needs a CLI resume/reporting fix: `opencode run --session ... --format json` completed a GPT-5.5 answer and stored the correct text in the temp DB, but the process remained alive after `exiting loop` and emitted no JSON stdout before timeout.
+This is a bounded live compaction-quality and token-efficiency result, not solve-rate evidence. The original follow-up continuation attempt exposed a CLI resume/reporting issue: `opencode run --session ... --format json` completed a GPT-5.5 answer and stored the correct text in the temp DB, but the process remained alive after `exiting loop` and emitted no JSON stdout before timeout.
+
+Follow-up: `reports/live_continuation_gpt55_20260615.md` documents the Gate 0 CLI fix and the first successful six-row live post-compaction continuation A/B.

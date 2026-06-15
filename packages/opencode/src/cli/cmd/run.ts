@@ -66,6 +66,10 @@ type SessionInfo = {
   directory?: string
 }
 
+type RunEventStream = Awaited<ReturnType<OpencodeClient["event"]["subscribe"]>>
+type SessionMessages = NonNullable<Awaited<ReturnType<OpencodeClient["session"]["messages"]>>["data"]>
+type SessionPart = SessionMessages[number]["parts"][number]
+
 function inline(info: Inline) {
   const suffix = info.description ? UI.Style.TEXT_DIM + ` ${info.description}` + UI.Style.TEXT_NORMAL : ""
   UI.println(UI.Style.TEXT_NORMAL + info.icon, UI.Style.TEXT_NORMAL + info.title + suffix)
@@ -81,6 +85,16 @@ function block(info: Inline, output?: string) {
 
 function formatRunError(error: unknown) {
   return FormatError(error) ?? FormatUnknownError(error)
+}
+
+function shouldDropRunEventForTest(type: string) {
+  const raw = process.env.OPENCODE_TEST_RUN_DROP_EVENTS
+  if (!raw) return false
+  return raw
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .includes(type)
 }
 
 async function tool(part: ToolPart) {
@@ -609,6 +623,8 @@ export const RunCommand = effectCmd({
           process.exit(1)
         }
         const sessionID = sess.id
+        const emittedParts = new Set<string>()
+        let promptSettled = false
 
         function emit(type: string, data: Record<string, unknown>) {
           if (args.format === "json") {
@@ -625,130 +641,209 @@ export const RunCommand = effectCmd({
           return false
         }
 
+        function partKey(part: SessionPart) {
+          if (!part.id) return
+          return `${part.messageID}:${part.id}`
+        }
+
+        function markEmitted(part: SessionPart) {
+          const key = partKey(part)
+          if (key) emittedParts.add(key)
+        }
+
+        function wasEmitted(part: SessionPart) {
+          const key = partKey(part)
+          return key ? emittedParts.has(key) : false
+        }
+
+        async function renderPart(
+          part: SessionPart,
+          options: { source: "stream" | "stored"; toggles?: Map<string, boolean> },
+        ) {
+          if ("sessionID" in part && part.sessionID !== sessionID) return
+          if (wasEmitted(part)) return
+
+          if (part.type === "tool" && (part.state.status === "completed" || part.state.status === "error")) {
+            markEmitted(part)
+            if (emit("tool_use", { part })) return
+            if (part.state.status === "completed") {
+              await tool(part)
+              return
+            }
+            await toolError(part)
+            UI.error(part.state.error)
+            return
+          }
+
+          if (
+            options.source === "stream" &&
+            part.type === "tool" &&
+            part.tool === "task" &&
+            part.state.status === "running" &&
+            args.format !== "json"
+          ) {
+            if (options.toggles?.get(part.id) === true) return
+            await tool(part)
+            options.toggles?.set(part.id, true)
+            return
+          }
+
+          if (part.type === "step-start") {
+            markEmitted(part)
+            if (emit("step_start", { part })) return
+            return
+          }
+
+          if (part.type === "step-finish") {
+            markEmitted(part)
+            if (emit("step_finish", { part })) return
+            return
+          }
+
+          if (part.type === "text" && part.time?.end) {
+            markEmitted(part)
+            if (emit("text", { part })) return
+            const text = part.text.trim()
+            if (!text) return
+            if (!process.stdout.isTTY) {
+              process.stdout.write(text + EOL)
+              return
+            }
+            UI.empty()
+            UI.println(text)
+            UI.empty()
+            return
+          }
+
+          if (part.type === "reasoning" && part.time?.end && thinking) {
+            markEmitted(part)
+            if (emit("reasoning", { part })) return
+            const text = part.text.trim()
+            if (!text) return
+            const line = `Thinking: ${text}`
+            if (process.stdout.isTTY) {
+              UI.empty()
+              UI.println(`${UI.Style.TEXT_DIM}\u001b[3m${line}\u001b[0m${UI.Style.TEXT_NORMAL}`)
+              UI.empty()
+              return
+            }
+            process.stdout.write(line + EOL)
+          }
+        }
+
+        async function sessionIdle(client: OpencodeClient) {
+          const result = await client.session.status().catch(() => undefined)
+          const status = result?.data?.[sessionID]
+          return !status || status.type === "idle"
+        }
+
+        async function flushStoredAssistantParts(client: OpencodeClient) {
+          const response = await client.session.messages({ sessionID }).catch(() => undefined)
+          const latestAssistant = response?.data?.findLast((msg) => msg.info.role === "assistant")
+          if (!latestAssistant) return
+
+          for (const part of latestAssistant.parts) {
+            await renderPart(part, { source: "stored" })
+          }
+        }
+
         // Consume one subscribed event stream for the active session and mirror it
         // to stdout/UI. `client` is passed explicitly because attach mode may
         // rebind the SDK to the session's directory after the subscription is
         // created, and replies issued from inside the loop must use that client.
-        async function loop(client: OpencodeClient, events: Awaited<ReturnType<typeof sdk.event.subscribe>>) {
+        async function loop(client: OpencodeClient, events: RunEventStream) {
           const toggles = new Map<string, boolean>()
           let error: string | undefined
+          const iterator = events.stream[Symbol.asyncIterator]()
+          let next = iterator.next()
 
-          for await (const event of events.stream) {
-            if (
-              event.type === "message.updated" &&
-              event.properties.sessionID === sessionID &&
-              event.properties.info.role === "assistant" &&
-              args.format !== "json" &&
-              toggles.get("start") !== true
-            ) {
-              UI.empty()
-              UI.println(`> ${event.properties.info.agent} · ${event.properties.info.modelID}`)
-              UI.empty()
-              toggles.set("start", true)
-            }
+          try {
+            while (true) {
+              const item = await Promise.race([
+                next.then(
+                  (result) => ({ type: "event" as const, result }),
+                  (err) => ({ type: "error" as const, err }),
+                ),
+                new Promise<{ type: "poll" }>((resolve) => setTimeout(() => resolve({ type: "poll" }), 250)),
+              ])
 
-            if (event.type === "message.part.updated") {
-              const part = event.properties.part
-              if (part.sessionID !== sessionID) continue
+              if (item.type === "poll") {
+                if (promptSettled && (await sessionIdle(client))) break
+                continue
+              }
 
-              if (part.type === "tool" && (part.state.status === "completed" || part.state.status === "error")) {
-                if (emit("tool_use", { part })) continue
-                if (part.state.status === "completed") {
-                  await tool(part)
-                  continue
+              if (item.type === "error") throw item.err
+
+              if (item.result.done) break
+
+              const event = item.result.value
+              next = iterator.next()
+              if (shouldDropRunEventForTest(event.type)) continue
+
+              if (
+                event.type === "message.updated" &&
+                event.properties.sessionID === sessionID &&
+                event.properties.info.role === "assistant" &&
+                args.format !== "json" &&
+                toggles.get("start") !== true
+              ) {
+                UI.empty()
+                UI.println(`> ${event.properties.info.agent} · ${event.properties.info.modelID}`)
+                UI.empty()
+                toggles.set("start", true)
+              }
+
+              if (event.type === "message.part.updated") {
+                const part = event.properties.part
+                await renderPart(part, { source: "stream", toggles })
+                continue
+              }
+
+              if (event.type === "session.error") {
+                const props = event.properties
+                if (props.sessionID !== sessionID || !props.error) continue
+                let err = String(props.error.name)
+                if ("data" in props.error && props.error.data && "message" in props.error.data) {
+                  err = String(props.error.data.message)
                 }
-                await toolError(part)
-                UI.error(part.state.error)
+                error = error ? error + EOL + err : err
+                if (emit("error", { error: props.error })) continue
+                UI.error(err)
               }
 
               if (
-                part.type === "tool" &&
-                part.tool === "task" &&
-                part.state.status === "running" &&
-                args.format !== "json"
+                event.type === "session.status" &&
+                event.properties.sessionID === sessionID &&
+                event.properties.status.type === "idle" &&
+                promptSettled
               ) {
-                if (toggles.get(part.id) === true) continue
-                await tool(part)
-                toggles.set(part.id, true)
+                break
               }
 
-              if (part.type === "step-start") {
-                if (emit("step_start", { part })) continue
-              }
+              if (event.type === "permission.asked") {
+                const permission = event.properties
+                if (permission.sessionID !== sessionID) continue
 
-              if (part.type === "step-finish") {
-                if (emit("step_finish", { part })) continue
-              }
-
-              if (part.type === "text" && part.time?.end) {
-                if (emit("text", { part })) continue
-                const text = part.text.trim()
-                if (!text) continue
-                if (!process.stdout.isTTY) {
-                  process.stdout.write(text + EOL)
-                  continue
+                if (args["dangerously-skip-permissions"]) {
+                  await client.permission.reply({
+                    requestID: permission.id,
+                    reply: "once",
+                  })
+                } else {
+                  UI.println(
+                    UI.Style.TEXT_WARNING_BOLD + "!",
+                    UI.Style.TEXT_NORMAL +
+                      `permission requested: ${permission.permission} (${permission.patterns.join(", ")}); auto-rejecting`,
+                  )
+                  await client.permission.reply({
+                    requestID: permission.id,
+                    reply: "reject",
+                  })
                 }
-                UI.empty()
-                UI.println(text)
-                UI.empty()
-              }
-
-              if (part.type === "reasoning" && part.time?.end && thinking) {
-                if (emit("reasoning", { part })) continue
-                const text = part.text.trim()
-                if (!text) continue
-                const line = `Thinking: ${text}`
-                if (process.stdout.isTTY) {
-                  UI.empty()
-                  UI.println(`${UI.Style.TEXT_DIM}\u001b[3m${line}\u001b[0m${UI.Style.TEXT_NORMAL}`)
-                  UI.empty()
-                  continue
-                }
-                process.stdout.write(line + EOL)
               }
             }
-
-            if (event.type === "session.error") {
-              const props = event.properties
-              if (props.sessionID !== sessionID || !props.error) continue
-              let err = String(props.error.name)
-              if ("data" in props.error && props.error.data && "message" in props.error.data) {
-                err = String(props.error.data.message)
-              }
-              error = error ? error + EOL + err : err
-              if (emit("error", { error: props.error })) continue
-              UI.error(err)
-            }
-
-            if (
-              event.type === "session.status" &&
-              event.properties.sessionID === sessionID &&
-              event.properties.status.type === "idle"
-            ) {
-              break
-            }
-
-            if (event.type === "permission.asked") {
-              const permission = event.properties
-              if (permission.sessionID !== sessionID) continue
-
-              if (args["dangerously-skip-permissions"]) {
-                await client.permission.reply({
-                  requestID: permission.id,
-                  reply: "once",
-                })
-              } else {
-                UI.println(
-                  UI.Style.TEXT_WARNING_BOLD + "!",
-                  UI.Style.TEXT_NORMAL +
-                    `permission requested: ${permission.permission} (${permission.patterns.join(", ")}); auto-rejecting`,
-                )
-                await client.permission.reply({
-                  requestID: permission.id,
-                  reply: "reject",
-                })
-              }
-            }
+          } finally {
+            await iterator.return?.()
           }
           return error
         }
@@ -767,8 +862,10 @@ export const RunCommand = effectCmd({
             process.exitCode = 1
           })
           async function finish() {
+            promptSettled = true
             if (args.attach) return
             const error = await completed
+            await flushStoredAssistantParts(client)
             if (error) process.exitCode = 1
           }
 

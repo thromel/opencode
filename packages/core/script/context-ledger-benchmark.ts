@@ -182,7 +182,10 @@ const args = parseArgs({
 const created = DateTime.makeUnsafe(0)
 const id = (value: string) => SessionMessage.ID.make(`msg_${value}`)
 const model = { providerID: ProviderV2.ID.make("openai"), id: ModelV2.ID.make("gpt-5.5") }
-const selectedPolicies = parsePolicies(args.values.policies ?? SessionContextLedger.SELECTION_POLICIES.join(","), "--policies")
+const selectedPolicies = parsePolicies(
+  args.values.policies ?? SessionContextLedger.SELECTION_POLICIES.join(","),
+  "--policies",
+)
 const sweExploreRankerGateMinimumGain = numberAtLeast(
   args.values["swe-explore-ranker-gate-epsilon"] ?? "0",
   "--swe-explore-ranker-gate-epsilon",
@@ -245,8 +248,14 @@ const SWE_EXPLORE_REPO_RANKERS = [
   "anchored-neighbor",
   "hybrid-rrf",
 ] as const
-type SWEExploreRepoRanker = typeof SWE_EXPLORE_REPO_RANKERS[number]
-const DEFAULT_SWE_EXPLORE_RANKER_SWEEP_RANKERS = ["lexical", "bm25", "structural", "structural-neighbor", "hybrid-rrf"] as const satisfies readonly SWEExploreRepoRanker[]
+type SWEExploreRepoRanker = (typeof SWE_EXPLORE_REPO_RANKERS)[number]
+const DEFAULT_SWE_EXPLORE_RANKER_SWEEP_RANKERS = [
+  "lexical",
+  "bm25",
+  "structural",
+  "structural-neighbor",
+  "hybrid-rrf",
+] as const satisfies readonly SWEExploreRepoRanker[]
 const CONTENT_STRUCTURAL_PREFILTER_BYTES = 96_000
 const CONTENT_BACKFILL_STRUCTURAL_SHARE = 0.8
 const SWE_EXPLORE_RANKER_SWEEP_FEATURE_KEYS = [
@@ -273,8 +282,14 @@ const SWE_EXPLORE_RANKER_COMPARISON_FEATURE_KEYS = [
   "baselineRetainedEventShare",
   "candidateNewEventShare",
 ] as const satisfies readonly (keyof SWEExploreRankerComparisonFeatures)[]
-const SWE_EXPLORE_RANKER_PORTFOLIO_TARGETS = ["f1", "recall", "precision", "first-useful-hit", "f1-first-useful"] as const
-type SWEExploreRankerPortfolioTarget = typeof SWE_EXPLORE_RANKER_PORTFOLIO_TARGETS[number]
+const SWE_EXPLORE_RANKER_PORTFOLIO_TARGETS = [
+  "f1",
+  "recall",
+  "precision",
+  "first-useful-hit",
+  "f1-first-useful",
+] as const
+type SWEExploreRankerPortfolioTarget = (typeof SWE_EXPLORE_RANKER_PORTFOLIO_TARGETS)[number]
 const STRUCTURAL_NEIGHBOR_MAX_SEEDS_PER_FILE = 24
 const STRUCTURAL_NEIGHBOR_MAX_LINE_GAP = 240
 const STRUCTURAL_NEIGHBOR_BONUS_PER_POINT = 0.35
@@ -329,15 +344,7 @@ const CODE_QUERY_STOP_WORDS = new Set([
   "using",
   "version",
 ])
-const IMPORT_KEYWORDS = new Set([
-  "as",
-  "default",
-  "export",
-  "from",
-  "import",
-  "require",
-  "type",
-])
+const IMPORT_KEYWORDS = new Set(["as", "default", "export", "from", "import", "require", "type"])
 
 const SWE_EXPLORE_ISSUE_DATASETS = {
   verified: { dataset: "princeton-nlp/SWE-bench_Verified", config: "default", split: "test" },
@@ -544,6 +551,11 @@ type OpenCodeRunReport = {
     readonly answerPassRate?: number
     readonly fileCheckPassRate?: number
     readonly commandCheckPassRate?: number
+    readonly meanInputTokens?: number
+    readonly meanOutputTokens?: number
+    readonly meanReasoningTokens?: number
+    readonly meanCacheReadTokens?: number
+    readonly meanCacheWriteTokens?: number
   }[]
   readonly pairedComparisons: readonly {
     readonly instanceID: string
@@ -559,6 +571,11 @@ type OpenCodeRunReport = {
       readonly answerPassed?: number
       readonly fileChecksPassed?: number
       readonly commandChecksPassed?: number
+      readonly inputTokens?: number
+      readonly outputTokens?: number
+      readonly reasoningTokens?: number
+      readonly cacheReadTokens?: number
+      readonly cacheWriteTokens?: number
     }
   }[]
 }
@@ -650,7 +667,8 @@ async function emitPredictions(predictions: readonly SessionContextLedgerBenchma
   if (args.values["prediction-output"]) await Bun.write(args.values["prediction-output"], output)
   else process.stdout.write(output)
   if (args.values["prediction-eval-output"]) {
-    if (!args.values["prediction-eval-gold"]) throw new Error("--prediction-eval-output requires --prediction-eval-gold")
+    if (!args.values["prediction-eval-gold"])
+      throw new Error("--prediction-eval-output requires --prediction-eval-gold")
     await Bun.write(
       args.values["prediction-eval-output"],
       `${JSON.stringify(
@@ -693,7 +711,12 @@ async function compactionSummaryInputFromManifestRow(
 
 async function emitNoisyCompactionFixtures(outputDir: string) {
   mkdirSync(outputDir, { recursive: true })
-  const timestamp = optionalIntegerAtLeast(args.values["noisy-compaction-fixtures-timestamp"], "--noisy-compaction-fixtures-timestamp", 0) ?? Date.now()
+  const timestamp =
+    optionalIntegerAtLeast(
+      args.values["noisy-compaction-fixtures-timestamp"],
+      "--noisy-compaction-fixtures-timestamp",
+      0,
+    ) ?? Date.now()
   const fixtures = SessionContextLedgerBenchmark.buildNoisyCompactionFixtures({
     timestamp,
     directory: realpathSync(process.cwd()),
@@ -774,7 +797,9 @@ function noisyContinuationRunManifestRow(input: {
     instance_id: `${input.fixture.instanceID}_continuation`,
     run_id: `${segment}-${isBaseline ? "baseline" : "precision"}-continuation`,
     title: isBaseline ? "baseline" : "ContextLedger-precision-replace",
-    dir: optionalStringField((isBaseline ? input.fixture.baseline : input.fixture.contextLedger).info, "directory") ?? process.cwd(),
+    dir:
+      optionalStringField((isBaseline ? input.fixture.baseline : input.fixture.contextLedger).info, "directory") ??
+      process.cwd(),
     model: "openai/gpt-5.5",
     variant: "high",
     extra_args: ["--pure", "--session", sessionID],
@@ -805,8 +830,10 @@ function noisyContinuationRunManifestRow(input: {
 
 async function runNoisyCompactionLiveManifest(manifestPath: string) {
   const rows = parseNoisyCompactionLiveManifestJsonl(await Bun.file(manifestPath).text())
-  if (rows.length === 0) throw new Error("--opencode-noisy-compaction-live-manifest must contain at least one JSONL row")
-  const outputDir = args.values["opencode-noisy-compaction-live-output-dir"] ?? join(dirname(manifestPath), "noisy-compaction-live")
+  if (rows.length === 0)
+    throw new Error("--opencode-noisy-compaction-live-manifest must contain at least one JSONL row")
+  const outputDir =
+    args.values["opencode-noisy-compaction-live-output-dir"] ?? join(dirname(manifestPath), "noisy-compaction-live")
   mkdirSync(outputDir, { recursive: true })
   const exportManifestPath = join(outputDir, "exports.jsonl")
   const summaryReportPath = join(outputDir, "summary-report.json")
@@ -814,11 +841,21 @@ async function runNoisyCompactionLiveManifest(manifestPath: string) {
   const dbPath = join(outputDir, "opencode-live.db")
   const baseCommand = parseOpenCodeRunCommand(
     args.values["opencode-noisy-compaction-live-command-json"] ??
-      JSON.stringify(["bun", "run", "--cwd", join(import.meta.dir, "../../opencode"), "--conditions=browser", "src/index.ts"]),
+      JSON.stringify([
+        "bun",
+        "run",
+        "--cwd",
+        join(import.meta.dir, "../../opencode"),
+        "--conditions=browser",
+        "src/index.ts",
+      ]),
     "--opencode-noisy-compaction-live-command-json",
   )
   const baseEnv = args.values["opencode-noisy-compaction-live-env-json"]
-    ? parseStringRecord(args.values["opencode-noisy-compaction-live-env-json"], "--opencode-noisy-compaction-live-env-json")
+    ? parseStringRecord(
+        args.values["opencode-noisy-compaction-live-env-json"],
+        "--opencode-noisy-compaction-live-env-json",
+      )
     : {}
   if (baseEnv.OPENCODE_CONFIG_CONTENT !== undefined) {
     throw new Error("--opencode-noisy-compaction-live-env-json cannot include OPENCODE_CONFIG_CONTENT")
@@ -832,7 +869,10 @@ async function runNoisyCompactionLiveManifest(manifestPath: string) {
     OPENCODE_SERVER_PASSWORD: baseEnv.OPENCODE_SERVER_PASSWORD ?? "",
   }
   const exportRows: SessionContextLedgerBenchmark.OpenCodeExportManifestRow[] = []
-  const reportRows: Omit<NoisyCompactionLiveReportRow, "summaryTokens" | "claimRecall" | "survivedClaims" | "missingClaims">[] = []
+  const reportRows: Omit<
+    NoisyCompactionLiveReportRow,
+    "summaryTokens" | "claimRecall" | "survivedClaims" | "missingClaims"
+  >[] = []
 
   for (const row of rows) {
     for (const lane of ["baseline", "precision"] as const) {
@@ -947,8 +987,11 @@ async function noisyCompactionLaneInput(
   lane: NoisyCompactionLiveLane,
   manifestPath: string,
 ) {
-  const importPath = resolveManifestPath(lane === "baseline" ? row.baseline_import_path : row.precision_import_path, manifestPath)
-  const exported = await Bun.file(importPath).json() as SessionContextLedgerBenchmark.OpenCodeExport
+  const importPath = resolveManifestPath(
+    lane === "baseline" ? row.baseline_import_path : row.precision_import_path,
+    manifestPath,
+  )
+  const exported = (await Bun.file(importPath).json()) as SessionContextLedgerBenchmark.OpenCodeExport
   return {
     lane,
     importPath,
@@ -978,10 +1021,19 @@ async function runOpenCodeManifest(manifestPath: string) {
   mkdirSync(dirname(exportManifestPath), { recursive: true })
   const baseCommand = parseOpenCodeRunCommand(
     args.values["opencode-run-command-json"] ??
-      JSON.stringify(["bun", "run", "--cwd", join(import.meta.dir, "../../opencode"), "--conditions=browser", "src/index.ts"]),
+      JSON.stringify([
+        "bun",
+        "run",
+        "--cwd",
+        join(import.meta.dir, "../../opencode"),
+        "--conditions=browser",
+        "src/index.ts",
+      ]),
   )
   const extraArgs = args.values["opencode-run-extra-args-json"]
-    ? parseOpenCodeStringArray(args.values["opencode-run-extra-args-json"], "--opencode-run-extra-args-json", { allowEmpty: true })
+    ? parseOpenCodeStringArray(args.values["opencode-run-extra-args-json"], "--opencode-run-extra-args-json", {
+        allowEmpty: true,
+      })
     : []
   const baseEnv = args.values["opencode-run-env-json"]
     ? parseStringRecord(args.values["opencode-run-env-json"], "--opencode-run-env-json")
@@ -1020,9 +1072,12 @@ async function runOpenCodeManifest(manifestPath: string) {
       )
       turnRuns.push(run)
       const nextSessionID = openCodeRunSessionID(run.stdout)
-      if (!nextSessionID) throw new Error(`Could not find OpenCode session ID in run output for ${row.instance_id} turn ${index + 1}`)
+      if (!nextSessionID)
+        throw new Error(`Could not find OpenCode session ID in run output for ${row.instance_id} turn ${index + 1}`)
       if (sessionID && nextSessionID !== sessionID) {
-        throw new Error(`OpenCode session changed from ${sessionID} to ${nextSessionID} for ${row.instance_id} turn ${index + 1}`)
+        throw new Error(
+          `OpenCode session changed from ${sessionID} to ${nextSessionID} for ${row.instance_id} turn ${index + 1}`,
+        )
       }
       sessionID = nextSessionID
     }
@@ -1120,7 +1175,8 @@ function openCodeRunPrompts(row: SessionContextLedgerBenchmark.OpenCodeRunManife
   const prompts = row.prompts ?? (row.prompt === undefined ? [] : [row.prompt])
   if (prompts.length === 0) throw new Error(`OpenCode run row ${row.instance_id} requires prompt or prompts`)
   const blankIndex = prompts.findIndex((prompt) => prompt.trim().length === 0)
-  if (blankIndex >= 0) throw new Error(`OpenCode run row ${row.instance_id} has an empty prompt at turn ${blankIndex + 1}`)
+  if (blankIndex >= 0)
+    throw new Error(`OpenCode run row ${row.instance_id} has an empty prompt at turn ${blankIndex + 1}`)
   return prompts
 }
 
@@ -1217,6 +1273,11 @@ function openCodeRunReportSummaries(rows: readonly OpenCodeRunReportRow[]): Open
       answerPassRate: metricAverage(items, (row) => answerScore(row.answer)),
       fileCheckPassRate: metricAverage(items, (row) => fileCheckScore(row.fileChecks)),
       commandCheckPassRate: metricAverage(items, (row) => commandCheckScore(row.commandChecks)),
+      meanInputTokens: metricAverage(items, (row) => row.tokens?.input),
+      meanOutputTokens: metricAverage(items, (row) => row.tokens?.output),
+      meanReasoningTokens: metricAverage(items, (row) => row.tokens?.reasoning),
+      meanCacheReadTokens: metricAverage(items, (row) => row.tokens?.cacheRead),
+      meanCacheWriteTokens: metricAverage(items, (row) => row.tokens?.cacheWrite),
     }
   })
 }
@@ -1243,7 +1304,15 @@ function openCodeRunReportComparisons(rows: readonly OpenCodeRunReportRow[]): Op
         ),
         answerPassed: metricDelta(answerScore(candidate.answer), answerScore(baseline.answer)),
         fileChecksPassed: metricDelta(fileCheckScore(candidate.fileChecks), fileCheckScore(baseline.fileChecks)),
-        commandChecksPassed: metricDelta(commandCheckScore(candidate.commandChecks), commandCheckScore(baseline.commandChecks)),
+        commandChecksPassed: metricDelta(
+          commandCheckScore(candidate.commandChecks),
+          commandCheckScore(baseline.commandChecks),
+        ),
+        inputTokens: metricDelta(candidate.tokens?.input, baseline.tokens?.input),
+        outputTokens: metricDelta(candidate.tokens?.output, baseline.tokens?.output),
+        reasoningTokens: metricDelta(candidate.tokens?.reasoning, baseline.tokens?.reasoning),
+        cacheReadTokens: metricDelta(candidate.tokens?.cacheRead, baseline.tokens?.cacheRead),
+        cacheWriteTokens: metricDelta(candidate.tokens?.cacheWrite, baseline.tokens?.cacheWrite),
       },
     }))
   })
@@ -1571,7 +1640,11 @@ function openCodeRunFileCheckReport(input: {
       contains,
       notContains,
       ...(regex ? { regex } : {}),
-      passed: text !== undefined && contains.every((check) => check.matched) && notContains.every((check) => check.matched) && (regex?.matched ?? true),
+      passed:
+        text !== undefined &&
+        contains.every((check) => check.matched) &&
+        notContains.every((check) => check.matched) &&
+        (regex?.matched ?? true),
     }
   })
   return {
@@ -1673,7 +1746,12 @@ function sessionIDFromValue(value: unknown): string | undefined {
 }
 
 function safeFileSegment(value: string) {
-  return value.replace(/[^A-Za-z0-9_.-]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 120) || "instance"
+  return (
+    value
+      .replace(/[^A-Za-z0-9_.-]+/g, "_")
+      .replace(/^_+|_+$/g, "")
+      .slice(0, 120) || "instance"
+  )
 }
 
 function parseNoisyCompactionLiveManifestJsonl(text: string): NoisyCompactionLiveManifestRow[] {
@@ -1681,7 +1759,12 @@ function parseNoisyCompactionLiveManifestJsonl(text: string): NoisyCompactionLiv
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((line, index) => noisyCompactionLiveManifestRow(parseJson(line, `--opencode-noisy-compaction-live-manifest line ${index + 1}`), index))
+    .map((line, index) =>
+      noisyCompactionLiveManifestRow(
+        parseJson(line, `--opencode-noisy-compaction-live-manifest line ${index + 1}`),
+        index,
+      ),
+    )
 }
 
 function noisyCompactionLiveManifestRow(input: unknown, index: number): NoisyCompactionLiveManifestRow {
@@ -1715,7 +1798,10 @@ function requiredStringField(input: unknown, field: string, index: number) {
 }
 
 function enrichNoisyCompactionLiveRows(
-  rows: readonly Omit<NoisyCompactionLiveReportRow, "summaryTokens" | "claimRecall" | "survivedClaims" | "missingClaims">[],
+  rows: readonly Omit<
+    NoisyCompactionLiveReportRow,
+    "summaryTokens" | "claimRecall" | "survivedClaims" | "missingClaims"
+  >[],
   summaryReport: SessionContextLedgerBenchmark.OpenCodeCompactionSummaryReport,
   reportDir: string,
 ): NoisyCompactionLiveReportRow[] {
@@ -1745,7 +1831,9 @@ function enrichNoisyCompactionLiveRows(
   })
 }
 
-function noisyCompactionLiveSummaries(rows: readonly NoisyCompactionLiveReportRow[]): NoisyCompactionLiveReport["summaries"] {
+function noisyCompactionLiveSummaries(
+  rows: readonly NoisyCompactionLiveReportRow[],
+): NoisyCompactionLiveReport["summaries"] {
   return (["baseline", "precision"] as const).map((lane) => {
     const items = rows.filter((row) => row.lane === lane)
     return {
@@ -1758,7 +1846,9 @@ function noisyCompactionLiveSummaries(rows: readonly NoisyCompactionLiveReportRo
   })
 }
 
-function noisyCompactionLiveComparisons(rows: readonly NoisyCompactionLiveReportRow[]): NoisyCompactionLiveReport["pairedComparisons"] {
+function noisyCompactionLiveComparisons(
+  rows: readonly NoisyCompactionLiveReportRow[],
+): NoisyCompactionLiveReport["pairedComparisons"] {
   return Array.from(new Set(rows.map((row) => row.instanceID))).flatMap((instanceID) => {
     const items = rows.filter((row) => row.instanceID === instanceID)
     const baseline = items.find((row) => row.lane === "baseline")
@@ -1787,7 +1877,9 @@ const opencodePredictionInputs = [
   args.values["opencode-run-manifest"],
 ].filter(Boolean)
 if (opencodePredictionInputs.length > 1) {
-  throw new Error("--opencode-export, --opencode-export-manifest, --opencode-messages, and --opencode-run-manifest are mutually exclusive")
+  throw new Error(
+    "--opencode-export, --opencode-export-manifest, --opencode-messages, and --opencode-run-manifest are mutually exclusive",
+  )
 }
 
 if (args.values["benchmark-registry-output"]) {
@@ -1871,7 +1963,9 @@ if (
   args.values["opencode-noisy-compaction-live-env-json"] ||
   args.values["opencode-noisy-compaction-live-output-dir"]
 ) {
-  throw new Error("--opencode-noisy-compaction-live-command-json, --opencode-noisy-compaction-live-env-json, and --opencode-noisy-compaction-live-output-dir require --opencode-noisy-compaction-live-manifest")
+  throw new Error(
+    "--opencode-noisy-compaction-live-command-json, --opencode-noisy-compaction-live-env-json, and --opencode-noisy-compaction-live-output-dir require --opencode-noisy-compaction-live-manifest",
+  )
 }
 
 if (
@@ -1885,7 +1979,9 @@ if (
   args.values["opencode-run-report-output"] ||
   args.values["opencode-run-variant"]
 ) {
-  throw new Error("--opencode-run-command-json, --opencode-run-config-json, --opencode-run-env-json, --opencode-run-export-manifest-output, --opencode-run-extra-args-json, --opencode-run-model, --opencode-run-output-dir, --opencode-run-report-output, and --opencode-run-variant require --opencode-run-manifest")
+  throw new Error(
+    "--opencode-run-command-json, --opencode-run-config-json, --opencode-run-env-json, --opencode-run-export-manifest-output, --opencode-run-extra-args-json, --opencode-run-model, --opencode-run-output-dir, --opencode-run-report-output, and --opencode-run-variant require --opencode-run-manifest",
+  )
 }
 
 if (args.values["swe-explore-ranker-sweep-merge-output"]) {
@@ -1916,9 +2012,7 @@ if (args.values["swe-explore-ranker-portfolio-output"]) {
         outputName: "--swe-explore-ranker-portfolio-output",
         inputsName: "--swe-explore-ranker-portfolio-inputs",
         labelsName: "--swe-explore-ranker-portfolio-labels",
-        target: parseSWEExploreRankerPortfolioTarget(
-          args.values["swe-explore-ranker-portfolio-target"] ?? "f1",
-        ),
+        target: parseSWEExploreRankerPortfolioTarget(args.values["swe-explore-ranker-portfolio-target"] ?? "f1"),
       }),
       undefined,
       2,
@@ -1937,9 +2031,7 @@ if (args.values["swe-explore-ranker-portfolio-stability-output"]) {
         outputName: "--swe-explore-ranker-portfolio-stability-output",
         inputsName: "--swe-explore-ranker-portfolio-stability-inputs",
         labelsName: "--swe-explore-ranker-portfolio-stability-labels",
-        target: parseSWEExploreRankerPortfolioTarget(
-          args.values["swe-explore-ranker-portfolio-target"] ?? "f1",
-        ),
+        target: parseSWEExploreRankerPortfolioTarget(args.values["swe-explore-ranker-portfolio-target"] ?? "f1"),
         maximumHeldoutLoss: numberAtLeast(
           args.values["swe-explore-ranker-portfolio-max-heldout-loss"] ?? "0",
           "--swe-explore-ranker-portfolio-max-heldout-loss",
@@ -1966,7 +2058,9 @@ if (args.values["swe-explore-ranker-gate-report-output"]) {
 }
 
 if (args.values["swe-explore-ranker-gate-report-inputs"] || args.values["swe-explore-ranker-gate-report-labels"]) {
-  throw new Error("--swe-explore-ranker-gate-report-inputs and --swe-explore-ranker-gate-report-labels require --swe-explore-ranker-gate-report-output")
+  throw new Error(
+    "--swe-explore-ranker-gate-report-inputs and --swe-explore-ranker-gate-report-labels require --swe-explore-ranker-gate-report-output",
+  )
 }
 
 if (
@@ -1977,7 +2071,9 @@ if (
   args.values["swe-explore-ranker-portfolio-max-heldout-loss"] ||
   args.values["swe-explore-ranker-portfolio-target"]
 ) {
-  throw new Error("--swe-explore-ranker-portfolio inputs, labels, target, and max-heldout-loss require --swe-explore-ranker-portfolio-output or --swe-explore-ranker-portfolio-stability-output")
+  throw new Error(
+    "--swe-explore-ranker-portfolio inputs, labels, target, and max-heldout-loss require --swe-explore-ranker-portfolio-output or --swe-explore-ranker-portfolio-stability-output",
+  )
 }
 
 const budgets = args.values.budgets
@@ -2011,7 +2107,9 @@ if (args.values["compaction-survival-input"] || args.values["compaction-survival
 
 const contextBenchRowsResponse = args.values.contextbench ? await fetchContextBenchRowsResponse() : undefined
 const agentRetrievalBenchSamples = args.values["agent-retrieval-bench-samples"]
-  ? SessionContextLedgerBenchmark.parseAgentRetrievalBenchSamplesJsonl(await Bun.file(args.values["agent-retrieval-bench-samples"]).text())
+  ? SessionContextLedgerBenchmark.parseAgentRetrievalBenchSamplesJsonl(
+      await Bun.file(args.values["agent-retrieval-bench-samples"]).text(),
+    )
   : undefined
 const agentRetrievalBenchChunks = await loadAgentRetrievalBenchChunks(agentRetrievalBenchSamples)
 const sweExploreRows = args.values["swe-explore"]
@@ -2110,15 +2208,16 @@ const cases = experienceRecords
     })
   : baseCases
 
-if (
-  (args.values["experience-replay-k"] || args.values["experience-replay-min-score"]) &&
-  !experienceRecords
-) {
-  throw new Error("--experience-replay-k and --experience-replay-min-score require --experience-replay-input or --swe-contextbench-experience-input")
+if ((args.values["experience-replay-k"] || args.values["experience-replay-min-score"]) && !experienceRecords) {
+  throw new Error(
+    "--experience-replay-k and --experience-replay-min-score require --experience-replay-input or --swe-contextbench-experience-input",
+  )
 }
 
 if (args.values["experience-replay-report-output"] && !experienceRecords) {
-  throw new Error("--experience-replay-report-output requires --experience-replay-input or --swe-contextbench-experience-input")
+  throw new Error(
+    "--experience-replay-report-output requires --experience-replay-input or --swe-contextbench-experience-input",
+  )
 }
 
 if (args.values["prediction-eval-output"] && !args.values["prediction-eval-gold"]) {
@@ -2146,7 +2245,10 @@ if (args.values["agent-retrieval-bench-corpus-root"] && !args.values["agent-retr
   throw new Error("--agent-retrieval-bench-corpus-root requires --agent-retrieval-bench-corpus-manifest")
 }
 
-if (args.values["agent-retrieval-bench-ranking-context-budget"] && !args.values["agent-retrieval-bench-ranking-output"]) {
+if (
+  args.values["agent-retrieval-bench-ranking-context-budget"] &&
+  !args.values["agent-retrieval-bench-ranking-output"]
+) {
   throw new Error("--agent-retrieval-bench-ranking-context-budget requires --agent-retrieval-bench-ranking-output")
 }
 
@@ -2190,9 +2292,7 @@ if (
     args.values["swe-explore-split-seed"] ||
     args.values["swe-explore-split-sizes"])
 ) {
-  throw new Error(
-    "SWE-Explore options require --swe-explore",
-  )
+  throw new Error("SWE-Explore options require --swe-explore")
 }
 
 if (
@@ -2201,7 +2301,9 @@ if (
     args.values["swe-explore-split-sizes"]) &&
   !args.values["swe-explore-split-output"]
 ) {
-  throw new Error("--swe-explore-split-labels, --swe-explore-split-seed, and --swe-explore-split-sizes require --swe-explore-split-output")
+  throw new Error(
+    "--swe-explore-split-labels, --swe-explore-split-seed, and --swe-explore-split-sizes require --swe-explore-split-output",
+  )
 }
 
 if (args.values["swe-explore-repo-candidates"] && !args.values["swe-explore-repos-root"]) {
@@ -2321,7 +2423,7 @@ if (args.values["swe-explore-split-output"]) {
         labels: optionalList(args.values["swe-explore-split-labels"]) ?? ["dev", "heldout"],
         seed: args.values["swe-explore-split-seed"] ?? "context-ledger-v1",
         sizes: optionalList(args.values["swe-explore-split-sizes"])?.map((value) =>
-          integerAtLeast(value, "--swe-explore-split-sizes", 1)
+          integerAtLeast(value, "--swe-explore-split-sizes", 1),
         ),
       }),
       undefined,
@@ -2372,8 +2474,14 @@ if (args.values["selection-delta-output"]) {
   process.exit(0)
 }
 
-if (args.values["selection-delta-baseline"] || args.values["selection-delta-policy"] || args.values["selection-delta-limit"]) {
-  throw new Error("--selection-delta-baseline, --selection-delta-policy, and --selection-delta-limit require --selection-delta-output")
+if (
+  args.values["selection-delta-baseline"] ||
+  args.values["selection-delta-policy"] ||
+  args.values["selection-delta-limit"]
+) {
+  throw new Error(
+    "--selection-delta-baseline, --selection-delta-policy, and --selection-delta-limit require --selection-delta-output",
+  )
 }
 
 if (args.values["agent-retrieval-bench-ranking-output"]) {
@@ -2437,7 +2545,9 @@ if (args.values["swe-explore-ranker-gate-repo-fold-output"]) {
 }
 
 if (args.values["swe-explore-ranker-gate-repo-fold-input"] || args.values["swe-explore-ranker-gate-repo-folds"]) {
-  throw new Error("--swe-explore-ranker-gate-repo-fold-input and --swe-explore-ranker-gate-repo-folds require --swe-explore-ranker-gate-repo-fold-output")
+  throw new Error(
+    "--swe-explore-ranker-gate-repo-fold-input and --swe-explore-ranker-gate-repo-folds require --swe-explore-ranker-gate-repo-fold-output",
+  )
 }
 
 if (args.values["swe-explore-ranker-gate-transfer-output"]) {
@@ -2457,11 +2567,14 @@ if (args.values["swe-explore-ranker-gate-transfer-output"]) {
 }
 
 if (args.values["swe-explore-ranker-gate-transfer-inputs"] || args.values["swe-explore-ranker-gate-transfer-labels"]) {
-  throw new Error("--swe-explore-ranker-gate-transfer-inputs and --swe-explore-ranker-gate-transfer-labels require --swe-explore-ranker-gate-transfer-output")
+  throw new Error(
+    "--swe-explore-ranker-gate-transfer-inputs and --swe-explore-ranker-gate-transfer-labels require --swe-explore-ranker-gate-transfer-output",
+  )
 }
 
 if (args.values["swe-explore-official-output"] || args.values["swe-explore-official-summary-output"]) {
-  if (!sweExploreRows) throw new Error("--swe-explore-official-output and --swe-explore-official-summary-output require --swe-explore")
+  if (!sweExploreRows)
+    throw new Error("--swe-explore-official-output and --swe-explore-official-summary-output require --swe-explore")
   const report = SessionContextLedgerBenchmark.evaluateSWEExploreOfficial({
     rows: sweExploreRows,
     cases,
@@ -2529,12 +2642,16 @@ if (args.values["prediction-output"]) {
   const budget = budgets[0] ?? 0
   const predictions = predictionsForPolicy({ cases, policy, budget })
   emittedPredictions = predictions
-  await Bun.write(args.values["prediction-output"], predictions.map((prediction) => JSON.stringify(prediction)).join("\n") + "\n")
+  await Bun.write(
+    args.values["prediction-output"],
+    predictions.map((prediction) => JSON.stringify(prediction)).join("\n") + "\n",
+  )
 }
 
 if (args.values["prediction-eval-output"]) {
   const predictions = emittedPredictions
-  if (!predictions) throw new Error("--prediction-eval-output requires --prediction-output, --opencode-export, or --opencode-messages")
+  if (!predictions)
+    throw new Error("--prediction-eval-output requires --prediction-output, --opencode-export, or --opencode-messages")
   await Bun.write(
     args.values["prediction-eval-output"],
     `${JSON.stringify(
@@ -2640,19 +2757,17 @@ if (args.values["official-policy-report-output"]) {
     },
     results: budgetResults,
   }
-  const report = budgets.length === 1
-    ? {
-      ...baseReport,
-      budget: budgets[0],
-      policies: budgetResults[0]?.policies ?? [],
-      best: budgetResults[0]?.best,
-      comparisons: budgetResults[0]?.comparisons ?? [],
-    }
-    : baseReport
-  await Bun.write(
-    args.values["official-policy-report-output"],
-    `${JSON.stringify(report, undefined, 2)}\n`,
-  )
+  const report =
+    budgets.length === 1
+      ? {
+          ...baseReport,
+          budget: budgets[0],
+          policies: budgetResults[0]?.policies ?? [],
+          best: budgetResults[0]?.best,
+          comparisons: budgetResults[0]?.comparisons ?? [],
+        }
+      : baseReport
+  await Bun.write(args.values["official-policy-report-output"], `${JSON.stringify(report, undefined, 2)}\n`)
   process.exit(0)
 }
 
@@ -2675,7 +2790,10 @@ if (args.values["official-summary-output"] && !args.values["official-summary-inp
 }
 
 if (args.values["analysis-output"]) {
-  await Bun.write(args.values["analysis-output"], `${JSON.stringify(SessionContextLedgerBenchmark.analyze(results), undefined, 2)}\n`)
+  await Bun.write(
+    args.values["analysis-output"],
+    `${JSON.stringify(SessionContextLedgerBenchmark.analyze(results), undefined, 2)}\n`,
+  )
 }
 
 if (args.values["target-report-output"]) {
@@ -2712,7 +2830,9 @@ if (args.values["portfolio-report-output"]) {
 
 if (args.values["portfolio-objective"] || args.values["portfolio-target"] || args.values["portfolio-targets"]) {
   if (!args.values["portfolio-report-output"] && !args.values["portfolio-stability-report-output"]) {
-    throw new Error("--portfolio-objective, --portfolio-target, and --portfolio-targets require --portfolio-report-output or --portfolio-stability-report-output")
+    throw new Error(
+      "--portfolio-objective, --portfolio-target, and --portfolio-targets require --portfolio-report-output or --portfolio-stability-report-output",
+    )
   }
 }
 
@@ -2733,7 +2853,11 @@ if (args.values["portfolio-stability-report-output"]) {
         objective: parsePortfolioObjective(args.values["portfolio-objective"] ?? "minimax-regret"),
         target: parseRouterTarget(args.values["portfolio-target"] ?? "official-utility", "--portfolio-target"),
         targets: parseRouterTargets(args.values["portfolio-targets"], "--portfolio-targets"),
-        maximumHeldoutLoss: numberAtLeast(args.values["portfolio-max-heldout-loss"] ?? "0", "--portfolio-max-heldout-loss", 0),
+        maximumHeldoutLoss: numberAtLeast(
+          args.values["portfolio-max-heldout-loss"] ?? "0",
+          "--portfolio-max-heldout-loss",
+          0,
+        ),
       }),
       undefined,
       2,
@@ -2742,8 +2866,14 @@ if (args.values["portfolio-stability-report-output"]) {
   process.exit(0)
 }
 
-if (args.values["portfolio-stability-split-inputs"] || args.values["portfolio-stability-split-labels"] || args.values["portfolio-max-heldout-loss"]) {
-  throw new Error("--portfolio-stability-split-inputs, --portfolio-stability-split-labels, and --portfolio-max-heldout-loss require --portfolio-stability-report-output")
+if (
+  args.values["portfolio-stability-split-inputs"] ||
+  args.values["portfolio-stability-split-labels"] ||
+  args.values["portfolio-max-heldout-loss"]
+) {
+  throw new Error(
+    "--portfolio-stability-split-inputs, --portfolio-stability-split-labels, and --portfolio-max-heldout-loss require --portfolio-stability-report-output",
+  )
 }
 
 if (args.values["router-output"]) {
@@ -2783,7 +2913,11 @@ if (args.values["feature-router-rules-output"]) {
         budgets,
         policies: selectedPolicies,
         target: parseRouterTarget(args.values["feature-router-target"] ?? "event-f1"),
-        validationFolds: integerAtLeast(args.values["feature-router-validation-folds"] ?? "0", "--feature-router-validation-folds", 0),
+        validationFolds: integerAtLeast(
+          args.values["feature-router-validation-folds"] ?? "0",
+          "--feature-router-validation-folds",
+          0,
+        ),
         minimumValidationGain: numberAtLeast(
           args.values["feature-router-min-validation-gain"] ?? "0",
           "--feature-router-min-validation-gain",
@@ -2826,13 +2960,21 @@ if (args.values["promotion-report-output"]) {
         budgets,
         policies: selectedPolicies,
         target: parseRouterTarget(args.values["feature-router-target"] ?? "event-f1"),
-        validationFolds: integerAtLeast(args.values["feature-router-validation-folds"] ?? "0", "--feature-router-validation-folds", 0),
+        validationFolds: integerAtLeast(
+          args.values["feature-router-validation-folds"] ?? "0",
+          "--feature-router-validation-folds",
+          0,
+        ),
         minimumValidationGain: numberAtLeast(
           args.values["feature-router-min-validation-gain"] ?? "0",
           "--feature-router-min-validation-gain",
           0,
         ),
-        minimumHeldoutGain: numberAtLeast(args.values["promotion-min-heldout-gain"] ?? "0", "--promotion-min-heldout-gain", 0),
+        minimumHeldoutGain: numberAtLeast(
+          args.values["promotion-min-heldout-gain"] ?? "0",
+          "--promotion-min-heldout-gain",
+          0,
+        ),
       }),
       undefined,
       2,
@@ -2869,7 +3011,9 @@ if (args.values["stability-report-output"]) {
 }
 
 if (args.values["stability-split-inputs"] || args.values["stability-split-labels"] || args.values["stability-target"]) {
-  throw new Error("--stability-split-inputs, --stability-split-labels, and --stability-target require --stability-report-output")
+  throw new Error(
+    "--stability-split-inputs, --stability-split-labels, and --stability-target require --stability-report-output",
+  )
 }
 
 console.log(
@@ -2972,9 +3116,8 @@ function sourceMapFromJson(input: unknown): Record<string, SWEExploreSourceRecor
   }
   const record = recordValue(input)
   if (!record) return {}
-  const direct = stringValue(record, "instance_id") || stringValue(record, "id")
-    ? sourceRecordFromUnknown(record)
-    : undefined
+  const direct =
+    stringValue(record, "instance_id") || stringValue(record, "id") ? sourceRecordFromUnknown(record) : undefined
   if (direct) return { [direct.instance_id]: direct }
   return Object.fromEntries(
     Object.entries(record).flatMap(([id, value]) => {
@@ -3060,7 +3203,8 @@ async function prepareSWEExploreRepos(
   if (!rows) throw new Error("--swe-explore-prepare-repos requires --swe-explore")
   const reposRoot = args.values["swe-explore-repos-root"]
   if (!reposRoot) throw new Error("--swe-explore-prepare-repos requires --swe-explore-repos-root")
-  if (!sourceMap) throw new Error("--swe-explore-prepare-repos requires --swe-explore-auto-source-map or --swe-explore-source-map")
+  if (!sourceMap)
+    throw new Error("--swe-explore-prepare-repos requires --swe-explore-auto-source-map or --swe-explore-source-map")
   const cacheRoot = args.values["swe-explore-prepare-repos-cache"]
     ? absolutePath(args.values["swe-explore-prepare-repos-cache"])
     : undefined
@@ -3095,7 +3239,8 @@ function sweExploreCloneURL(source: SWEExploreSourceRecord) {
     source.repo.startsWith("file://") ||
     source.repo.startsWith("/") ||
     source.repo.startsWith(".")
-  ) return source.repo
+  )
+    return source.repo
   return `https://github.com/${source.repo}.git`
 }
 
@@ -3130,13 +3275,10 @@ async function ensureSWEExploreRepo(
   if (!(await gitHasCommit(repoDir, commit))) {
     const directFetch = await runGitMaybe(["fetch", "--filter=blob:none", "origin", commit], repoDir)
     if (!directFetch.ok) {
-      await runGit([
-        "fetch",
-        "--filter=blob:none",
-        "origin",
-        "+refs/heads/*:refs/remotes/origin/*",
-        "+refs/tags/*:refs/tags/*",
-      ], repoDir)
+      await runGit(
+        ["fetch", "--filter=blob:none", "origin", "+refs/heads/*:refs/remotes/origin/*", "+refs/tags/*:refs/tags/*"],
+        repoDir,
+      )
     }
   }
   if (!(await gitHasCommit(repoDir, commit))) throw new Error(`Could not fetch ${commit} in ${repoDir}`)
@@ -3153,13 +3295,10 @@ async function ensureSWEExploreRepoCache(cacheRoot: string, cloneURL: string, co
   if (!(await gitHasCommit(cacheDir, commit))) {
     const directFetch = await runGitMaybe(["fetch", "--filter=blob:none", "origin", commit], cacheDir)
     if (!directFetch.ok) {
-      await runGit([
-        "fetch",
-        "--filter=blob:none",
-        "origin",
-        "+refs/heads/*:refs/remotes/origin/*",
-        "+refs/tags/*:refs/tags/*",
-      ], cacheDir)
+      await runGit(
+        ["fetch", "--filter=blob:none", "origin", "+refs/heads/*:refs/remotes/origin/*", "+refs/tags/*:refs/tags/*"],
+        cacheDir,
+      )
     }
   }
   if (!(await gitHasCommit(cacheDir, commit))) throw new Error(`Could not fetch ${commit} in repo cache ${cacheDir}`)
@@ -3200,12 +3339,18 @@ async function fetchSWEExploreSourceMap(rows: readonly SessionContextLedgerBench
   for (const [label, items] of neededByDataset.entries()) {
     const source = sweExploreIssueDataset(label)
     if (!source) continue
-    const needed = new Map(items.flatMap((item) => issueIDVariants(item.instance_id).map((id) => [id, item.instance_id] as const)))
+    const needed = new Map(
+      items.flatMap((item) => issueIDVariants(item.instance_id).map((id) => [id, item.instance_id] as const)),
+    )
     const neededTargets = new Set(items.map((item) => item.instance_id))
     const matchedTargets = new Set<string>()
     for (const row of await fetchSWEExploreSourceRows(source)) {
       const id = stringValue(row, "instance_id")
-      const matched = id ? issueIDVariants(id).map((variant) => needed.get(variant)).find(Boolean) : undefined
+      const matched = id
+        ? issueIDVariants(id)
+            .map((variant) => needed.get(variant))
+            .find(Boolean)
+        : undefined
       const sourceRecord = matched ? sourceRecordFromUnknown(row, matched, label, id) : undefined
       if (matched && sourceRecord) {
         entries.push([matched, sourceRecord])
@@ -3244,11 +3389,13 @@ async function fetchSWEExploreSourceRows(source: {
     url.searchParams.set("length", String(pageSize))
     const data = await fetchJson(url)
     const page = Array.isArray(data.rows) ? data.rows : []
-    rows.push(...page.flatMap((item) => {
-      const record = recordValue(item)
-      const row = recordValue(record?.row)
-      return row ? [row] : []
-    }))
+    rows.push(
+      ...page.flatMap((item) => {
+        const record = recordValue(item)
+        const row = recordValue(record?.row)
+        return row ? [row] : []
+      }),
+    )
     const total = typeof data.num_rows_total === "number" ? data.num_rows_total : rows.length
     if (offset + page.length >= total || page.length === 0) break
   }
@@ -3309,11 +3456,10 @@ async function loadSWEExploreRepoCandidates(
 async function loadSWEContextBenchExperienceRecords() {
   const input = args.values["swe-contextbench-experience-input"]
   if (!input) {
-    if (
-      args.values["swe-contextbench-relationship-input"] ||
-      args.values["swe-contextbench-related-instance-ids"]
-    ) {
-      throw new Error("--swe-contextbench-relationship-input and --swe-contextbench-related-instance-ids require --swe-contextbench-experience-input")
+    if (args.values["swe-contextbench-relationship-input"] || args.values["swe-contextbench-related-instance-ids"]) {
+      throw new Error(
+        "--swe-contextbench-relationship-input and --swe-contextbench-related-instance-ids require --swe-contextbench-experience-input",
+      )
     }
     return undefined
   }
@@ -3336,7 +3482,11 @@ function evaluateSWEExploreChunkSweep(
   if (!rows) throw new Error("--swe-explore-chunk-sweep-output requires --swe-explore")
   const reposRoot = args.values["swe-explore-repos-root"]
   if (!reposRoot) throw new Error("--swe-explore-chunk-sweep-output requires --swe-explore-repos-root")
-  const chunkLines = integerListAtLeast(args.values["swe-explore-chunk-sweep-lines"] ?? "40,80,160", "--swe-explore-chunk-sweep-lines", 1)
+  const chunkLines = integerListAtLeast(
+    args.values["swe-explore-chunk-sweep-lines"] ?? "40,80,160",
+    "--swe-explore-chunk-sweep-lines",
+    1,
+  )
   const results = chunkLines.map((lines) => {
     const options = sweExploreRepoChunkOptions({
       chunkLines: lines,
@@ -3474,7 +3624,10 @@ async function mergeSWEExploreRankerSweepReports(input: { readonly inputs: strin
     if (!Array.isArray(report.results)) throw new Error(`Ranker sweep report must include results: ${path}`)
     for (const [index, result] of report.results.entries()) {
       if (!isRecord(result)) throw new Error(`Invalid ${path}.results[${index}]`)
-      const ranker = sweExploreRepoRanker(stringField(result.ranker, `${path}.results[${index}].ranker`), `${path}.results[${index}].ranker`)
+      const ranker = sweExploreRepoRanker(
+        stringField(result.ranker, `${path}.results[${index}].ranker`),
+        `${path}.results[${index}].ranker`,
+      )
       const existing = resultByRanker.get(ranker)
       if (existing && JSON.stringify(existing) !== JSON.stringify(result)) {
         throw new Error(`Cannot merge conflicting result summaries for ranker ${ranker}: ${path}`)
@@ -3559,9 +3712,7 @@ function rankerSweepMergedPolicies(results: readonly unknown[]) {
   return Array.from(
     new Set(
       results.flatMap((result) =>
-        rankerSweepResultSummaries(result).map((summary) =>
-          parsePolicyWithName(summary.policy, "summary.policy"),
-        ),
+        rankerSweepResultSummaries(result).map((summary) => parsePolicyWithName(summary.policy, "summary.policy")),
       ),
     ),
   ).toSorted((a, b) => SessionContextLedger.selectionPolicyOrder(a) - SessionContextLedger.selectionPolicyOrder(b))
@@ -3628,10 +3779,12 @@ function sameStringArray(left: readonly string[], right: readonly string[]) {
   return left.length === right.length && left.every((value, index) => value === right[index])
 }
 
-function sweExploreRankerSweepBests(results: readonly {
-  readonly ranker: SWEExploreRepoRanker
-  readonly summaries: readonly SessionContextLedgerBenchmark.SWEExploreOfficialSummary[]
-}[]) {
+function sweExploreRankerSweepBests(
+  results: readonly {
+    readonly ranker: SWEExploreRepoRanker
+    readonly summaries: readonly SessionContextLedgerBenchmark.SWEExploreOfficialSummary[]
+  }[],
+) {
   return sweExploreRankerSweepBestsForBudgets(results, budgets)
 }
 
@@ -3655,19 +3808,22 @@ function sweExploreRankerSweepBestsForBudgets(
           firstUsefulHit: summary.metrics.first_useful_hit,
         })),
     )
-    const best = candidates.toSorted((a, b) =>
-      b.f1 - a.f1 ||
-      b.recall - a.recall ||
-      SWE_EXPLORE_REPO_RANKERS.indexOf(a.ranker) - SWE_EXPLORE_REPO_RANKERS.indexOf(b.ranker)
+    const best = candidates.toSorted(
+      (a, b) =>
+        b.f1 - a.f1 ||
+        b.recall - a.recall ||
+        SWE_EXPLORE_REPO_RANKERS.indexOf(a.ranker) - SWE_EXPLORE_REPO_RANKERS.indexOf(b.ranker),
     )[0]
     return { budget, best }
   })
 }
 
-function sweExploreRankerSweepComparisons(results: readonly {
-  readonly ranker: SWEExploreRepoRanker
-  readonly summaries: readonly SessionContextLedgerBenchmark.SWEExploreOfficialSummary[]
-}[]) {
+function sweExploreRankerSweepComparisons(
+  results: readonly {
+    readonly ranker: SWEExploreRepoRanker
+    readonly summaries: readonly SessionContextLedgerBenchmark.SWEExploreOfficialSummary[]
+  }[],
+) {
   const baselineRanker = results.find((result) => result.ranker === "structural")?.ranker ?? results[0]?.ranker
   const baseline = results.find((result) => result.ranker === baselineRanker)
   if (!baseline) return []
@@ -3675,29 +3831,35 @@ function sweExploreRankerSweepComparisons(results: readonly {
     .filter((result) => result.ranker !== baseline.ranker)
     .flatMap((result) =>
       result.summaries.flatMap((summary) => {
-        const baselineSummary = baseline.summaries.find((item) => item.policy === summary.policy && item.budget === summary.budget)
+        const baselineSummary = baseline.summaries.find(
+          (item) => item.policy === summary.policy && item.budget === summary.budget,
+        )
         if (!baselineSummary) return []
-        return [{
-          baselineRanker: baseline.ranker,
-          ranker: result.ranker,
-          policy: summary.policy,
-          budget: summary.budget,
-          deltas: {
-            f1: summary.metrics.f1_score - baselineSummary.metrics.f1_score,
-            recall: summary.metrics.recall - baselineSummary.metrics.recall,
-            precision: summary.metrics.precision - baselineSummary.metrics.precision,
-            firstUsefulHit: summary.metrics.first_useful_hit - baselineSummary.metrics.first_useful_hit,
+        return [
+          {
+            baselineRanker: baseline.ranker,
+            ranker: result.ranker,
+            policy: summary.policy,
+            budget: summary.budget,
+            deltas: {
+              f1: summary.metrics.f1_score - baselineSummary.metrics.f1_score,
+              recall: summary.metrics.recall - baselineSummary.metrics.recall,
+              precision: summary.metrics.precision - baselineSummary.metrics.precision,
+              firstUsefulHit: summary.metrics.first_useful_hit - baselineSummary.metrics.first_useful_hit,
+            },
           },
-        }]
+        ]
       }),
     )
 }
 
-function sweExploreRankerSweepCaseComparisons(results: readonly {
-  readonly ranker: SWEExploreRepoRanker
-  readonly rows: readonly SessionContextLedgerBenchmark.SWEExploreOfficialRow[]
-  readonly featuresByInstance: ReadonlyMap<string, SWEExploreRankerSweepPacketFeatures>
-}[]) {
+function sweExploreRankerSweepCaseComparisons(
+  results: readonly {
+    readonly ranker: SWEExploreRepoRanker
+    readonly rows: readonly SessionContextLedgerBenchmark.SWEExploreOfficialRow[]
+    readonly featuresByInstance: ReadonlyMap<string, SWEExploreRankerSweepPacketFeatures>
+  }[],
+) {
   const baselineRanker = results.find((result) => result.ranker === "structural")?.ranker ?? results[0]?.ranker
   const baseline = results.find((result) => result.ranker === baselineRanker)
   if (!baseline) return []
@@ -3713,29 +3875,30 @@ function sweExploreRankerSweepCaseComparisons(results: readonly {
         const f1Delta = row.metrics.f1_score - baselineRow.metrics.f1_score
         const baselineMetrics = sweExploreRankerGateMetrics(baselineRow.metrics)
         const metrics = sweExploreRankerGateMetrics(row.metrics)
-        return [{
-          baselineRanker: baseline.ranker,
-          ranker: result.ranker,
-          instanceID: row.instance_id,
-          policy: row.policy,
-          budget: row.budget,
-          outcome: f1Delta > 0 ? "win" : f1Delta < 0 ? "loss" : "tie",
-          baselineRegions: baselineRow.num_regions,
-          regions: row.num_regions,
-          baselineMetrics,
-          metrics,
-          baselineFeatures: baselineFeatures?.metrics,
-          features: features?.metrics,
-          comparisonFeatures: baselineFeatures && features
-            ? sweExploreRankerComparisonFeatures(features, baselineFeatures)
-            : undefined,
-          deltas: {
-            f1: metrics.f1 - baselineMetrics.f1,
-            recall: metrics.recall - baselineMetrics.recall,
-            precision: metrics.precision - baselineMetrics.precision,
-            firstUsefulHit: metrics.firstUsefulHit - baselineMetrics.firstUsefulHit,
+        return [
+          {
+            baselineRanker: baseline.ranker,
+            ranker: result.ranker,
+            instanceID: row.instance_id,
+            policy: row.policy,
+            budget: row.budget,
+            outcome: f1Delta > 0 ? "win" : f1Delta < 0 ? "loss" : "tie",
+            baselineRegions: baselineRow.num_regions,
+            regions: row.num_regions,
+            baselineMetrics,
+            metrics,
+            baselineFeatures: baselineFeatures?.metrics,
+            features: features?.metrics,
+            comparisonFeatures:
+              baselineFeatures && features ? sweExploreRankerComparisonFeatures(features, baselineFeatures) : undefined,
+            deltas: {
+              f1: metrics.f1 - baselineMetrics.f1,
+              recall: metrics.recall - baselineMetrics.recall,
+              precision: metrics.precision - baselineMetrics.precision,
+              firstUsefulHit: metrics.firstUsefulHit - baselineMetrics.firstUsefulHit,
+            },
           },
-        }]
+        ]
       }),
     )
     .toSorted(
@@ -3751,11 +3914,14 @@ function sweExploreRankerSweepRowKey(row: SessionContextLedgerBenchmark.SWEExplo
   return `${row.instance_id}\0${row.policy}\0${row.budget}`
 }
 
-function sweExploreRankerSweepGates(results: readonly {
-  readonly ranker: SWEExploreRepoRanker
-  readonly rows: readonly SessionContextLedgerBenchmark.SWEExploreOfficialRow[]
-  readonly featuresByInstance: ReadonlyMap<string, SWEExploreRankerSweepPacketFeatures>
-}[], options?: { readonly minimumGain?: number }) {
+function sweExploreRankerSweepGates(
+  results: readonly {
+    readonly ranker: SWEExploreRepoRanker
+    readonly rows: readonly SessionContextLedgerBenchmark.SWEExploreOfficialRow[]
+    readonly featuresByInstance: ReadonlyMap<string, SWEExploreRankerSweepPacketFeatures>
+  }[],
+  options?: { readonly minimumGain?: number },
+) {
   const baselineRanker = results.find((result) => result.ranker === "structural")?.ranker ?? results[0]?.ranker
   const baseline = results.find((result) => result.ranker === baselineRanker)
   if (!baseline) return []
@@ -3768,20 +3934,22 @@ function sweExploreRankerSweepGates(results: readonly {
         const baselineFeatures = baseline.featuresByInstance.get(row.instance_id)
         const features = result.featuresByInstance.get(row.instance_id)
         if (!baselineRow || !baselineFeatures || !features) return []
-        return [{
-          instanceID: row.instance_id,
-          ranker: result.ranker,
-          baselineRanker: baseline.ranker,
-          policy: row.policy,
-          budget: row.budget,
-          baselineMetrics: sweExploreRankerGateMetrics(baselineRow.metrics),
-          candidateMetrics: sweExploreRankerGateMetrics(row.metrics),
-          features: sweExploreRankerGateFeatures(
-            features.metrics,
-            baselineFeatures.metrics,
-            sweExploreRankerComparisonFeatures(features, baselineFeatures),
-          ),
-        }]
+        return [
+          {
+            instanceID: row.instance_id,
+            ranker: result.ranker,
+            baselineRanker: baseline.ranker,
+            policy: row.policy,
+            budget: row.budget,
+            baselineMetrics: sweExploreRankerGateMetrics(baselineRow.metrics),
+            candidateMetrics: sweExploreRankerGateMetrics(row.metrics),
+            features: sweExploreRankerGateFeatures(
+              features.metrics,
+              baselineFeatures.metrics,
+              sweExploreRankerComparisonFeatures(features, baselineFeatures),
+            ),
+          },
+        ]
       })
       return Array.from(Map.groupBy(examples, (item) => `${item.policy}\0${item.budget}`).values()).map((items) => {
         const rule = trainSWEExploreRankerGate(items, { minimumGain: options?.minimumGain ?? 0 })
@@ -3796,7 +3964,7 @@ function sweExploreRankerSweepGates(results: readonly {
         const baselineMetrics = items.map((item) => item.baselineMetrics)
         const candidateMetrics = items.map((item) => item.candidateMetrics)
         const oracleMetrics = items.map((item) =>
-          item.candidateMetrics.f1 > item.baselineMetrics.f1 ? item.candidateMetrics : item.baselineMetrics
+          item.candidateMetrics.f1 > item.baselineMetrics.f1 ? item.candidateMetrics : item.baselineMetrics,
         )
         return {
           baselineRanker: baseline.ranker,
@@ -3874,9 +4042,8 @@ function trainSWEExploreRankerGate(
     ranker: first.ranker,
     trainF1: meanSWEExploreRankerGateF1(examples.map((item) => item.candidateMetrics)),
   } satisfies SWEExploreRankerGateRule
-  let best: SWEExploreRankerGateRule = candidateRule.trainF1 > baselineRule.trainF1 + minimumGain
-    ? candidateRule
-    : baselineRule
+  let best: SWEExploreRankerGateRule =
+    candidateRule.trainF1 > baselineRule.trainF1 + minimumGain ? candidateRule : baselineRule
   const featureNames = Array.from(new Set(examples.flatMap((item) => Array.from(item.features.keys())))).toSorted()
   for (const feature of featureNames) {
     for (const threshold of sweExploreRankerGateThresholds(examples.map((item) => item.features.get(feature) ?? 0))) {
@@ -3899,11 +4066,9 @@ function trainSWEExploreRankerGate(
   return best
 }
 
-function routeSWEExploreRankerGate(
-  example: SWEExploreRankerGateExample,
-  rule: SWEExploreRankerGateRule,
-) {
-  if (rule.type === "constant") return rule.ranker === example.ranker ? example.candidateMetrics : example.baselineMetrics
+function routeSWEExploreRankerGate(example: SWEExploreRankerGateExample, rule: SWEExploreRankerGateRule) {
+  if (rule.type === "constant")
+    return rule.ranker === example.ranker ? example.candidateMetrics : example.baselineMetrics
   const value = example.features.get(rule.feature) ?? 0
   const useCandidate = rule.candidateWhen === "lte" ? value <= rule.threshold : value > rule.threshold
   return useCandidate ? example.candidateMetrics : example.baselineMetrics
@@ -3950,7 +4115,9 @@ function sweExploreRankerGateThresholds(values: readonly number[]) {
   return thresholds
 }
 
-function sweExploreRankerGateMetrics(metrics: SessionContextLedgerBenchmark.SWEExploreOfficialMetrics): SWEExploreRankerGateMetrics {
+function sweExploreRankerGateMetrics(
+  metrics: SessionContextLedgerBenchmark.SWEExploreOfficialMetrics,
+): SWEExploreRankerGateMetrics {
   return {
     f1: metrics.f1_score,
     recall: metrics.recall,
@@ -4172,23 +4339,25 @@ async function evaluateSWEExploreRankerPortfolioStability(input: {
         target: input.target,
         maximumHeldoutLoss: input.maximumHeldoutLoss,
       })
-      return [{
-        trainSplit: trainSplit.id,
-        budget,
-        selectedRanker: selected.ranker,
-        selectedPolicy: selected.policy,
-        selectedTrainScore: selected.score,
-        selectedTrainMetrics: selected.metrics,
-        selectedEvaluation,
-        selectedHeldout: selectedEvaluation.heldout,
-        robustRanker: robust.ranker,
-        robustPolicy: robust.policy,
-        robustTrainScore: robust.score,
-        robustTrainMinScore: sweExploreRankerPortfolioCandidateMinScore(robust),
-        robustTrainMetrics: robust.metrics,
-        robustEvaluation,
-        robustHeldout: robustEvaluation.heldout,
-      }]
+      return [
+        {
+          trainSplit: trainSplit.id,
+          budget,
+          selectedRanker: selected.ranker,
+          selectedPolicy: selected.policy,
+          selectedTrainScore: selected.score,
+          selectedTrainMetrics: selected.metrics,
+          selectedEvaluation,
+          selectedHeldout: selectedEvaluation.heldout,
+          robustRanker: robust.ranker,
+          robustPolicy: robust.policy,
+          robustTrainScore: robust.score,
+          robustTrainMinScore: sweExploreRankerPortfolioCandidateMinScore(robust),
+          robustTrainMetrics: robust.metrics,
+          robustEvaluation,
+          robustHeldout: robustEvaluation.heldout,
+        },
+      ]
     }),
   )
   return {
@@ -4225,30 +4394,36 @@ function sweExploreRankerPortfolioCandidates(
 ) {
   const rows = splits.flatMap((split) => split.rows.filter((row) => row.budget === budget))
   const keys = Array.from(new Set(rows.map(sweExploreRankerPortfolioRowKey)))
-  return keys.map((key) => {
-    const candidateRows = rows.filter((row) => sweExploreRankerPortfolioRowKey(row) === key)
-    const first = candidateRows[0]
-    if (!first) throw new Error(`Missing ranker portfolio candidate ${key}`)
-    const metrics = meanSWEExploreRankerPortfolioMetrics(candidateRows.map((row) => row.metrics))
-    const splitScores = splits.flatMap((split) => {
-      const row = split.rows.find((item) => item.budget === budget && item.ranker === first.ranker && item.policy === first.policy)
-      if (!row) return []
-      return [{
-        split: split.id,
-        score: sweExploreRankerPortfolioTargetScore(row.metrics, target),
-        metrics: row.metrics,
-      }]
+  return keys
+    .map((key) => {
+      const candidateRows = rows.filter((row) => sweExploreRankerPortfolioRowKey(row) === key)
+      const first = candidateRows[0]
+      if (!first) throw new Error(`Missing ranker portfolio candidate ${key}`)
+      const metrics = meanSWEExploreRankerPortfolioMetrics(candidateRows.map((row) => row.metrics))
+      const splitScores = splits.flatMap((split) => {
+        const row = split.rows.find(
+          (item) => item.budget === budget && item.ranker === first.ranker && item.policy === first.policy,
+        )
+        if (!row) return []
+        return [
+          {
+            split: split.id,
+            score: sweExploreRankerPortfolioTargetScore(row.metrics, target),
+            metrics: row.metrics,
+          },
+        ]
+      })
+      return {
+        ranker: first.ranker,
+        policy: first.policy,
+        score: sweExploreRankerPortfolioTargetScore(metrics, target),
+        metrics,
+        coveredSplits: splitScores.length,
+        complete: splitScores.length === splits.length,
+        splitScores,
+      } satisfies SWEExploreRankerPortfolioCandidate
     })
-    return {
-      ranker: first.ranker,
-      policy: first.policy,
-      score: sweExploreRankerPortfolioTargetScore(metrics, target),
-      metrics,
-      coveredSplits: splitScores.length,
-      complete: splitScores.length === splits.length,
-      splitScores,
-    } satisfies SWEExploreRankerPortfolioCandidate
-  }).toSorted(sweExploreRankerPortfolioCandidateOrder)
+    .toSorted(sweExploreRankerPortfolioCandidateOrder)
 }
 
 function sweExploreRankerPortfolioRobustCandidate(candidates: readonly SWEExploreRankerPortfolioCandidate[]) {
@@ -4301,16 +4476,18 @@ function sweExploreRankerPortfolioEvaluateFrozenCandidate(input: {
       return []
     }
     const score = sweExploreRankerPortfolioTargetScore(row.metrics, input.target)
-    return [{
-      evalSplit: split.id,
-      score,
-      metrics: row.metrics,
-      bestRanker: winner.ranker,
-      bestPolicy: winner.policy,
-      bestScore: winner.score,
-      bestMetrics: winner.metrics,
-      regretVsBest: winner.score - score,
-    }]
+    return [
+      {
+        evalSplit: split.id,
+        score,
+        metrics: row.metrics,
+        bestRanker: winner.ranker,
+        bestPolicy: winner.policy,
+        bestScore: winner.score,
+        bestMetrics: winner.metrics,
+        regretVsBest: winner.score - score,
+      },
+    ]
   })
   const heldout = evalSplits.filter((item) => item.evalSplit !== input.trainSplit.id)
   const heldoutMissing = missingSplits.filter((split) => split !== input.trainSplit.id)
@@ -4332,7 +4509,10 @@ function sweExploreRankerPortfolioEvaluateFrozenCandidate(input: {
   }
 }
 
-function sweExploreRankerPortfolioCandidateOrder(a: SWEExploreRankerPortfolioCandidate, b: SWEExploreRankerPortfolioCandidate) {
+function sweExploreRankerPortfolioCandidateOrder(
+  a: SWEExploreRankerPortfolioCandidate,
+  b: SWEExploreRankerPortfolioCandidate,
+) {
   return (
     Number(b.complete) - Number(a.complete) ||
     b.coveredSplits - a.coveredSplits ||
@@ -4394,9 +4574,7 @@ function sweExploreRankerPortfolioRowKey(row: SWEExploreRankerPortfolioRow) {
   return `${row.ranker}\0${row.policy}`
 }
 
-function sweExploreRankerPortfolioRankerCounts(
-  rows: readonly { readonly selectedRanker: SWEExploreRepoRanker }[],
-) {
+function sweExploreRankerPortfolioRankerCounts(rows: readonly { readonly selectedRanker: SWEExploreRepoRanker }[]) {
   return Array.from(Map.groupBy(rows, (row) => row.selectedRanker).entries())
     .map(([ranker, selected]) => ({ ranker, budgets: selected.length }))
     .toSorted(
@@ -4426,7 +4604,7 @@ function sweExploreRankerPortfolioPairCounts(
         b.budgets - a.budgets ||
         SWE_EXPLORE_REPO_RANKERS.indexOf(a.ranker) - SWE_EXPLORE_REPO_RANKERS.indexOf(b.ranker) ||
         SessionContextLedger.selectionPolicyOrder(a.policy) - SessionContextLedger.selectionPolicyOrder(b.policy),
-  )
+    )
 }
 
 async function evaluateSWEExploreRankerGateRepoFolds(input: {
@@ -4439,44 +4617,50 @@ async function evaluateSWEExploreRankerGateRepoFolds(input: {
   }
   const examples = sweExploreRankerGateExamplesFromSweepReport(await Bun.file(input.input).json(), input.input)
   const folds = sweExploreRankerGateRepoFolds(examples, input.folds)
-  const gates = folds.flatMap((fold) => {
-    const heldoutRepos = new Set(fold.repos)
-    const trainExamples = examples.filter((example) => !heldoutRepos.has(sweExploreRankerGateRepo(example.instanceID)))
-    const trainByKey = Map.groupBy(trainExamples, sweExploreRankerGateExampleKey)
-    return Array.from(Map.groupBy(fold.examples, sweExploreRankerGateExampleKey).entries()).flatMap(([key, evalExamples]) => {
-      const matchingTrainExamples = trainByKey.get(key) ?? []
-      const first = evalExamples[0]
-      if (!first || matchingTrainExamples.length === 0) return []
-      const rule = trainSWEExploreRankerGate(matchingTrainExamples, { minimumGain: input.minimumGain ?? 0 })
-      const train = sweExploreRankerGateTransferScore(matchingTrainExamples, rule)
-      const heldout = sweExploreRankerGateTransferScore(evalExamples, rule)
-      return [{
-        fold: fold.id,
-        heldoutRepos: fold.repos,
-        baselineRanker: first.baselineRanker,
-        ranker: first.ranker,
-        policy: first.policy,
-        budget: first.budget,
-        minimumGain: input.minimumGain ?? 0,
-        trainCases: matchingTrainExamples.length,
-        heldoutCases: evalExamples.length,
-        rule,
-        train,
-        trainChoices: sweExploreRankerGateChoiceCounts(matchingTrainExamples, rule),
-        heldout,
-        heldoutChoices: sweExploreRankerGateChoiceCounts(evalExamples, rule),
-        stable:
-          heldout.routedDeltaVsBaseline >= 0 &&
-          heldout.routedDeltaVsBestFixed >= -(input.minimumGain ?? 0),
-      }]
+  const gates = folds
+    .flatMap((fold) => {
+      const heldoutRepos = new Set(fold.repos)
+      const trainExamples = examples.filter(
+        (example) => !heldoutRepos.has(sweExploreRankerGateRepo(example.instanceID)),
+      )
+      const trainByKey = Map.groupBy(trainExamples, sweExploreRankerGateExampleKey)
+      return Array.from(Map.groupBy(fold.examples, sweExploreRankerGateExampleKey).entries()).flatMap(
+        ([key, evalExamples]) => {
+          const matchingTrainExamples = trainByKey.get(key) ?? []
+          const first = evalExamples[0]
+          if (!first || matchingTrainExamples.length === 0) return []
+          const rule = trainSWEExploreRankerGate(matchingTrainExamples, { minimumGain: input.minimumGain ?? 0 })
+          const train = sweExploreRankerGateTransferScore(matchingTrainExamples, rule)
+          const heldout = sweExploreRankerGateTransferScore(evalExamples, rule)
+          return [
+            {
+              fold: fold.id,
+              heldoutRepos: fold.repos,
+              baselineRanker: first.baselineRanker,
+              ranker: first.ranker,
+              policy: first.policy,
+              budget: first.budget,
+              minimumGain: input.minimumGain ?? 0,
+              trainCases: matchingTrainExamples.length,
+              heldoutCases: evalExamples.length,
+              rule,
+              train,
+              trainChoices: sweExploreRankerGateChoiceCounts(matchingTrainExamples, rule),
+              heldout,
+              heldoutChoices: sweExploreRankerGateChoiceCounts(evalExamples, rule),
+              stable: heldout.routedDeltaVsBaseline >= 0 && heldout.routedDeltaVsBestFixed >= -(input.minimumGain ?? 0),
+            },
+          ]
+        },
+      )
     })
-  }).toSorted(
-    (a, b) =>
-      a.budget - b.budget ||
-      SessionContextLedger.selectionPolicyOrder(a.policy) - SessionContextLedger.selectionPolicyOrder(b.policy) ||
-      a.ranker.localeCompare(b.ranker) ||
-      a.fold.localeCompare(b.fold),
-  )
+    .toSorted(
+      (a, b) =>
+        a.budget - b.budget ||
+        SessionContextLedger.selectionPolicyOrder(a.policy) - SessionContextLedger.selectionPolicyOrder(b.policy) ||
+        a.ranker.localeCompare(b.ranker) ||
+        a.fold.localeCompare(b.fold),
+    )
   const heldoutScores = gates.map((gate) => gate.heldout)
   return {
     input: input.input,
@@ -4495,9 +4679,8 @@ async function evaluateSWEExploreRankerGateRepoFolds(input: {
       stableGates: gates.filter((gate) => gate.stable).length,
       meanRoutedDeltaVsBaseline: meanNumber(heldoutScores.map((score) => score.routedDeltaVsBaseline)),
       meanRoutedDeltaVsBestFixed: meanNumber(heldoutScores.map((score) => score.routedDeltaVsBestFixed)),
-      minRoutedDeltaVsBestFixed: heldoutScores.length === 0
-        ? 0
-        : Math.min(...heldoutScores.map((score) => score.routedDeltaVsBestFixed)),
+      minRoutedDeltaVsBestFixed:
+        heldoutScores.length === 0 ? 0 : Math.min(...heldoutScores.map((score) => score.routedDeltaVsBestFixed)),
       meanRoutedRegretVsOracle: meanNumber(heldoutScores.map((score) => score.routedRegretVsOracle)),
       worstDecileRoutedRegretVsOracle: worstDecileMean(heldoutScores.map((score) => score.routedRegretVsOracle)),
     },
@@ -4509,8 +4692,9 @@ function sweExploreRankerGateRepoFolds(
   examples: readonly SWEExploreRankerGateExample[],
   requestedFolds: number,
 ): readonly SWEExploreRankerGateRepoFold[] {
-  const repoGroups = Array.from(Map.groupBy(examples, (example) => sweExploreRankerGateRepo(example.instanceID)).entries())
-    .toSorted((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
+  const repoGroups = Array.from(
+    Map.groupBy(examples, (example) => sweExploreRankerGateRepo(example.instanceID)).entries(),
+  ).toSorted((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
   if (repoGroups.length < 2) {
     throw new Error("--swe-explore-ranker-gate-repo-fold-output requires at least two repository groups")
   }
@@ -4522,10 +4706,7 @@ function sweExploreRankerGateRepoFolds(
   }))
   for (const [repo, repoExamples] of repoGroups) {
     const target = folds.toSorted(
-      (a, b) =>
-        a.examples.length - b.examples.length ||
-        a.repos.length - b.repos.length ||
-        a.id.localeCompare(b.id),
+      (a, b) => a.examples.length - b.examples.length || a.repos.length - b.repos.length || a.id.localeCompare(b.id),
     )[0]
     if (!target) throw new Error("Failed to allocate SWE-Explore ranker gate repo fold")
     target.repos.push(repo)
@@ -4564,34 +4745,42 @@ async function evaluateSWEExploreRankerGateTransfer(input: {
       if (!first) return []
       const rule = trainSWEExploreRankerGate(trainExamples, { minimumGain: input.minimumGain ?? 0 })
       const evalSplits = splits.flatMap((evalSplit) => {
-        const evalExamples = evalSplit.examples.filter((item) => sweExploreRankerGateExampleKey(item) === sweExploreRankerGateExampleKey(first))
+        const evalExamples = evalSplit.examples.filter(
+          (item) => sweExploreRankerGateExampleKey(item) === sweExploreRankerGateExampleKey(first),
+        )
         if (evalExamples.length === 0) return []
-        return [{
-          evalSplit: evalSplit.id,
-          evalCases: evalExamples.length,
-          ...sweExploreRankerGateTransferScore(evalExamples, rule),
-          routedChoices: sweExploreRankerGateChoiceCounts(evalExamples, rule),
-        }]
+        return [
+          {
+            evalSplit: evalSplit.id,
+            evalCases: evalExamples.length,
+            ...sweExploreRankerGateTransferScore(evalExamples, rule),
+            routedChoices: sweExploreRankerGateChoiceCounts(evalExamples, rule),
+          },
+        ]
       })
       const heldout = evalSplits.filter((item) => item.evalSplit !== trainSplit.id)
-      return [{
-        trainSplit: trainSplit.id,
-        baselineRanker: first.baselineRanker,
-        ranker: first.ranker,
-        policy: first.policy,
-        budget: first.budget,
-        minimumGain: input.minimumGain ?? 0,
-        trainCases: trainExamples.length,
-        rule,
-        train: sweExploreRankerGateTransferScore(trainExamples, rule),
-        trainChoices: sweExploreRankerGateChoiceCounts(trainExamples, rule),
-        evalSplits,
-        heldout: {
-          splits: heldout.length,
-          minRoutedDeltaVsBaseline: heldout.length === 0 ? 0 : Math.min(...heldout.map((item) => item.routedDeltaVsBaseline)),
-          minRoutedDeltaVsBestFixed: heldout.length === 0 ? 0 : Math.min(...heldout.map((item) => item.routedDeltaVsBestFixed)),
+      return [
+        {
+          trainSplit: trainSplit.id,
+          baselineRanker: first.baselineRanker,
+          ranker: first.ranker,
+          policy: first.policy,
+          budget: first.budget,
+          minimumGain: input.minimumGain ?? 0,
+          trainCases: trainExamples.length,
+          rule,
+          train: sweExploreRankerGateTransferScore(trainExamples, rule),
+          trainChoices: sweExploreRankerGateChoiceCounts(trainExamples, rule),
+          evalSplits,
+          heldout: {
+            splits: heldout.length,
+            minRoutedDeltaVsBaseline:
+              heldout.length === 0 ? 0 : Math.min(...heldout.map((item) => item.routedDeltaVsBaseline)),
+            minRoutedDeltaVsBestFixed:
+              heldout.length === 0 ? 0 : Math.min(...heldout.map((item) => item.routedDeltaVsBestFixed)),
+          },
         },
-      }]
+      ]
     }),
   )
   return {
@@ -4688,8 +4877,14 @@ async function renderSWEExploreRankerGateReport(input: {
         ["Best fixed mean F1", formatScore(portfolio.portfolio.meanF1)],
         ["Robust fixed mean F1", formatScore(portfolio.portfolio.meanRobustF1)],
         ["Held-out gate rows", String(heldout.length)],
-        ["Mean held-out routed delta vs structural", formatScore(meanNumber(heldout.map((item) => item.routedDeltaVsBaseline)))],
-        ["Mean held-out routed delta vs best fixed", formatScore(meanNumber(heldout.map((item) => item.routedDeltaVsBestFixed)))],
+        [
+          "Mean held-out routed delta vs structural",
+          formatScore(meanNumber(heldout.map((item) => item.routedDeltaVsBaseline))),
+        ],
+        [
+          "Mean held-out routed delta vs best fixed",
+          formatScore(meanNumber(heldout.map((item) => item.routedDeltaVsBestFixed))),
+        ],
         ["Mean held-out regret vs oracle", formatScore(meanNumber(heldout.map((item) => item.routedRegretVsOracle)))],
         ["Stable gates under epsilon", String(stableGates.length)],
         ["Stable non-abstaining gates under epsilon", String(stableNonAbstainingGates.length)],
@@ -4740,15 +4935,23 @@ async function renderSWEExploreRankerGateReport(input: {
     "## Gate Rules",
     markdownTable(
       ["Train split", "Budget", "Candidate", "Policy", "Rule", "Held-out delta vs best", "Held-out regret"],
-      transfer.gates.slice(0, 40).map((gate) => [
-        gate.trainSplit,
-        String(gate.budget),
-        gate.ranker,
-        gate.policy,
-        sweExploreRankerGateRuleText(gate.rule),
-        formatScore(gate.heldout.minRoutedDeltaVsBestFixed),
-        formatScore(meanNumber(gate.evalSplits.filter((item) => item.evalSplit !== gate.trainSplit).map((item) => item.routedRegretVsOracle))),
-      ]),
+      transfer.gates
+        .slice(0, 40)
+        .map((gate) => [
+          gate.trainSplit,
+          String(gate.budget),
+          gate.ranker,
+          gate.policy,
+          sweExploreRankerGateRuleText(gate.rule),
+          formatScore(gate.heldout.minRoutedDeltaVsBestFixed),
+          formatScore(
+            meanNumber(
+              gate.evalSplits
+                .filter((item) => item.evalSplit !== gate.trainSplit)
+                .map((item) => item.routedRegretVsOracle),
+            ),
+          ),
+        ]),
     ),
     "",
     "## Case Comparisons",
@@ -4814,7 +5017,7 @@ function rankerGateExamplesByDelta(
   direction: "asc" | "desc",
 ) {
   return examples.toSorted((a, b) => {
-    const delta = (a.candidateMetrics.f1 - a.baselineMetrics.f1) - (b.candidateMetrics.f1 - b.baselineMetrics.f1)
+    const delta = a.candidateMetrics.f1 - a.baselineMetrics.f1 - (b.candidateMetrics.f1 - b.baselineMetrics.f1)
     return direction === "asc" ? delta : -delta
   })
 }
@@ -4846,7 +5049,9 @@ function sweExploreRankerGateTransferScore(
   const candidate = sweExploreRankerGateScore(examples.map((item) => item.candidateMetrics))
   const routed = sweExploreRankerGateScore(examples.map((item) => routeSWEExploreRankerGate(item, rule)))
   const oracle = sweExploreRankerGateScore(
-    examples.map((item) => item.candidateMetrics.f1 > item.baselineMetrics.f1 ? item.candidateMetrics : item.baselineMetrics),
+    examples.map((item) =>
+      item.candidateMetrics.f1 > item.baselineMetrics.f1 ? item.candidateMetrics : item.baselineMetrics,
+    ),
   )
   return {
     baseline,
@@ -4859,9 +5064,14 @@ function sweExploreRankerGateTransferScore(
     baselineRegretVsOracle: oracle.f1 - baseline.f1,
     candidateRegretVsOracle: oracle.f1 - candidate.f1,
     routedRegretVsOracle: oracle.f1 - routed.f1,
-    routedWinsVsBaseline: examples.filter((item) => routeSWEExploreRankerGate(item, rule).f1 > item.baselineMetrics.f1).length,
-    routedLossesVsBaseline: examples.filter((item) => routeSWEExploreRankerGate(item, rule).f1 < item.baselineMetrics.f1).length,
-    routedTiesVsBaseline: examples.filter((item) => routeSWEExploreRankerGate(item, rule).f1 === item.baselineMetrics.f1).length,
+    routedWinsVsBaseline: examples.filter((item) => routeSWEExploreRankerGate(item, rule).f1 > item.baselineMetrics.f1)
+      .length,
+    routedLossesVsBaseline: examples.filter(
+      (item) => routeSWEExploreRankerGate(item, rule).f1 < item.baselineMetrics.f1,
+    ).length,
+    routedTiesVsBaseline: examples.filter(
+      (item) => routeSWEExploreRankerGate(item, rule).f1 === item.baselineMetrics.f1,
+    ).length,
   }
 }
 
@@ -4905,7 +5115,9 @@ function sweExploreRankerSweepFeatures(cases: readonly SessionContextLedgerBench
   return new Map(cases.map((item) => [item.instance_id, sweExploreRankerSweepCaseFeatures(item)] as const))
 }
 
-function sweExploreRankerSweepCaseFeatures(item: SessionContextLedgerBenchmark.Case): SWEExploreRankerSweepPacketFeatures {
+function sweExploreRankerSweepCaseFeatures(
+  item: SessionContextLedgerBenchmark.Case,
+): SWEExploreRankerSweepPacketFeatures {
   const codeEvents = item.events.filter((event) => event.kind === "code-context" || event.kind === "diff")
   const files = Array.from(new Set(codeEvents.flatMap((event) => event.files)))
   const fileRefs = codeEvents.flatMap((event) => event.files)
@@ -4915,7 +5127,9 @@ function sweExploreRankerSweepCaseFeatures(item: SessionContextLedgerBenchmark.C
   const totalLineCost = tokenCounts.reduce((total, count) => total + count, 0)
   const pathBuckets = files.map(sweExplorePathBucket)
   const queryTerms = localTextTerms(item.query ?? "")
-  const candidateTerms = localTextTerms(codeEvents.map((event) => `${event.summary}\n${event.files.join("\n")}`).join("\n"))
+  const candidateTerms = localTextTerms(
+    codeEvents.map((event) => `${event.summary}\n${event.files.join("\n")}`).join("\n"),
+  )
   const queryOverlap = Array.from(queryTerms).filter((term) => candidateTerms.has(term)).length
   return {
     metrics: {
@@ -4930,10 +5144,12 @@ function sweExploreRankerSweepCaseFeatures(item: SessionContextLedgerBenchmark.C
       largeChunkShare: shareNumbers(tokenCounts, (count) => count > 80),
       implementationPathShare: shareStrings(pathBuckets, "implementation"),
       testPathShare: shareStrings(pathBuckets, "test"),
-      noisyPathShare: pathBuckets.length === 0
-        ? 0
-        : pathBuckets.filter((bucket) => bucket === "test" || bucket === "docs" || bucket === "generated" || bucket === "fixture").length /
-          pathBuckets.length,
+      noisyPathShare:
+        pathBuckets.length === 0
+          ? 0
+          : pathBuckets.filter(
+              (bucket) => bucket === "test" || bucket === "docs" || bucket === "generated" || bucket === "fixture",
+            ).length / pathBuckets.length,
       queryTermCount: queryTerms.size,
       queryCandidateTermOverlap: queryTerms.size === 0 ? 0 : queryOverlap / queryTerms.size,
     },
@@ -4965,10 +5181,15 @@ function sweExploreRankerComparisonFeatures(
 
 function sweExplorePathBucket(path: string) {
   const lowered = path.toLowerCase()
-  if (/(^|\/)(test|tests|testing|spec|specs)(__|\/|_|-|\.)/.test(lowered) || /\.(test|spec)\.[cm]?[jt]sx?$/.test(lowered)) return "test"
+  if (
+    /(^|\/)(test|tests|testing|spec|specs)(__|\/|_|-|\.)/.test(lowered) ||
+    /\.(test|spec)\.[cm]?[jt]sx?$/.test(lowered)
+  )
+    return "test"
   if (/(^|\/)(doc|docs|documentation|examples?)(\/|$)/.test(lowered) || /\.(md|rst|txt)$/.test(lowered)) return "docs"
   if (/(^|\/)(fixtures?|snapshots?|golden)(\/|$)/.test(lowered)) return "fixture"
-  if (/(^|\/)(dist|build|generated|vendor|third_party)(\/|$)/.test(lowered) || /\.min\.[cm]?js$/.test(lowered)) return "generated"
+  if (/(^|\/)(dist|build|generated|vendor|third_party)(\/|$)/.test(lowered) || /\.min\.[cm]?js$/.test(lowered))
+    return "generated"
   return "implementation"
 }
 
@@ -4998,10 +5219,12 @@ function shareStrings(values: readonly string[], target: string) {
   return values.length === 0 ? 0 : values.filter((value) => value === target).length / values.length
 }
 
-function sweExploreChunkSweepBests(results: readonly {
-  readonly chunkLines: number
-  readonly summaries: readonly SessionContextLedgerBenchmark.SWEExploreOfficialSummary[]
-}[]) {
+function sweExploreChunkSweepBests(
+  results: readonly {
+    readonly chunkLines: number
+    readonly summaries: readonly SessionContextLedgerBenchmark.SWEExploreOfficialSummary[]
+  }[],
+) {
   return budgets.map((budget) => {
     const candidates = results.flatMap((result) =>
       result.summaries
@@ -5025,19 +5248,25 @@ function sweExploreRepoChunkOptions(input?: {
   readonly chunkOverlap?: number
   readonly ranker?: SWEExploreRepoRanker
 }) {
-  const chunkLines = input?.chunkLines !== undefined
-    ? [input.chunkLines]
-    : args.values["swe-explore-multiscale-chunk-lines"]
-      ? integerListAtLeast(args.values["swe-explore-multiscale-chunk-lines"], "--swe-explore-multiscale-chunk-lines", 1)
-      : [integerAtLeast(args.values["swe-explore-chunk-lines"] ?? "80", "--swe-explore-chunk-lines", 1)]
-  const configuredOverlap = input?.chunkOverlap ?? (
-    args.values["swe-explore-chunk-overlap"]
+  const chunkLines =
+    input?.chunkLines !== undefined
+      ? [input.chunkLines]
+      : args.values["swe-explore-multiscale-chunk-lines"]
+        ? integerListAtLeast(
+            args.values["swe-explore-multiscale-chunk-lines"],
+            "--swe-explore-multiscale-chunk-lines",
+            1,
+          )
+        : [integerAtLeast(args.values["swe-explore-chunk-lines"] ?? "80", "--swe-explore-chunk-lines", 1)]
+  const configuredOverlap =
+    input?.chunkOverlap ??
+    (args.values["swe-explore-chunk-overlap"]
       ? integerAtLeast(args.values["swe-explore-chunk-overlap"], "--swe-explore-chunk-overlap", 0)
-      : undefined
-  )
+      : undefined)
   const chunkSizes = chunkLines.map((lines) => {
     const overlap = configuredOverlap ?? (chunkLines.length > 1 ? Math.floor(lines / 4) : 20)
-    if (overlap >= lines) throw new Error("--swe-explore-chunk-overlap must be smaller than every configured chunk size")
+    if (overlap >= lines)
+      throw new Error("--swe-explore-chunk-overlap must be smaller than every configured chunk size")
     return { chunkLines: lines, chunkOverlap: overlap }
   })
   return {
@@ -5071,9 +5300,7 @@ function sweExploreRepoCandidatesForOptions(
       const started = performance.now()
       const repoDir = resolveSWEExploreRepoDir(row, reposRoot)
       const query = row.problem_statement ?? issueMap?.[row.instance_id] ?? row.instance_id
-      const chunks = repoDir
-        ? sweExploreRepoChunks(repoDir, query, options)
-        : []
+      const chunks = repoDir ? sweExploreRepoChunks(repoDir, query, options) : []
       if (progress?.enabled) {
         console.error(
           [
@@ -5093,9 +5320,7 @@ function sweExploreRepoCandidatesForOptions(
 
 function resolveSWEExploreRepoDir(row: SessionContextLedgerBenchmark.SWEExploreRow, reposRoot: string) {
   const root = isAbsolute(reposRoot) ? reposRoot : join(process.cwd(), reposRoot)
-  const repoName = row.instance_id.includes("__")
-    ? row.instance_id.split("__")[1]?.replace(/-[^-]+$/, "")
-    : undefined
+  const repoName = row.instance_id.includes("__") ? row.instance_id.split("__")[1]?.replace(/-[^-]+$/, "") : undefined
   const candidates = [
     sweExploreRepoTargetDir(row, reposRoot),
     join(root, row.instance_id),
@@ -5132,9 +5357,7 @@ function sweExploreRepoChunks(
   )
     .flatMap((file) => {
       const text = readFileSync(file.absolute, "utf8")
-      return options.chunkSizes.flatMap((size) =>
-        chunkFile(file.relative, text, size.chunkLines, size.chunkOverlap),
-      )
+      return options.chunkSizes.flatMap((size) => chunkFile(file.relative, text, size.chunkLines, size.chunkOverlap))
     })
     .map((chunk, index) => ({ chunk, index }))
   return rankRepoChunks(query, queryTerms, chunks, options.ranker)
@@ -5177,7 +5400,7 @@ function rankRepoFiles(
   }
 
   const structuralCount = Math.floor(maxFiles * CONTENT_BACKFILL_STRUCTURAL_SHARE)
-  const selected = new Map<string, typeof ranked[number]>()
+  const selected = new Map<string, (typeof ranked)[number]>()
   for (const file of ranked.slice(0, structuralCount)) selected.set(file.relative, file)
   for (const file of contentRanked) {
     if (selected.size >= maxFiles) break
@@ -5224,7 +5447,9 @@ function repoFileContentScore(
     return 0
   }
   const fileTerms = localTextTerms(text)
-  const filteredQueryTerms = Array.from(queryTextTerms).filter((term) => term.length > 2 && !SEARCH_STOP_WORDS.has(term))
+  const filteredQueryTerms = Array.from(queryTextTerms).filter(
+    (term) => term.length > 2 && !SEARCH_STOP_WORDS.has(term),
+  )
   const lexicalHits = filteredQueryTerms.filter((term) => fileTerms.has(term)).length
   const definitionTerms = new Set(extractDefinitionIdentifiers(text).flatMap(identifierTerms))
   const identifierTermsInFile = new Set(extractCodeIdentifiers(text).flatMap(identifierTerms))
@@ -5234,10 +5459,7 @@ function repoFileContentScore(
   const pathPenalty = pathBucket === "generated" || pathBucket === "fixture" || pathBucket === "docs" ? 4 : 0
   return Math.max(
     0,
-    Math.min(8, lexicalHits * 0.5) +
-      Math.min(18, definitionHits * 6) +
-      Math.min(8, identifierHits * 1.5) -
-      pathPenalty,
+    Math.min(8, lexicalHits * 0.5) + Math.min(18, definitionHits * 6) + Math.min(8, identifierHits * 1.5) - pathPenalty,
   )
 }
 
@@ -5278,22 +5500,23 @@ function rankRepoChunks(
   chunks: readonly RepoChunkCandidate[],
   ranker: SWEExploreRepoRanker,
 ) {
-  const scored = ranker === "bm25"
-    ? repoChunkBM25Scores(query, chunks)
-    : ranker === "dependency-neighbor"
-      ? repoChunkDependencyNeighborScores(query, queryTerms, chunks)
-      : ranker === "anchored-neighbor"
-      ? repoChunkAnchoredNeighborScores(query, queryTerms, chunks)
-      : ranker === "hybrid-rrf"
-      ? repoChunkHybridRRFScores(query, queryTerms, chunks)
-      : ranker === "structural-neighbor"
-      ? repoChunkStructuralNeighborScores(query, queryTerms, chunks)
-      : ranker === "structural" || ranker === "content-structural" || ranker === "content-backfill"
-      ? repoChunkStructuralScores(query, queryTerms, chunks)
-      : chunks.map((candidate) => ({
-          ...candidate,
-          score: repoChunkScore(query, queryTerms, candidate.chunk),
-        }))
+  const scored =
+    ranker === "bm25"
+      ? repoChunkBM25Scores(query, chunks)
+      : ranker === "dependency-neighbor"
+        ? repoChunkDependencyNeighborScores(query, queryTerms, chunks)
+        : ranker === "anchored-neighbor"
+          ? repoChunkAnchoredNeighborScores(query, queryTerms, chunks)
+          : ranker === "hybrid-rrf"
+            ? repoChunkHybridRRFScores(query, queryTerms, chunks)
+            : ranker === "structural-neighbor"
+              ? repoChunkStructuralNeighborScores(query, queryTerms, chunks)
+              : ranker === "structural" || ranker === "content-structural" || ranker === "content-backfill"
+                ? repoChunkStructuralScores(query, queryTerms, chunks)
+                : chunks.map((candidate) => ({
+                    ...candidate,
+                    score: repoChunkScore(query, queryTerms, candidate.chunk),
+                  }))
   return sortRankedRepoChunks(scored)
 }
 
@@ -5326,11 +5549,17 @@ function repoChunkBM25Scores(query: string, chunks: readonly RepoChunkCandidate[
     }
     return {
       ...candidate,
-      length: Math.max(1, Array.from(termFrequency.values()).reduce((total, count) => total + count, 0)),
+      length: Math.max(
+        1,
+        Array.from(termFrequency.values()).reduce((total, count) => total + count, 0),
+      ),
       termFrequency,
     }
   })
-  const averageLength = Math.max(1, documents.reduce((total, document) => total + document.length, 0) / documents.length)
+  const averageLength = Math.max(
+    1,
+    documents.reduce((total, document) => total + document.length, 0) / documents.length,
+  )
   const documentFrequency = new Map<string, number>()
   for (const term of queryTerms) {
     documentFrequency.set(term, documents.filter((document) => document.termFrequency.has(term)).length)
@@ -5435,7 +5664,8 @@ function repoChunkHybridRRFScores(
   }
   return chunks.map((candidate) => ({
     ...candidate,
-    score: (scores.get(candidate.index) ?? 0) + repoChunkPathBonus(query, candidate.chunk) * HYBRID_RRF_PATH_BONUS_SCALE,
+    score:
+      (scores.get(candidate.index) ?? 0) + repoChunkPathBonus(query, candidate.chunk) * HYBRID_RRF_PATH_BONUS_SCALE,
   }))
 }
 
@@ -5453,9 +5683,7 @@ function repoChunkStructuralSeedsByPath(
   for (const [path, seeds] of seedsByPath) {
     seedsByPath.set(
       path,
-      seeds
-        .toSorted((a, b) => b.structuralScore - a.structuralScore || b.score - a.score)
-        .slice(0, maxSeedsPerFile),
+      seeds.toSorted((a, b) => b.structuralScore - a.structuralScore || b.score - a.score).slice(0, maxSeedsPerFile),
     )
   }
   return seedsByPath
@@ -5503,20 +5731,15 @@ function repoChunkStructuralBaseScores(
   })
 }
 
-function repoChunkNeighborScore(
-  candidate: RepoChunkCandidate,
-  seeds: readonly StructurallyScoredRepoChunkCandidate[],
-) {
+function repoChunkNeighborScore(candidate: RepoChunkCandidate, seeds: readonly StructurallyScoredRepoChunkCandidate[]) {
   let best = 0
   for (const seed of seeds) {
     if (seed.index === candidate.index) continue
     const gap = repoChunkLineGap(candidate.chunk, seed.chunk)
     if (gap > STRUCTURAL_NEIGHBOR_MAX_LINE_GAP) continue
     const proximity = 1 - gap / STRUCTURAL_NEIGHBOR_MAX_LINE_GAP
-    const bonus = Math.min(
-      STRUCTURAL_NEIGHBOR_MAX_BONUS,
-      seed.structuralScore * STRUCTURAL_NEIGHBOR_BONUS_PER_POINT,
-    ) * proximity
+    const bonus =
+      Math.min(STRUCTURAL_NEIGHBOR_MAX_BONUS, seed.structuralScore * STRUCTURAL_NEIGHBOR_BONUS_PER_POINT) * proximity
     if (bonus > best) best = bonus
   }
   return best
@@ -5532,10 +5755,9 @@ function repoChunkAnchoredNeighborScore(
     const gap = repoChunkLineGap(candidate.chunk, seed.chunk)
     if (gap > ANCHORED_NEIGHBOR_MAX_LINE_GAP) continue
     const proximity = 1 - gap / ANCHORED_NEIGHBOR_MAX_LINE_GAP
-    const bonus = Math.min(
-      ANCHORED_NEIGHBOR_MAX_BONUS,
-      repoChunkAnchorConfidence(seed) * ANCHORED_NEIGHBOR_BONUS_PER_POINT,
-    ) * proximity
+    const bonus =
+      Math.min(ANCHORED_NEIGHBOR_MAX_BONUS, repoChunkAnchorConfidence(seed) * ANCHORED_NEIGHBOR_BONUS_PER_POINT) *
+      proximity
     if (bonus > best) best = bonus
   }
   return best
@@ -5549,12 +5771,15 @@ type RepoChunkFileProfile = {
 }
 
 function repoChunkFileProfiles(chunks: readonly RepoChunkCandidate[]) {
-  const profiles = new Map<string, {
-    pathTerms: Set<string>
-    definitionTerms: Set<string>
-    importTerms: Set<string>
-    directoryTerms: Set<string>
-  }>()
+  const profiles = new Map<
+    string,
+    {
+      pathTerms: Set<string>
+      definitionTerms: Set<string>
+      importTerms: Set<string>
+      directoryTerms: Set<string>
+    }
+  >()
   for (const candidate of chunks) {
     const profile = profiles.get(candidate.chunk.path) ?? {
       pathTerms: new Set(localPathTerms(candidate.chunk.path)),
@@ -5588,10 +5813,8 @@ function repoDependencyBonusByPath(
       if (relationScore <= 0) continue
       const seedStrength = Math.max(...seeds.map((seed) => seed.structuralScore))
       const relationScale = Math.min(1, relationScore / 2.5)
-      const bonus = Math.min(
-        DEPENDENCY_NEIGHBOR_MAX_BONUS,
-        seedStrength * DEPENDENCY_NEIGHBOR_BONUS_PER_POINT,
-      ) * relationScale
+      const bonus =
+        Math.min(DEPENDENCY_NEIGHBOR_MAX_BONUS, seedStrength * DEPENDENCY_NEIGHBOR_BONUS_PER_POINT) * relationScale
       if (bonus > best) best = bonus
     }
     if (best > 0) bonusByPath.set(candidatePath, best)
@@ -5599,10 +5822,7 @@ function repoDependencyBonusByPath(
   return bonusByPath
 }
 
-function repoFileDependencyRelationScore(
-  source: RepoChunkFileProfile,
-  target: RepoChunkFileProfile,
-) {
+function repoFileDependencyRelationScore(source: RepoChunkFileProfile, target: RepoChunkFileProfile) {
   const sourceReferencesTarget = termIntersectionSize(source.importTerms, repoFileReferenceTerms(target))
   const targetReferencesSource = termIntersectionSize(target.importTerms, repoFileReferenceTerms(source))
   const sharedImports = termIntersectionSize(source.importTerms, target.importTerms)
@@ -5640,7 +5860,9 @@ function repoChunkLineGap(
 }
 
 function codeQueryTerms(query: string) {
-  return new Set(Array.from(localPathTerms(query)).filter((term) => term.length > 2 && !CODE_QUERY_STOP_WORDS.has(term)))
+  return new Set(
+    Array.from(localPathTerms(query)).filter((term) => term.length > 2 && !CODE_QUERY_STOP_WORDS.has(term)),
+  )
 }
 
 function repoChunkStructuralScore(
@@ -5666,8 +5888,9 @@ function repoChunkStructuralScore(
 }
 
 function extractCodeIdentifiers(text: string) {
-  return Array.from(new Set(Array.from(text.matchAll(/\b[A-Za-z_][A-Za-z0-9_]*\b/g), (match) => match[0])))
-    .filter((identifier) => identifier.length > 1 && !CODE_QUERY_STOP_WORDS.has(identifier.toLowerCase()))
+  return Array.from(new Set(Array.from(text.matchAll(/\b[A-Za-z_][A-Za-z0-9_]*\b/g), (match) => match[0]))).filter(
+    (identifier) => identifier.length > 1 && !CODE_QUERY_STOP_WORDS.has(identifier.toLowerCase()),
+  )
 }
 
 function extractDefinitionIdentifiers(text: string) {
@@ -5731,7 +5954,11 @@ function chunkFile(path: string, text: string, chunkLines: number, chunkOverlap:
   return chunks
 }
 
-function repoChunkScore(query: string, queryTerms: ReadonlySet<string>, chunk: SessionContextLedgerBenchmark.SWEExploreRepoChunk) {
+function repoChunkScore(
+  query: string,
+  queryTerms: ReadonlySet<string>,
+  chunk: SessionContextLedgerBenchmark.SWEExploreRepoChunk,
+) {
   const chunkTerms = localTextTerms(`${chunk.path}\n${chunk.text ?? ""}`)
   let score = 0
   for (const term of queryTerms) if (chunkTerms.has(term)) score += 1
@@ -5749,7 +5976,10 @@ function repoChunkPathBonus(query: string, chunk: SessionContextLedgerBenchmark.
 }
 
 function localTextTermList(input: string) {
-  return input.toLowerCase().split(/[^a-z0-9_]+/).filter((term) => term.length > 1)
+  return input
+    .toLowerCase()
+    .split(/[^a-z0-9_]+/)
+    .filter((term) => term.length > 1)
 }
 
 function localTextTerms(input: string) {
@@ -5757,13 +5987,10 @@ function localTextTerms(input: string) {
 }
 
 function localPathTerms(input: string) {
-  const expanded = input
-    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
-    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
-  const terms = [
-    ...input.toLowerCase().split(/[^a-z0-9_]+/),
-    ...expanded.toLowerCase().split(/[^a-z0-9]+/),
-  ].flatMap((term) => [term, ...term.split(/_+/)])
+  const expanded = input.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+  const terms = [...input.toLowerCase().split(/[^a-z0-9_]+/), ...expanded.toLowerCase().split(/[^a-z0-9]+/)].flatMap(
+    (term) => [term, ...term.split(/_+/)],
+  )
   return new Set(terms.flatMap(localTermVariants).filter((term) => term.length > 1))
 }
 
@@ -5803,7 +6030,9 @@ async function loadAgentRetrievalBenchChunks(
   if (!args.values["agent-retrieval-bench-corpus-manifest"]) return undefined
   if (!samples) throw new Error("--agent-retrieval-bench-corpus-manifest requires --agent-retrieval-bench-samples")
   const manifestPath = args.values["agent-retrieval-bench-corpus-manifest"]
-  const manifest = SessionContextLedgerBenchmark.parseAgentRetrievalBenchCorpusManifestJsonl(await Bun.file(manifestPath).text())
+  const manifest = SessionContextLedgerBenchmark.parseAgentRetrievalBenchCorpusManifestJsonl(
+    await Bun.file(manifestPath).text(),
+  )
   const chunkPaths = SessionContextLedgerBenchmark.agentRetrievalBenchChunkPathsForSamples(samples, manifest)
   const root = args.values["agent-retrieval-bench-corpus-root"] ?? dirname(manifestPath)
   const chunks = []
@@ -5825,7 +6054,8 @@ async function resolveAgentRetrievalBenchChunkPath(path: string, root: string, m
 
 async function officialGoldPath(contextBenchRowsResponse: unknown) {
   if (args.values["gold-output"]) return args.values["gold-output"]
-  if (!contextBenchRowsResponse) throw new Error("--official-policy-report-output requires --contextbench or --gold-output")
+  if (!contextBenchRowsResponse)
+    throw new Error("--official-policy-report-output requires --contextbench or --gold-output")
   const path = tempPath("context-ledger-official-gold-", ".jsonl")
   await Bun.write(
     path,
@@ -5886,7 +6116,8 @@ function bestOfficialPolicy(
     if (!current) return item
     const delta = score(item) - score(current)
     if (delta !== 0) return delta > 0 ? item : current
-    return SessionContextLedger.selectionPolicyOrder(item.policy) < SessionContextLedger.selectionPolicyOrder(current.policy)
+    return SessionContextLedger.selectionPolicyOrder(item.policy) <
+      SessionContextLedger.selectionPolicyOrder(current.policy)
       ? item
       : current
   }, undefined)
@@ -5950,14 +6181,20 @@ function parseRouterTargets(value: string | undefined, name: string) {
 }
 
 function parseAgentRetrievalRankingStrategy(value: string) {
-  const strategies = ["packet-order", "action-aware"] satisfies readonly SessionContextLedgerBenchmark.AgentRetrievalRankingStrategy[]
+  const strategies = [
+    "packet-order",
+    "action-aware",
+  ] satisfies readonly SessionContextLedgerBenchmark.AgentRetrievalRankingStrategy[]
   const strategy = strategies.find((item) => item === value)
   if (!strategy) throw new Error(`Invalid --agent-retrieval-bench-ranking-strategy: ${value}`)
   return strategy
 }
 
 function parsePortfolioObjective(value: string) {
-  const objectives = ["target-score", "minimax-regret"] satisfies readonly SessionContextLedgerBenchmark.PolicyPortfolioObjective[]
+  const objectives = [
+    "target-score",
+    "minimax-regret",
+  ] satisfies readonly SessionContextLedgerBenchmark.PolicyPortfolioObjective[]
   const objective = objectives.find((item) => item === value)
   if (!objective) throw new Error(`Invalid --portfolio-objective: ${value}`)
   return objective
@@ -5972,7 +6209,10 @@ function parseSWEExploreRankerPortfolioTarget(value: string): SWEExploreRankerPo
 async function fetchContextBenchRowsResponse() {
   const offset = integerAtLeast(args.values["contextbench-offset"] ?? "0", "--contextbench-offset", 0)
   const limit = integerAtLeast(args.values["contextbench-limit"] ?? "3", "--contextbench-limit", 0)
-  const pageSize = Math.min(limit || 1, integerAtLeast(args.values["contextbench-page-size"] ?? "100", "--contextbench-page-size", 1))
+  const pageSize = Math.min(
+    limit || 1,
+    integerAtLeast(args.values["contextbench-page-size"] ?? "100", "--contextbench-page-size", 1),
+  )
   const pages = Array.from({ length: Math.ceil(limit / pageSize) }, (_, index) => ({
     offset: offset + index * pageSize,
     length: Math.min(pageSize, limit - index * pageSize),
@@ -6056,7 +6296,8 @@ function definedEnv(input: NodeJS.ProcessEnv) {
 }
 
 function rowsFromResponse(input: unknown) {
-  if (!isRecord(input) || !Array.isArray(input.rows)) throw new Error("ContextBench fetch returned malformed rows response")
+  if (!isRecord(input) || !Array.isArray(input.rows))
+    throw new Error("ContextBench fetch returned malformed rows response")
   return input.rows
 }
 
@@ -6111,7 +6352,11 @@ function buildSWEExploreSplitManifest(input: {
       repo,
       rows: repoRows.toSorted((a, b) => a.instance_id.localeCompare(b.instance_id)),
     }))
-    .toSorted((a, b) => stableSplitHash(`${input.seed}\0${a.repo}`) - stableSplitHash(`${input.seed}\0${b.repo}`) || a.repo.localeCompare(b.repo))
+    .toSorted(
+      (a, b) =>
+        stableSplitHash(`${input.seed}\0${a.repo}`) - stableSplitHash(`${input.seed}\0${b.repo}`) ||
+        a.repo.localeCompare(b.repo),
+    )
   const defaultTarget = Math.ceil(rows.length / labels.length)
   const splits = labels.map((label, index) => ({
     label,
@@ -6153,9 +6398,7 @@ function buildSWEExploreSplitManifest(input: {
     seed: input.seed,
     instances: rows.length,
     repoCount: groups.length,
-    sourceMapCoverage: input.sourceMap
-      ? rows.filter((row) => input.sourceMap?.[row.instance_id]).length
-      : 0,
+    sourceMapCoverage: input.sourceMap ? rows.filter((row) => input.sourceMap?.[row.instance_id]).length : 0,
     labels,
     requestedSizes: splits.map((split) => split.requestedSize),
     splits: splits.map((split) => sweExploreSplitSummary(split.label, split.requestedSize, split.repos, split.rows)),
@@ -6213,11 +6456,7 @@ function sweExploreRepoFromInstanceID(instanceID: string) {
 }
 
 function sweExploreRepoName(value: string) {
-  return (
-    value.match(/^(.*)-[0-9a-f]{7,40}(?:-v[A-Za-z0-9]+)?$/)?.[1] ??
-    value.match(/^(.*)-\d+$/)?.[1] ??
-    value
-  )
+  return value.match(/^(.*)-[0-9a-f]{7,40}(?:-v[A-Za-z0-9]+)?$/)?.[1] ?? value.match(/^(.*)-\d+$/)?.[1] ?? value
 }
 
 function stableSplitHash(value: string) {
@@ -6286,7 +6525,7 @@ async function readSWEExploreRankerPortfolioSplits(input: {
         await Bun.file(path).json(),
         path,
         splitLabels[index] ?? splitIDFromPath(path, index),
-      )
+      ),
     ),
   )
   const duplicate = firstDuplicate(splits.map((split) => split.id))
@@ -6306,7 +6545,9 @@ function sweExploreRankerPortfolioSplitFromSweepReport(
     sweExploreRankerPortfolioRowsFromResult(result, `${path} results[${resultIndex}]`, id),
   )
   const instances = Array.isArray(report.instances)
-    ? report.instances.flatMap((item, index) => typeof item === "string" ? [item] : failInvalidString(item, `${path}.instances[${index}]`))
+    ? report.instances.flatMap((item, index) =>
+        typeof item === "string" ? [item] : failInvalidString(item, `${path}.instances[${index}]`),
+      )
     : []
   return {
     id,
@@ -6344,7 +6585,10 @@ function sweExploreRankerPortfolioRowsFromResult(
     return {
       split,
       ranker,
-      policy: parsePolicyWithName(stringField(summary.policy, `${summaryLocation}.policy`), `${summaryLocation}.policy`),
+      policy: parsePolicyWithName(
+        stringField(summary.policy, `${summaryLocation}.policy`),
+        `${summaryLocation}.policy`,
+      ),
       budget: integerField(summary.budget, `${summaryLocation}.budget`, 1),
       metrics,
     } satisfies SWEExploreRankerPortfolioRow
@@ -6398,27 +6642,37 @@ function sweExploreRankerGateExamplesFromSweepReport(report: unknown, path: stri
   if (!isRecord(report) || !Array.isArray(report.caseComparisons)) {
     throw new Error(`Ranker sweep report must include caseComparisons: ${path}`)
   }
-  return report.caseComparisons.flatMap((item, index) => sweExploreRankerGateExampleFromCaseComparison(item, path, index))
+  return report.caseComparisons.flatMap((item, index) =>
+    sweExploreRankerGateExampleFromCaseComparison(item, path, index),
+  )
 }
 
 function sweExploreRankerGateExampleFromCaseComparison(input: unknown, path: string, index: number) {
   const location = `${path} caseComparisons[${index}]`
   if (!isRecord(input)) throw new Error(`Invalid ${location}`)
-  const baselineFeatures = sweExploreRankerSweepFeaturesFromRecord(input.baselineFeatures, `${location}.baselineFeatures`)
+  const baselineFeatures = sweExploreRankerSweepFeaturesFromRecord(
+    input.baselineFeatures,
+    `${location}.baselineFeatures`,
+  )
   const features = sweExploreRankerSweepFeaturesFromRecord(input.features, `${location}.features`)
   const comparisonFeatures = isRecord(input.comparisonFeatures)
     ? sweExploreRankerComparisonFeaturesFromRecord(input.comparisonFeatures, `${location}.comparisonFeatures`)
     : undefined
-  return [{
-    instanceID: stringField(input.instanceID, `${location}.instanceID`),
-    baselineRanker: sweExploreRepoRanker(stringField(input.baselineRanker, `${location}.baselineRanker`), `${location}.baselineRanker`),
-    ranker: sweExploreRepoRanker(stringField(input.ranker, `${location}.ranker`), `${location}.ranker`),
-    policy: parsePolicyWithName(stringField(input.policy, `${location}.policy`), `${location}.policy`),
-    budget: integerField(input.budget, `${location}.budget`, 1),
-    baselineMetrics: sweExploreRankerGateMetricsFromRecord(input.baselineMetrics, `${location}.baselineMetrics`),
-    candidateMetrics: sweExploreRankerGateMetricsFromRecord(input.metrics, `${location}.metrics`),
-    features: sweExploreRankerGateFeatures(features, baselineFeatures, comparisonFeatures),
-  } satisfies SWEExploreRankerGateExample]
+  return [
+    {
+      instanceID: stringField(input.instanceID, `${location}.instanceID`),
+      baselineRanker: sweExploreRepoRanker(
+        stringField(input.baselineRanker, `${location}.baselineRanker`),
+        `${location}.baselineRanker`,
+      ),
+      ranker: sweExploreRepoRanker(stringField(input.ranker, `${location}.ranker`), `${location}.ranker`),
+      policy: parsePolicyWithName(stringField(input.policy, `${location}.policy`), `${location}.policy`),
+      budget: integerField(input.budget, `${location}.budget`, 1),
+      baselineMetrics: sweExploreRankerGateMetricsFromRecord(input.baselineMetrics, `${location}.baselineMetrics`),
+      candidateMetrics: sweExploreRankerGateMetricsFromRecord(input.metrics, `${location}.metrics`),
+      features: sweExploreRankerGateFeatures(features, baselineFeatures, comparisonFeatures),
+    } satisfies SWEExploreRankerGateExample,
+  ]
 }
 
 function sweExploreRankerGateMetricsFromRecord(input: unknown, name: string): SWEExploreRankerGateMetrics {
@@ -6451,7 +6705,10 @@ function sweExploreRankerSweepFeaturesFromRecord(input: unknown, name: string): 
   }
 }
 
-function sweExploreRankerComparisonFeaturesFromRecord(input: unknown, name: string): SWEExploreRankerComparisonFeatures {
+function sweExploreRankerComparisonFeaturesFromRecord(
+  input: unknown,
+  name: string,
+): SWEExploreRankerComparisonFeatures {
   if (!isRecord(input)) throw new Error(`Missing ${name}; regenerate ranker sweep output with current CLI`)
   return {
     fileJaccard: numberField(input.fileJaccard, `${name}.fileJaccard`),

@@ -81,4 +81,27 @@ describe("opencode run (non-interactive subprocess)", () => {
       }),
     60_000,
   )
+
+  cliIt.concurrent(
+    "--format json recovers persisted assistant text when stream text and idle events are missed",
+    ({ llm, opencode }) =>
+      Effect.gen(function* () {
+        yield* llm.text("recovered from stored messages")
+        const result = yield* opencode.run("say hi", {
+          format: "json",
+          timeoutMs: 30_000,
+          env: {
+            OPENCODE_TEST_RUN_DROP_EVENTS: "message.part.updated,session.status",
+          },
+        })
+        opencode.expectExit(result, 0)
+
+        const events = opencode.parseJsonEvents(result.stdout)
+        const text = events.filter((e) => e.type === "text")
+        expect(text).toHaveLength(1)
+        const part = text[0]?.part as { text?: string } | undefined
+        expect(part?.text).toBe("recovered from stored messages")
+      }),
+    60_000,
+  )
 })
