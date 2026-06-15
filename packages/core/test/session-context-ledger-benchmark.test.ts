@@ -3180,6 +3180,129 @@ describe("SessionContextLedgerBenchmark", () => {
     ])
   })
 
+  test("CLI can isolate repeated OpenCode runs from imported seed sessions", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "context-ledger-opencode-run-import-repeats-"))
+    const repoDir = join(dir, "repo")
+    const outputDir = join(dir, "runs")
+    mkdirSync(repoDir, { recursive: true })
+    const fakeCliPath = join(dir, "fake-opencode.mjs")
+    const seedExportPath = join(dir, "seed.export.json")
+    const manifestPath = join(dir, "run-manifest.jsonl")
+    const reportPath = join(dir, "run-report.json")
+    await Bun.write(
+      seedExportPath,
+      `${JSON.stringify({ info: { id: "ses_seed_from_export" }, messages: [{ info: { id: "msg_seed" }, parts: [] }] })}\n`,
+    )
+    await Bun.write(
+      fakeCliPath,
+      [
+        "const args = process.argv.slice(2)",
+        "const repeat = process.env.CONTEXTLEDGER_BENCHMARK_REPEAT_INDEX",
+        "if (args[0] === 'import') {",
+        "  console.log(`imported ses_seed_${repeat}`)",
+        "  process.exit(0)",
+        "}",
+        "if (args[0] === 'run') {",
+        "  const sessionArg = args.includes('--session') ? args[args.indexOf('--session') + 1] : undefined",
+        "  console.log(JSON.stringify({",
+        "    sessionID: sessionArg,",
+        "    db: process.env.OPENCODE_DB,",
+        "    prompt: args.at(-1),",
+        "    part: { type: 'text', text: `answer-${repeat}` },",
+        "  }))",
+        "  process.exit(0)",
+        "}",
+        "if (args[0] === 'export') {",
+        "  console.log(JSON.stringify({",
+        "    info: {",
+        "      id: args[1],",
+        "      model: { providerID: 'openai', id: 'gpt-5.5', variant: 'high' },",
+        "      tokens: { input: 70 + Number(repeat), output: 4, reasoning: 1, cache: { read: 0, write: 0 } },",
+        "    },",
+        "    messages: [{ info: { id: `msg_${args[1]}` }, parts: [{ type: 'text', text: `summary-${repeat}` }] }],",
+        "  }))",
+        "  process.exit(0)",
+        "}",
+        "process.exit(1)",
+      ].join("\n"),
+    )
+    await Bun.write(
+      manifestPath,
+      `${JSON.stringify({
+        instance_id: "owner__repo-import-repeat",
+        run_id: "owner__repo-import-repeat-contextledger",
+        dir: repoDir,
+        prompt: "continue from imported compaction",
+        title: "import repeat contextledger",
+        import_path: seedExportPath,
+        repeats: 2,
+        answer_contains: ["answer-"],
+      })}\n`,
+    )
+
+    const proc = Bun.spawn({
+      cmd: [
+        "bun",
+        "run",
+        "script/context-ledger-benchmark.ts",
+        "--opencode-run-manifest",
+        manifestPath,
+        "--opencode-run-command-json",
+        JSON.stringify(["bun", fakeCliPath]),
+        "--opencode-run-output-dir",
+        outputDir,
+        "--opencode-run-report-output",
+        reportPath,
+      ],
+      cwd: process.cwd(),
+      stdout: "pipe",
+      stderr: "pipe",
+    })
+    const exit = await proc.exited
+    const stderr = await new Response(proc.stderr).text()
+
+    expect(exit, stderr).toBe(0)
+    const firstRun = JSON.parse(
+      readFileSync(join(outputDir, "owner__repo-import-repeat-contextledger-r01.run.stdout"), "utf8"),
+    )
+    const secondRun = JSON.parse(
+      readFileSync(join(outputDir, "owner__repo-import-repeat-contextledger-r02.run.stdout"), "utf8"),
+    )
+    expect(firstRun).toMatchObject({
+      sessionID: "ses_seed_1",
+      prompt: "continue from imported compaction",
+    })
+    expect(secondRun).toMatchObject({
+      sessionID: "ses_seed_2",
+      prompt: "continue from imported compaction",
+    })
+    expect(firstRun.db).toContain("owner__repo-import-repeat-contextledger-r01.opencode.db")
+    expect(secondRun.db).toContain("owner__repo-import-repeat-contextledger-r02.opencode.db")
+    expect(firstRun.db).not.toBe(secondRun.db)
+    expect(
+      readFileSync(join(outputDir, "owner__repo-import-repeat-contextledger-r01.import.stdout"), "utf8"),
+    ).toContain("ses_seed_1")
+    const report = JSON.parse(readFileSync(reportPath, "utf8"))
+    expect(report.rows.map((row: { sessionID: string; artifacts: { importStdout?: string } }) => row)).toMatchObject([
+      {
+        sessionID: "ses_seed_1",
+        artifacts: { importStdout: "runs/owner__repo-import-repeat-contextledger-r01.import.stdout" },
+      },
+      {
+        sessionID: "ses_seed_2",
+        artifacts: { importStdout: "runs/owner__repo-import-repeat-contextledger-r02.import.stdout" },
+      },
+    ])
+    expect(
+      report.summaries.map((row: { label: string; runs: number; answerPassRate: number; meanInputTokens: number }) => [
+        row.label,
+        row.runs,
+        row.answerPassRate,
+        row.meanInputTokens,
+      ]),
+    ).toEqual([["import repeat contextledger", 2, 1, 71.5]])
+  })
+
   test("CLI can score exported OpenCode compaction summaries against gold claims", async () => {
     const dir = mkdtempSync(join(tmpdir(), "context-ledger-opencode-compaction-summary-cli-"))
     const manifestPath = join(dir, "exports.jsonl")

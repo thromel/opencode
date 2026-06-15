@@ -463,6 +463,8 @@ type OpenCodeRunReportRow = {
   }
   readonly config?: unknown
   readonly artifacts: {
+    readonly importStdout?: string
+    readonly importStderr?: string
     readonly runStdout: string
     readonly runStderr: string
     readonly exportJson: string
@@ -1092,13 +1094,33 @@ async function runOpenCodeManifest(manifestPath: string) {
     for (let repeatIndex = 1; repeatIndex <= repeats; repeatIndex++) {
       const segment = repeats === 1 ? baseSegment : `${baseSegment}-r${String(repeatIndex).padStart(2, "0")}`
       const runID = repeats === 1 ? baseRunID : `${baseRunID}-r${repeatIndex}`
-      const rowEnv = {
+      const rowEnv: Record<string, string> = {
         ...openCodeRunEnvironment({ baseEnv, baseConfig, row }),
         CONTEXTLEDGER_BENCHMARK_REPEAT_INDEX: String(repeatIndex),
         CONTEXTLEDGER_BENCHMARK_REPEAT_COUNT: String(repeats),
       }
+      if (openCodeRunShouldIsolate(row, repeats)) {
+        rowEnv.OPENCODE_DB = join(outputDir, `${segment}.opencode.db`)
+      }
+      let importedSessionID: string | undefined
+      let importStdoutPath: string | undefined
+      let importStderrPath: string | undefined
+      if (row.import_path) {
+        const importPath = resolveManifestPath(row.import_path, manifestPath)
+        const importedExport = (await Bun.file(importPath).json()) as SessionContextLedgerBenchmark.OpenCodeExport
+        const importResult = await runCommandIn([...baseCommand, "import", importPath], { cwd: dir, env: rowEnv })
+        importStdoutPath = join(outputDir, `${segment}.import.stdout`)
+        importStderrPath = join(outputDir, `${segment}.import.stderr`)
+        await Bun.write(importStdoutPath, importResult.stdout)
+        await Bun.write(importStderrPath, importResult.stderr)
+        importedSessionID =
+          row.import_session_id ??
+          importResult.stdout.match(/\bses_[A-Za-z0-9_]+\b/)?.[0] ??
+          sessionIDFromExport(importedExport)
+        if (!importedSessionID) throw new Error(`Could not find imported session ID for ${row.instance_id}`)
+      }
       const turnRuns: { readonly stdout: string; readonly stderr: string }[] = []
-      let sessionID: string | undefined
+      let sessionID = importedSessionID
       for (const [index, prompt] of prompts.entries()) {
         const run = await runCommand(
           openCodeRunCommand({
@@ -1176,6 +1198,8 @@ async function runOpenCodeManifest(manifestPath: string) {
         exportedModel: openCodeExportModel(exportedJson),
         config: row.config ?? baseConfig,
         artifacts: {
+          ...(importStdoutPath ? { importStdout: importStdoutPath } : {}),
+          ...(importStderrPath ? { importStderr: importStderrPath } : {}),
           runStdout: runStdoutPath,
           runStderr: runStderrPath,
           exportJson: exportPath,
@@ -1233,6 +1257,10 @@ function openCodeRunRepeats(row: SessionContextLedgerBenchmark.OpenCodeRunManife
   return repeats
 }
 
+function openCodeRunShouldIsolate(row: SessionContextLedgerBenchmark.OpenCodeRunManifestRow, repeats: number) {
+  return row.isolate_repeats ?? Boolean(row.import_path && repeats > 1)
+}
+
 function openCodeRunCommand(input: {
   readonly baseCommand: readonly string[]
   readonly extraArgs: readonly string[]
@@ -1278,6 +1306,12 @@ async function writeOpenCodeRunReport(input: {
   const rows = input.rows.map((row, index) => ({
     ...row,
     artifacts: {
+      ...(row.artifacts.importStdout
+        ? { importStdout: reportRelativePath(row.artifacts.importStdout, reportDir) }
+        : {}),
+      ...(row.artifacts.importStderr
+        ? { importStderr: reportRelativePath(row.artifacts.importStderr, reportDir) }
+        : {}),
       runStdout: reportRelativePath(row.artifacts.runStdout, reportDir),
       runStderr: reportRelativePath(row.artifacts.runStderr, reportDir),
       exportJson: reportRelativePath(row.artifacts.exportJson, reportDir),
