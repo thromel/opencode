@@ -561,6 +561,10 @@ type OpenCodeRunReport = {
     readonly maxAnswerPassed?: number
     readonly fileCheckPassRate?: number
     readonly commandCheckPassRate?: number
+    readonly meanPromptTokens?: number
+    readonly stddevPromptTokens?: number
+    readonly minPromptTokens?: number
+    readonly maxPromptTokens?: number
     readonly meanInputTokens?: number
     readonly stddevInputTokens?: number
     readonly minInputTokens?: number
@@ -589,6 +593,10 @@ type OpenCodeRunReport = {
     readonly pairs: number
     readonly meanAnswerPassedDelta?: number
     readonly stddevAnswerPassedDelta?: number
+    readonly meanPromptTokensDelta?: number
+    readonly stddevPromptTokensDelta?: number
+    readonly minPromptTokensDelta?: number
+    readonly maxPromptTokensDelta?: number
     readonly meanInputTokensDelta?: number
     readonly stddevInputTokensDelta?: number
     readonly minInputTokensDelta?: number
@@ -617,6 +625,7 @@ type OpenCodeRunReport = {
       readonly answerPassed?: number
       readonly fileChecksPassed?: number
       readonly commandChecksPassed?: number
+      readonly promptTokens?: number
       readonly inputTokens?: number
       readonly outputTokens?: number
       readonly reasoningTokens?: number
@@ -712,7 +721,9 @@ type NoisyCompactionLiveReport = {
     readonly meanContradictedClaimRate?: number
     readonly meanStaleClaimRate?: number
     readonly meanSummaryTokens?: number
+    readonly meanPromptTokens?: number
     readonly meanInputTokens?: number
+    readonly meanCacheReadTokens?: number
   }[]
   readonly pairedComparisons: readonly {
     readonly scenarioID: string
@@ -727,7 +738,9 @@ type NoisyCompactionLiveReport = {
       readonly contradictedClaimRate?: number
       readonly staleClaimRate?: number
       readonly summaryTokens?: number
+      readonly promptTokens?: number
       readonly inputTokens?: number
+      readonly cacheReadTokens?: number
     }
   }[]
 }
@@ -1461,6 +1474,10 @@ function openCodeRunReportSummaries(rows: readonly OpenCodeRunReportRow[]): Open
       maxAnswerPassed: metricMax(items, (row) => answerScore(row.answer)),
       fileCheckPassRate: metricAverage(items, (row) => fileCheckScore(row.fileChecks)),
       commandCheckPassRate: metricAverage(items, (row) => commandCheckScore(row.commandChecks)),
+      meanPromptTokens: metricAverage(items, (row) => openCodePromptTokens(row.tokens)),
+      stddevPromptTokens: metricStddev(items, (row) => openCodePromptTokens(row.tokens)),
+      minPromptTokens: metricMin(items, (row) => openCodePromptTokens(row.tokens)),
+      maxPromptTokens: metricMax(items, (row) => openCodePromptTokens(row.tokens)),
       meanInputTokens: metricAverage(items, (row) => row.tokens?.input),
       stddevInputTokens: metricStddev(items, (row) => row.tokens?.input),
       minInputTokens: metricMin(items, (row) => row.tokens?.input),
@@ -1515,6 +1532,7 @@ function openCodeRunReportComparisons(rows: readonly OpenCodeRunReportRow[]): Op
             commandCheckScore(candidate.commandChecks),
             commandCheckScore(baseline.commandChecks),
           ),
+          promptTokens: metricDelta(openCodePromptTokens(candidate.tokens), openCodePromptTokens(baseline.tokens)),
           inputTokens: metricDelta(candidate.tokens?.input, baseline.tokens?.input),
           outputTokens: metricDelta(candidate.tokens?.output, baseline.tokens?.output),
           reasoningTokens: metricDelta(candidate.tokens?.reasoning, baseline.tokens?.reasoning),
@@ -1544,6 +1562,10 @@ function openCodeRunReportPairedSummaries(
       pairs: items.length,
       meanAnswerPassedDelta: metricAverage(items, (row) => row.delta.answerPassed),
       stddevAnswerPassedDelta: metricStddev(items, (row) => row.delta.answerPassed),
+      meanPromptTokensDelta: metricAverage(items, (row) => row.delta.promptTokens),
+      stddevPromptTokensDelta: metricStddev(items, (row) => row.delta.promptTokens),
+      minPromptTokensDelta: metricMin(items, (row) => row.delta.promptTokens),
+      maxPromptTokensDelta: metricMax(items, (row) => row.delta.promptTokens),
       meanInputTokensDelta: metricAverage(items, (row) => row.delta.inputTokens),
       stddevInputTokensDelta: metricStddev(items, (row) => row.delta.inputTokens),
       minInputTokensDelta: metricMin(items, (row) => row.delta.inputTokens),
@@ -1573,6 +1595,11 @@ function fileCheckScore(report: OpenCodeRunFileCheckReport | undefined) {
 function commandCheckScore(report: OpenCodeRunCommandCheckReport | undefined) {
   if (!report) return undefined
   return report.passed ? 1 : 0
+}
+
+function openCodePromptTokens(tokens: OpenCodeRunReportRow["tokens"] | undefined) {
+  if (!tokens) return undefined
+  return tokens.input + tokens.cacheRead
 }
 
 function metricAverage<Row>(rows: readonly Row[], value: (row: Row) => number | undefined) {
@@ -2154,7 +2181,9 @@ function noisyCompactionLiveSummaries(
       meanContradictedClaimRate: metricAverage(items, (row) => row.contradictedClaimRate),
       meanStaleClaimRate: metricAverage(items, (row) => row.staleClaimRate),
       meanSummaryTokens: metricAverage(items, (row) => row.summaryTokens),
+      meanPromptTokens: metricAverage(items, (row) => openCodePromptTokens(row.tokens)),
       meanInputTokens: metricAverage(items, (row) => row.tokens?.input),
+      meanCacheReadTokens: metricAverage(items, (row) => row.tokens?.cacheRead),
     }
   })
 }
@@ -2181,7 +2210,9 @@ function noisyCompactionLiveComparisons(
           contradictedClaimRate: metricDelta(precision.contradictedClaimRate, baseline.contradictedClaimRate),
           staleClaimRate: metricDelta(precision.staleClaimRate, baseline.staleClaimRate),
           summaryTokens: metricDelta(precision.summaryTokens, baseline.summaryTokens),
+          promptTokens: metricDelta(openCodePromptTokens(precision.tokens), openCodePromptTokens(baseline.tokens)),
           inputTokens: metricDelta(precision.tokens?.input, baseline.tokens?.input),
+          cacheReadTokens: metricDelta(precision.tokens?.cacheRead, baseline.tokens?.cacheRead),
         },
       },
     ]

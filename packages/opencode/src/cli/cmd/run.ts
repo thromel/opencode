@@ -624,6 +624,12 @@ export const RunCommand = effectCmd({
         }
         const sessionID = sess.id
         const emittedParts = new Set<string>()
+        let preexistingMessageIDs = new Set<string>()
+        let preexistingAssistantMessageIDs = new Set<string>()
+        let streamedAssistantMessageID: string | undefined
+        let currentPromptText: string | undefined
+        let activeClient: OpencodeClient | undefined
+        const currentPromptMessageIDs = new Map<string, boolean | undefined>()
         let promptSettled = false
 
         function emit(type: string, data: Record<string, unknown>) {
@@ -661,7 +667,23 @@ export const RunCommand = effectCmd({
           options: { source: "stream" | "stored"; toggles?: Map<string, boolean> },
         ) {
           if ("sessionID" in part && part.sessionID !== sessionID) return
+          if (options.source === "stream" && args.format === "json") return
+          if (options.source === "stream" && part.messageID) {
+            const belongs = await messageBelongsToCurrentPrompt(part.messageID)
+            if (belongs === false) return
+          }
+          if (
+            options.source === "stream" &&
+            part.messageID &&
+            preexistingAssistantMessageIDs.has(part.messageID)
+          ) {
+            return
+          }
           if (wasEmitted(part)) return
+          if (options.source === "stream" && part.messageID) {
+            if (streamedAssistantMessageID && part.messageID !== streamedAssistantMessageID) return
+            streamedAssistantMessageID = part.messageID
+          }
 
           if (part.type === "tool" && (part.state.status === "completed" || part.state.status === "error")) {
             markEmitted(part)
@@ -737,9 +759,101 @@ export const RunCommand = effectCmd({
           return !status || status.type === "idle"
         }
 
-        async function flushStoredAssistantParts(client: OpencodeClient) {
+        function messageText(msg: SessionMessages[number]) {
+          return msg.parts
+            .filter((part) => part.type === "text")
+            .map((part) => part.text)
+            .join("\n")
+        }
+
+        async function messageBelongsToCurrentPrompt(messageID: string) {
+          if (!currentPromptText || !activeClient) return undefined
+          if (currentPromptMessageIDs.has(messageID)) return currentPromptMessageIDs.get(messageID)
+          const response = await activeClient.session.messages({ sessionID }).catch(() => undefined)
+          const messages = response?.data ?? []
+          const candidate = messages.find((msg) => msg.info.id === messageID)
+          if (!candidate || candidate.info.role !== "assistant") {
+            currentPromptMessageIDs.set(messageID, undefined)
+            return undefined
+          }
+          const parentID = "parentID" in candidate.info ? candidate.info.parentID : undefined
+          const parent = typeof parentID === "string" ? messages.find((msg) => msg.info.id === parentID) : undefined
+          const belongs = parent?.info.role === "user" && messageText(parent) === currentPromptText
+          currentPromptMessageIDs.set(messageID, belongs)
+          return belongs
+        }
+
+        function assistantForCurrentPrompt(messages: SessionMessages) {
+          if (!currentPromptText) return
+          const promptMessage = messages.findLast(
+            (msg) => msg.info.role === "user" && messageText(msg) === currentPromptText,
+          )
+          if (!promptMessage) return
+          return messages.find(
+            (msg) => {
+              const parentID = "parentID" in msg.info ? (msg.info as { parentID?: unknown }).parentID : undefined
+              return msg.info.role === "assistant" && parentID === promptMessage.info.id
+            },
+          )
+        }
+
+        function assistantForNewPrompt(messages: SessionMessages) {
+          return messages.findLast((msg) => {
+            if (msg.info.role !== "assistant" || preexistingAssistantMessageIDs.has(msg.info.id)) return false
+            const parentID = "parentID" in msg.info ? (msg.info as { parentID?: unknown }).parentID : undefined
+            if (typeof parentID !== "string") return true
+            const parent = messages.find((candidate) => candidate.info.id === parentID)
+            return parent?.info.role === "user" && !preexistingMessageIDs.has(parent.info.id)
+          })
+        }
+
+        async function storedMessageIDSnapshot(client: OpencodeClient) {
           const response = await client.session.messages({ sessionID }).catch(() => undefined)
-          const latestAssistant = response?.data?.findLast((msg) => msg.info.role === "assistant")
+          const messages = response?.data ?? []
+          return {
+            all: new Set(messages.map((msg) => msg.info.id)),
+            assistant: new Set(messages.filter((msg) => msg.info.role === "assistant").map((msg) => msg.info.id)),
+          }
+        }
+
+        function assistantMessageIDFromResult(result: { data?: unknown }) {
+          const data = result.data
+          if (!data || typeof data !== "object" || !("info" in data)) return
+          const info = (data as { info?: unknown }).info
+          if (!info || typeof info !== "object" || !("id" in info)) return
+          const id = (info as { id?: unknown }).id
+          return typeof id === "string" ? id : undefined
+        }
+
+        async function flushStoredAssistantParts(client: OpencodeClient, assistantMessageID?: string) {
+          const response = await client.session.messages({ sessionID }).catch(() => undefined)
+          const messages = [...(response?.data ?? [])]
+          const staleText = process.env.OPENCODE_TEST_RUN_APPEND_STALE_STORED_ASSISTANT_TEXT
+          if (staleText) {
+            messages.push({
+              info: {
+                id: "msg_opencode_test_stale_assistant",
+                role: "assistant",
+              },
+              parts: [
+                {
+                  id: "prt_opencode_test_stale_assistant",
+                  sessionID,
+                  messageID: "msg_opencode_test_stale_assistant",
+                  type: "text",
+                  text: staleText,
+                  time: { start: 0, end: 1 },
+                },
+              ],
+            } as SessionMessages[number])
+          }
+          const latestAssistant = assistantMessageID
+            ? messages.find((msg) => msg.info.id === assistantMessageID && msg.info.role === "assistant")
+            : assistantForCurrentPrompt(messages) ??
+              assistantForNewPrompt(messages) ??
+              messages.findLast(
+                (msg) => msg.info.role === "assistant" && !preexistingAssistantMessageIDs.has(msg.info.id),
+              )
           if (!latestAssistant) return
 
           for (const part of latestAssistant.parts) {
@@ -752,6 +866,7 @@ export const RunCommand = effectCmd({
         // rebind the SDK to the session's directory after the subscription is
         // created, and replies issued from inside the loop must use that client.
         async function loop(client: OpencodeClient, events: RunEventStream) {
+          activeClient = client
           const toggles = new Map<string, boolean>()
           let error: string | undefined
           const iterator = events.stream[Symbol.asyncIterator]()
@@ -856,16 +971,23 @@ export const RunCommand = effectCmd({
         await share(client, sessionID)
 
         if (!args.interactive) {
+          if (!args.command) {
+            currentPromptText = message
+            currentPromptMessageIDs.clear()
+          }
+          const snapshot = await storedMessageIDSnapshot(client)
+          preexistingMessageIDs = snapshot.all
+          preexistingAssistantMessageIDs = snapshot.assistant
           const events = await client.event.subscribe()
           const completed = loop(client, events).catch((e) => {
             console.error(e)
             process.exitCode = 1
           })
-          async function finish() {
+          async function finish(assistantMessageID?: string) {
             promptSettled = true
             if (args.attach) return
             const error = await completed
-            await flushStoredAssistantParts(client)
+            await flushStoredAssistantParts(client, assistantMessageID ?? (currentPromptText ? undefined : streamedAssistantMessageID))
             if (error) process.exitCode = 1
           }
 
@@ -883,7 +1005,7 @@ export const RunCommand = effectCmd({
               process.exitCode = 1
               return
             }
-            await finish()
+            await finish(assistantMessageIDFromResult(result))
             return
           }
 

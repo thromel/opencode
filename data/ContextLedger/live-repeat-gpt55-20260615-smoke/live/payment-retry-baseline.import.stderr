@@ -1,0 +1,19 @@
+timestamp=2026-06-15T11:02:42.252Z level=INFO run=0121764e message="creating instance" directory=/Users/romel/Documents/GitHub/opencode/packages/opencode
+timestamp=2026-06-15T11:02:42.253Z level=INFO run=0121764e message=fromDirectory directory=/Users/romel/Documents/GitHub/opencode/packages/opencode
+timestamp=2026-06-15T11:02:42.289Z level=INFO run=0121764e message=bootstrapping directory=/Users/romel/Documents/GitHub/opencode/packages/opencode
+timestamp=2026-06-15T11:02:42.298Z level=INFO run=0121764e message=loading path=/Users/romel/.config/opencode/config.json
+timestamp=2026-06-15T11:02:42.298Z level=INFO run=0121764e message=loading path=/Users/romel/.config/opencode/opencode.json
+timestamp=2026-06-15T11:02:42.301Z level=INFO run=0121764e message=loading path=/Users/romel/.config/opencode/opencode.jsonc
+timestamp=2026-06-15T11:02:42.334Z level=DEBUG run=0121764e message="loading config from /Users/romel/Documents/GitHub/opencode/.opencode/opencode.json"
+timestamp=2026-06-15T11:02:42.334Z level=INFO run=0121764e message=loading path=/Users/romel/Documents/GitHub/opencode/.opencode/opencode.json
+timestamp=2026-06-15T11:02:42.334Z level=DEBUG run=0121764e message="loading config from /Users/romel/Documents/GitHub/opencode/.opencode/opencode.jsonc"
+timestamp=2026-06-15T11:02:42.334Z level=INFO run=0121764e message=loading path=/Users/romel/Documents/GitHub/opencode/.opencode/opencode.jsonc
+timestamp=2026-06-15T11:02:42.343Z level=DEBUG run=0121764e message="loading config from /Users/romel/.opencode/opencode.json"
+timestamp=2026-06-15T11:02:42.343Z level=INFO run=0121764e message=loading path=/Users/romel/.opencode/opencode.json
+timestamp=2026-06-15T11:02:42.344Z level=DEBUG run=0121764e message="loading config from /Users/romel/.opencode/opencode.jsonc"
+timestamp=2026-06-15T11:02:42.344Z level=INFO run=0121764e message=loading path=/Users/romel/.opencode/opencode.jsonc
+timestamp=2026-06-15T11:02:42.346Z level=DEBUG run=0121764e message="loaded custom config from OPENCODE_CONFIG_CONTENT"
+timestamp=2026-06-15T11:02:42.441Z level=INFO run=0121764e message="all LSPs are disabled"
+timestamp=2026-06-15T11:02:42.442Z level=INFO run=0121764e message="all formatters are disabled"
+timestamp=2026-06-15T11:02:42.442Z level=INFO run=0121764e message=init
+timestamp=2026-06-15T11:02:42.494Z level=INFO run=0121764e message="disposing instance" directory=/Users/romel/Documents/GitHub/opencode/packages/opencode

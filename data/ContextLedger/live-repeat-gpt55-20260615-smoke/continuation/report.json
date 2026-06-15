@@ -1,0 +1,424 @@
+{
+  "generatedBy": "context-ledger-benchmark",
+  "kind": "opencode-run-report",
+  "rows": [
+    {
+      "instanceID": "live__ctxledger_noisy_payment_retry_gpt55_continuation",
+      "runID": "payment-retry-baseline-continuation-r1",
+      "label": "baseline",
+      "repeatIndex": 1,
+      "repeatCount": 2,
+      "title": "baseline",
+      "sessionID": "ses_ctxledger_noisy_payment_retry_baseline_1781553600000",
+      "turns": 1,
+      "requestedModel": "openai/gpt-5.5",
+      "requestedVariant": "high",
+      "exportedModel": {
+        "providerID": "openai",
+        "modelID": "gpt-5.5",
+        "variant": "high"
+      },
+      "config": {
+        "compaction": {
+          "tail_turns": 1,
+          "preserve_recent_tokens": 2000,
+          "context_ledger": {
+            "enabled": false
+          }
+        }
+      },
+      "artifacts": {
+        "importStdout": "runs/payment-retry-baseline-continuation-r01.import.stdout",
+        "importStderr": "runs/payment-retry-baseline-continuation-r01.import.stderr",
+        "runStdout": "runs/payment-retry-baseline-continuation-r01.run.stdout",
+        "runStderr": "runs/payment-retry-baseline-continuation-r01.run.stderr",
+        "exportJson": "runs/payment-retry-baseline-continuation-r01.export.json",
+        "exportStderr": "runs/payment-retry-baseline-continuation-r01.export.stderr"
+      },
+      "tokens": {
+        "input": 20622,
+        "output": 455,
+        "reasoning": 188,
+        "cacheRead": 22784,
+        "cacheWrite": 0
+      },
+      "answer": {
+        "finalText": "marker=NOISY_LEDGER_ALPHA_20260615;header=x-context-ledger-noisy-id;file=src/payments/retry.ts;test=tests/payments/retry.test.ts::keeps_idempotency;attempts=2;symbol=computeRetryPlan",
+        "contains": [
+          {
+            "text": "marker=NOISY_LEDGER_ALPHA_20260615",
+            "matched": true
+          },
+          {
+            "text": "header=x-context-ledger-noisy-id",
+            "matched": true
+          },
+          {
+            "text": "file=src/payments/retry.ts",
+            "matched": true
+          },
+          {
+            "text": "test=tests/payments/retry.test.ts::keeps_idempotency",
+            "matched": true
+          },
+          {
+            "text": "attempts=2",
+            "matched": true
+          },
+          {
+            "text": "symbol=computeRetryPlan",
+            "matched": true
+          }
+        ],
+        "passed": true
+      }
+    },
+    {
+      "instanceID": "live__ctxledger_noisy_payment_retry_gpt55_continuation",
+      "runID": "payment-retry-baseline-continuation-r2",
+      "label": "baseline",
+      "repeatIndex": 2,
+      "repeatCount": 2,
+      "title": "baseline",
+      "sessionID": "ses_ctxledger_noisy_payment_retry_baseline_1781553600000",
+      "turns": 1,
+      "requestedModel": "openai/gpt-5.5",
+      "requestedVariant": "high",
+      "exportedModel": {
+        "providerID": "openai",
+        "modelID": "gpt-5.5",
+        "variant": "high"
+      },
+      "config": {
+        "compaction": {
+          "tail_turns": 1,
+          "preserve_recent_tokens": 2000,
+          "context_ledger": {
+            "enabled": false
+          }
+        }
+      },
+      "artifacts": {
+        "importStdout": "runs/payment-retry-baseline-continuation-r02.import.stdout",
+        "importStderr": "runs/payment-retry-baseline-continuation-r02.import.stderr",
+        "runStdout": "runs/payment-retry-baseline-continuation-r02.run.stdout",
+        "runStderr": "runs/payment-retry-baseline-continuation-r02.run.stderr",
+        "exportJson": "runs/payment-retry-baseline-continuation-r02.export.json",
+        "exportStderr": "runs/payment-retry-baseline-continuation-r02.export.stderr"
+      },
+      "tokens": {
+        "input": 1166,
+        "output": 457,
+        "reasoning": 537,
+        "cacheRead": 42240,
+        "cacheWrite": 0
+      },
+      "answer": {
+        "finalText": "marker=NOISY_LEDGER_ALPHA_20260615;header=x-context-ledger-noisy-id;file=src/payments/retry.ts;test=tests/payments/retry.test.ts::keeps_idempotency;attempts=2;symbol=computeRetryPlan",
+        "contains": [
+          {
+            "text": "marker=NOISY_LEDGER_ALPHA_20260615",
+            "matched": true
+          },
+          {
+            "text": "header=x-context-ledger-noisy-id",
+            "matched": true
+          },
+          {
+            "text": "file=src/payments/retry.ts",
+            "matched": true
+          },
+          {
+            "text": "test=tests/payments/retry.test.ts::keeps_idempotency",
+            "matched": true
+          },
+          {
+            "text": "attempts=2",
+            "matched": true
+          },
+          {
+            "text": "symbol=computeRetryPlan",
+            "matched": true
+          }
+        ],
+        "passed": true
+      }
+    },
+    {
+      "instanceID": "live__ctxledger_noisy_payment_retry_gpt55_continuation",
+      "runID": "payment-retry-precision-continuation-r1",
+      "label": "ContextLedger-precision-replace",
+      "repeatIndex": 1,
+      "repeatCount": 2,
+      "title": "ContextLedger-precision-replace",
+      "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+      "turns": 1,
+      "requestedModel": "openai/gpt-5.5",
+      "requestedVariant": "high",
+      "exportedModel": {
+        "providerID": "openai",
+        "modelID": "gpt-5.5",
+        "variant": "high"
+      },
+      "config": {
+        "compaction": {
+          "tail_turns": 1,
+          "preserve_recent_tokens": 2000,
+          "context_ledger": {
+            "enabled": true,
+            "policy": "precision-frontier",
+            "budget": 1200,
+            "mode": "replace"
+          }
+        }
+      },
+      "artifacts": {
+        "importStdout": "runs/payment-retry-precision-continuation-r01.import.stdout",
+        "importStderr": "runs/payment-retry-precision-continuation-r01.import.stderr",
+        "runStdout": "runs/payment-retry-precision-continuation-r01.run.stdout",
+        "runStderr": "runs/payment-retry-precision-continuation-r01.run.stderr",
+        "exportJson": "runs/payment-retry-precision-continuation-r01.export.json",
+        "exportStderr": "runs/payment-retry-precision-continuation-r01.export.stderr"
+      },
+      "tokens": {
+        "input": 5290,
+        "output": 368,
+        "reasoning": 77,
+        "cacheRead": 34816,
+        "cacheWrite": 0
+      },
+      "answer": {
+        "finalText": "marker=NOISY_LEDGER_ALPHA_20260615;header=x-context-ledger-noisy-id;file=src/payments/retry.ts;test=tests/payments/retry.test.ts::keeps_idempotency;attempts=2;symbol=computeRetryPlan",
+        "contains": [
+          {
+            "text": "marker=NOISY_LEDGER_ALPHA_20260615",
+            "matched": true
+          },
+          {
+            "text": "header=x-context-ledger-noisy-id",
+            "matched": true
+          },
+          {
+            "text": "file=src/payments/retry.ts",
+            "matched": true
+          },
+          {
+            "text": "test=tests/payments/retry.test.ts::keeps_idempotency",
+            "matched": true
+          },
+          {
+            "text": "attempts=2",
+            "matched": true
+          },
+          {
+            "text": "symbol=computeRetryPlan",
+            "matched": true
+          }
+        ],
+        "passed": true
+      }
+    },
+    {
+      "instanceID": "live__ctxledger_noisy_payment_retry_gpt55_continuation",
+      "runID": "payment-retry-precision-continuation-r2",
+      "label": "ContextLedger-precision-replace",
+      "repeatIndex": 2,
+      "repeatCount": 2,
+      "title": "ContextLedger-precision-replace",
+      "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+      "turns": 1,
+      "requestedModel": "openai/gpt-5.5",
+      "requestedVariant": "high",
+      "exportedModel": {
+        "providerID": "openai",
+        "modelID": "gpt-5.5",
+        "variant": "high"
+      },
+      "config": {
+        "compaction": {
+          "tail_turns": 1,
+          "preserve_recent_tokens": 2000,
+          "context_ledger": {
+            "enabled": true,
+            "policy": "precision-frontier",
+            "budget": 1200,
+            "mode": "replace"
+          }
+        }
+      },
+      "artifacts": {
+        "importStdout": "runs/payment-retry-precision-continuation-r02.import.stdout",
+        "importStderr": "runs/payment-retry-precision-continuation-r02.import.stderr",
+        "runStdout": "runs/payment-retry-precision-continuation-r02.run.stdout",
+        "runStderr": "runs/payment-retry-precision-continuation-r02.run.stderr",
+        "exportJson": "runs/payment-retry-precision-continuation-r02.export.json",
+        "exportStderr": "runs/payment-retry-precision-continuation-r02.export.stderr"
+      },
+      "tokens": {
+        "input": 5290,
+        "output": 368,
+        "reasoning": 77,
+        "cacheRead": 34816,
+        "cacheWrite": 0
+      },
+      "answer": {
+        "finalText": "marker=NOISY_LEDGER_ALPHA_20260615;header=x-context-ledger-noisy-id;file=src/payments/retry.ts;test=tests/payments/retry.test.ts::keeps_idempotency;attempts=2;symbol=computeRetryPlan",
+        "contains": [
+          {
+            "text": "marker=NOISY_LEDGER_ALPHA_20260615",
+            "matched": true
+          },
+          {
+            "text": "header=x-context-ledger-noisy-id",
+            "matched": true
+          },
+          {
+            "text": "file=src/payments/retry.ts",
+            "matched": true
+          },
+          {
+            "text": "test=tests/payments/retry.test.ts::keeps_idempotency",
+            "matched": true
+          },
+          {
+            "text": "attempts=2",
+            "matched": true
+          },
+          {
+            "text": "symbol=computeRetryPlan",
+            "matched": true
+          }
+        ],
+        "passed": true
+      }
+    }
+  ],
+  "summaries": [
+    {
+      "label": "baseline",
+      "runs": 2,
+      "answerPassRate": 1,
+      "stddevAnswerPassRate": 0,
+      "minAnswerPassed": 1,
+      "maxAnswerPassed": 1,
+      "meanPromptTokens": 43406,
+      "stddevPromptTokens": 0,
+      "minPromptTokens": 43406,
+      "maxPromptTokens": 43406,
+      "meanInputTokens": 10894,
+      "stddevInputTokens": 9728,
+      "minInputTokens": 1166,
+      "maxInputTokens": 20622,
+      "meanOutputTokens": 456,
+      "stddevOutputTokens": 1,
+      "minOutputTokens": 455,
+      "maxOutputTokens": 457,
+      "meanReasoningTokens": 362.5,
+      "stddevReasoningTokens": 174.5,
+      "minReasoningTokens": 188,
+      "maxReasoningTokens": 537,
+      "meanCacheReadTokens": 32512,
+      "stddevCacheReadTokens": 9728,
+      "minCacheReadTokens": 22784,
+      "maxCacheReadTokens": 42240,
+      "meanCacheWriteTokens": 0,
+      "stddevCacheWriteTokens": 0,
+      "minCacheWriteTokens": 0,
+      "maxCacheWriteTokens": 0
+    },
+    {
+      "label": "ContextLedger-precision-replace",
+      "runs": 2,
+      "answerPassRate": 1,
+      "stddevAnswerPassRate": 0,
+      "minAnswerPassed": 1,
+      "maxAnswerPassed": 1,
+      "meanPromptTokens": 40106,
+      "stddevPromptTokens": 0,
+      "minPromptTokens": 40106,
+      "maxPromptTokens": 40106,
+      "meanInputTokens": 5290,
+      "stddevInputTokens": 0,
+      "minInputTokens": 5290,
+      "maxInputTokens": 5290,
+      "meanOutputTokens": 368,
+      "stddevOutputTokens": 0,
+      "minOutputTokens": 368,
+      "maxOutputTokens": 368,
+      "meanReasoningTokens": 77,
+      "stddevReasoningTokens": 0,
+      "minReasoningTokens": 77,
+      "maxReasoningTokens": 77,
+      "meanCacheReadTokens": 34816,
+      "stddevCacheReadTokens": 0,
+      "minCacheReadTokens": 34816,
+      "maxCacheReadTokens": 34816,
+      "meanCacheWriteTokens": 0,
+      "stddevCacheWriteTokens": 0,
+      "minCacheWriteTokens": 0,
+      "maxCacheWriteTokens": 0
+    }
+  ],
+  "pairedSummaries": [
+    {
+      "instanceID": "live__ctxledger_noisy_payment_retry_gpt55_continuation",
+      "baselineLabel": "baseline",
+      "candidateLabel": "ContextLedger-precision-replace",
+      "pairs": 2,
+      "meanAnswerPassedDelta": 0,
+      "stddevAnswerPassedDelta": 0,
+      "meanPromptTokensDelta": -3300,
+      "stddevPromptTokensDelta": 0,
+      "minPromptTokensDelta": -3300,
+      "maxPromptTokensDelta": -3300,
+      "meanInputTokensDelta": -5604,
+      "stddevInputTokensDelta": 9728,
+      "minInputTokensDelta": -15332,
+      "maxInputTokensDelta": 4124,
+      "meanOutputTokensDelta": -88,
+      "stddevOutputTokensDelta": 1,
+      "minOutputTokensDelta": -89,
+      "maxOutputTokensDelta": -87,
+      "meanReasoningTokensDelta": -285.5,
+      "stddevReasoningTokensDelta": 174.5,
+      "minReasoningTokensDelta": -460,
+      "maxReasoningTokensDelta": -111
+    }
+  ],
+  "pairedComparisons": [
+    {
+      "instanceID": "live__ctxledger_noisy_payment_retry_gpt55_continuation",
+      "baselineRunID": "payment-retry-baseline-continuation-r1",
+      "candidateRunID": "payment-retry-precision-continuation-r1",
+      "baselineLabel": "baseline",
+      "candidateLabel": "ContextLedger-precision-replace",
+      "repeatIndex": 1,
+      "delta": {
+        "answerPassed": 0,
+        "promptTokens": -3300,
+        "inputTokens": -15332,
+        "outputTokens": -87,
+        "reasoningTokens": -111,
+        "cacheReadTokens": 12032,
+        "cacheWriteTokens": 0
+      }
+    },
+    {
+      "instanceID": "live__ctxledger_noisy_payment_retry_gpt55_continuation",
+      "baselineRunID": "payment-retry-baseline-continuation-r2",
+      "candidateRunID": "payment-retry-precision-continuation-r2",
+      "baselineLabel": "baseline",
+      "candidateLabel": "ContextLedger-precision-replace",
+      "repeatIndex": 2,
+      "delta": {
+        "answerPassed": 0,
+        "promptTokens": -3300,
+        "inputTokens": 4124,
+        "outputTokens": -89,
+        "reasoningTokens": -460,
+        "cacheReadTokens": -7424,
+        "cacheWriteTokens": 0
+      }
+    }
+  ]
+}

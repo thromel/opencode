@@ -1,0 +1,324 @@
+{
+  "generatedBy": "context-ledger-benchmark",
+  "kind": "opencode-noisy-compaction-live-report",
+  "manifestPath": "/Users/romel/Documents/GitHub/opencode/data/ContextLedger/live-repeat-gpt55-20260615-smoke/fixtures/fixtures.jsonl",
+  "outputDir": "/Users/romel/Documents/GitHub/opencode/data/ContextLedger/live-repeat-gpt55-20260615-smoke/live",
+  "rows": [
+    {
+      "scenarioID": "payment-retry",
+      "instanceID": "live__ctxledger_noisy_payment_retry_gpt55",
+      "lane": "baseline",
+      "sessionID": "ses_ctxledger_noisy_payment_retry_baseline_1781553600000",
+      "config": {
+        "compaction": {
+          "tail_turns": 1,
+          "preserve_recent_tokens": 2000,
+          "context_ledger": {
+            "enabled": false
+          }
+        }
+      },
+      "summarizeRequest": {
+        "providerID": "openai",
+        "modelID": "gpt-5.5",
+        "variant": "high",
+        "auto": false
+      },
+      "exportedModel": {
+        "providerID": "openai",
+        "modelID": "gpt-5.5",
+        "variant": "high"
+      },
+      "tokens": {
+        "input": 517,
+        "output": 333,
+        "reasoning": 188,
+        "cacheRead": 3328,
+        "cacheWrite": 0
+      },
+      "artifacts": {
+        "importStdout": "payment-retry-baseline.import.stdout",
+        "importStderr": "payment-retry-baseline.import.stderr",
+        "serveStdout": "payment-retry-baseline.serve.stdout",
+        "serveStderr": "payment-retry-baseline.serve.stderr",
+        "summarizeResponse": "payment-retry-baseline.summarize.response",
+        "exportJson": "payment-retry-baseline.export.json",
+        "exportStderr": "payment-retry-baseline.export.stderr"
+      },
+      "summaryTokens": 340,
+      "claimRecall": 1,
+      "claimPrecision": 1,
+      "falseClaimRate": 0,
+      "unsupportedClaimRate": 0,
+      "contradictedClaimRate": 0,
+      "staleClaimRate": 0,
+      "survivedClaims": [
+        "retry-marker",
+        "idempotency-header",
+        "retry-file",
+        "retry-test",
+        "retry-budget",
+        "retry-symbol"
+      ],
+      "missingClaims": [],
+      "falseClaims": [],
+      "unsupportedClaims": [],
+      "contradictedClaims": [],
+      "staleClaims": []
+    },
+    {
+      "scenarioID": "payment-retry",
+      "instanceID": "live__ctxledger_noisy_payment_retry_gpt55",
+      "lane": "precision",
+      "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+      "config": {
+        "compaction": {
+          "tail_turns": 1,
+          "preserve_recent_tokens": 2000,
+          "context_ledger": {
+            "enabled": true,
+            "policy": "precision-frontier",
+            "budget": 1200,
+            "mode": "replace"
+          }
+        }
+      },
+      "summarizeRequest": {
+        "providerID": "openai",
+        "modelID": "gpt-5.5",
+        "variant": "high",
+        "auto": false
+      },
+      "exportedModel": {
+        "providerID": "openai",
+        "modelID": "gpt-5.5",
+        "variant": "high"
+      },
+      "tokens": {
+        "input": 719,
+        "output": 246,
+        "reasoning": 77,
+        "cacheRead": 0,
+        "cacheWrite": 0
+      },
+      "artifacts": {
+        "importStdout": "payment-retry-precision.import.stdout",
+        "importStderr": "payment-retry-precision.import.stderr",
+        "serveStdout": "payment-retry-precision.serve.stdout",
+        "serveStderr": "payment-retry-precision.serve.stderr",
+        "summarizeResponse": "payment-retry-precision.summarize.response",
+        "exportJson": "payment-retry-precision.export.json",
+        "exportStderr": "payment-retry-precision.export.stderr"
+      },
+      "summaryTokens": 249,
+      "claimRecall": 1,
+      "claimPrecision": 1,
+      "falseClaimRate": 0,
+      "unsupportedClaimRate": 0,
+      "contradictedClaimRate": 0,
+      "staleClaimRate": 0,
+      "survivedClaims": [
+        "retry-marker",
+        "idempotency-header",
+        "retry-file",
+        "retry-test",
+        "retry-budget",
+        "retry-symbol"
+      ],
+      "missingClaims": [],
+      "falseClaims": [],
+      "unsupportedClaims": [],
+      "contradictedClaims": [],
+      "staleClaims": []
+    }
+  ],
+  "summaryReport": {
+    "cases": 2,
+    "rows": [
+      {
+        "instanceID": "live__ctxledger_noisy_payment_retry_gpt55",
+        "label": "baseline",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_baseline_1781553600000",
+        "summaryCount": 1,
+        "text": "## Goal\n- Debug the payment retry module.\n\n## Constraints & Preferences\n- Retry budget remains exactly 2 attempts; do not raise it to 3.\n- `computeRetryPlan` must keep stable request fingerprints.\n- Ignore unrelated distractor markers `DISTRACTOR_PAYMENT_RETRY_00` through `DISTRACTOR_PAYMENT_RETRY_31`.\n\n## Progress\n### Done\n- `tests/payments/retry.test.ts::keeps_idempotency` passed after the last change.\n- Distractor investigations 0–31 were acknowledged as unrelated to payment retry scope.\n\n### In Progress\n- Payment retry module debugging.\n\n### Blocked\n- (none)\n\n## Key Decisions\n- Retry budget remains exactly 2 attempts.\n- Distractor feature flags `noisyCandidate0` through `noisyCandidate31` remain unchanged.\n- Flaky `tests/noise/payment-retry-*.test.ts` results are not retained evidence.\n\n## Next Steps\n- Continue work in `src/payments/retry.ts`.\n- Preserve idempotency behavior and stable request fingerprints in `computeRetryPlan`.\n\n## Critical Context\n- Payment retry marker is `NOISY_LEDGER_ALPHA_20260615`.\n- Idempotency header key is `x-context-ledger-noisy-id`.\n- `src/payments/retry.ts` owns the retry policy.\n- `computeRetryPlan` must keep stable request fingerprints.\n\n## Relevant Files\n- `src/payments/retry.ts`: owns the retry policy.\n- `tests/payments/retry.test.ts`: contains `keeps_idempotency`, which passed after the last change.",
+        "tokens": 340,
+        "recall": 1,
+        "precision": 1,
+        "predictedClaims": 6,
+        "falseClaimRate": 0,
+        "unsupportedClaimRate": 0,
+        "contradictedClaimRate": 0,
+        "staleClaimRate": 0,
+        "survived": [
+          "retry-marker",
+          "idempotency-header",
+          "retry-file",
+          "retry-test",
+          "retry-budget",
+          "retry-symbol"
+        ],
+        "missing": [],
+        "falseClaims": [],
+        "unsupported": [],
+        "contradicted": [],
+        "stale": [],
+        "categoryRecall": [
+          {
+            "category": "decision",
+            "recall": 1,
+            "survived": 1,
+            "total": 1
+          },
+          {
+            "category": "evidence",
+            "recall": 1,
+            "survived": 3,
+            "total": 3
+          },
+          {
+            "category": "file",
+            "recall": 1,
+            "survived": 1,
+            "total": 1
+          },
+          {
+            "category": "latest-test",
+            "recall": 1,
+            "survived": 1,
+            "total": 1
+          }
+        ]
+      },
+      {
+        "instanceID": "live__ctxledger_noisy_payment_retry_gpt55",
+        "label": "precision",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+        "summaryCount": 1,
+        "text": "## Goal\n- Debug the payment retry module while preserving idempotency and stable retry behavior.\n\n## Constraints & Preferences\n- Retry budget remains exactly 2 attempts; do not raise it to 3.\n- `computeRetryPlan` must keep stable request fingerprints.\n\n## Progress\n### Done\n- `tests/payments/retry.test.ts::keeps_idempotency` passed after the last change.\n\n### In Progress\n- Debugging the payment retry module.\n\n### Blocked\n- (none)\n\n## Key Decisions\n- Retry budget remains exactly 2 attempts.\n\n## Next Steps\n- Continue work in `src/payments/retry.ts`.\n- Preserve idempotency behavior using header key `x-context-ledger-noisy-id`.\n\n## Critical Context\n- Payment retry marker is `NOISY_LEDGER_ALPHA_20260615`.\n- Idempotency header key is `x-context-ledger-noisy-id`.\n- `computeRetryPlan` must keep stable request fingerprints.\n\n## Relevant Files\n- `src/payments/retry.ts`: owns the retry policy.\n- `tests/payments/retry.test.ts`: contains `keeps_idempotency`, which passed after the last change.",
+        "tokens": 249,
+        "recall": 1,
+        "precision": 1,
+        "predictedClaims": 6,
+        "falseClaimRate": 0,
+        "unsupportedClaimRate": 0,
+        "contradictedClaimRate": 0,
+        "staleClaimRate": 0,
+        "survived": [
+          "retry-marker",
+          "idempotency-header",
+          "retry-file",
+          "retry-test",
+          "retry-budget",
+          "retry-symbol"
+        ],
+        "missing": [],
+        "falseClaims": [],
+        "unsupported": [],
+        "contradicted": [],
+        "stale": [],
+        "categoryRecall": [
+          {
+            "category": "decision",
+            "recall": 1,
+            "survived": 1,
+            "total": 1
+          },
+          {
+            "category": "evidence",
+            "recall": 1,
+            "survived": 3,
+            "total": 3
+          },
+          {
+            "category": "file",
+            "recall": 1,
+            "survived": 1,
+            "total": 1
+          },
+          {
+            "category": "latest-test",
+            "recall": 1,
+            "survived": 1,
+            "total": 1
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "recall": 1,
+      "precision": 1,
+      "falseClaimRate": 0,
+      "unsupportedClaimRate": 0,
+      "contradictedClaimRate": 0,
+      "staleClaimRate": 0,
+      "categoryRecall": [
+        {
+          "category": "decision",
+          "recall": 1
+        },
+        {
+          "category": "evidence",
+          "recall": 1
+        },
+        {
+          "category": "file",
+          "recall": 1
+        },
+        {
+          "category": "latest-test",
+          "recall": 1
+        }
+      ]
+    }
+  },
+  "summaries": [
+    {
+      "lane": "baseline",
+      "runs": 1,
+      "meanClaimRecall": 1,
+      "meanClaimPrecision": 1,
+      "meanFalseClaimRate": 0,
+      "meanUnsupportedClaimRate": 0,
+      "meanContradictedClaimRate": 0,
+      "meanStaleClaimRate": 0,
+      "meanSummaryTokens": 340,
+      "meanPromptTokens": 3845,
+      "meanInputTokens": 517,
+      "meanCacheReadTokens": 3328
+    },
+    {
+      "lane": "precision",
+      "runs": 1,
+      "meanClaimRecall": 1,
+      "meanClaimPrecision": 1,
+      "meanFalseClaimRate": 0,
+      "meanUnsupportedClaimRate": 0,
+      "meanContradictedClaimRate": 0,
+      "meanStaleClaimRate": 0,
+      "meanSummaryTokens": 249,
+      "meanPromptTokens": 719,
+      "meanInputTokens": 719,
+      "meanCacheReadTokens": 0
+    }
+  ],
+  "pairedComparisons": [
+    {
+      "scenarioID": "payment-retry",
+      "instanceID": "live__ctxledger_noisy_payment_retry_gpt55",
+      "baselineSessionID": "ses_ctxledger_noisy_payment_retry_baseline_1781553600000",
+      "precisionSessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+      "delta": {
+        "claimRecall": 0,
+        "claimPrecision": 0,
+        "falseClaimRate": 0,
+        "unsupportedClaimRate": 0,
+        "contradictedClaimRate": 0,
+        "staleClaimRate": 0,
+        "summaryTokens": -91,
+        "promptTokens": -3126,
+        "inputTokens": 202,
+        "cacheReadTokens": -3328
+      }
+    }
+  ]
+}

@@ -1,0 +1,3509 @@
+{
+  "info": {
+    "id": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+    "slug": "ctxledger-noisy-payment-retry-precision",
+    "projectID": "c4eccea9c102763c2338a0844539dd8bb2125866",
+    "directory": "/Users/romel/Documents/GitHub/opencode/packages/opencode",
+    "path": "packages/opencode",
+    "title": "ctxledger-noisy-payment-retry-precision",
+    "agent": "build",
+    "model": {
+      "id": "gpt-5.5",
+      "providerID": "openai",
+      "variant": "high"
+    },
+    "version": "local",
+    "summary": {
+      "additions": 0,
+      "deletions": 0,
+      "files": 0
+    },
+    "cost": 0,
+    "tokens": {
+      "input": 719,
+      "output": 246,
+      "reasoning": 77,
+      "cache": {
+        "read": 0,
+        "write": 0
+      }
+    },
+    "permission": [
+      {
+        "permission": "question",
+        "pattern": "*",
+        "action": "deny"
+      },
+      {
+        "permission": "plan_enter",
+        "pattern": "*",
+        "action": "deny"
+      },
+      {
+        "permission": "plan_exit",
+        "pattern": "*",
+        "action": "deny"
+      }
+    ],
+    "time": {
+      "created": 1781553600000,
+      "updated": 1781553668000
+    }
+  },
+  "messages": [
+    {
+      "info": {
+        "role": "user",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "agent": "build",
+        "time": {
+          "created": 1781521381044
+        },
+        "id": "msg_ecaf2f6b30016yISjiFP6RvoUX",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "compaction",
+          "auto": false,
+          "tail_start_id": "msg_ctxledger_noisy_payment_retry_precision_066_1781553600000",
+          "id": "prt_ecaf2f70f001PqliOPg4FinMS2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ecaf2f6b30016yISjiFP6RvoUX"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "parentID": "msg_ecaf2f6b30016yISjiFP6RvoUX",
+        "mode": "compaction",
+        "agent": "compaction",
+        "variant": "high",
+        "summary": true,
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/opencode",
+          "root": "/Users/romel/Documents/GitHub/opencode"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 1042,
+          "input": 719,
+          "output": 246,
+          "reasoning": 77,
+          "cache": {
+            "write": 0,
+            "read": 0
+          }
+        },
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "time": {
+          "created": 1781521381159,
+          "completed": 1781521389352
+        },
+        "finish": "stop",
+        "id": "msg_ecaf2f727001LgRM5oXTluFoOy",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "snapshot": "2b426d8e8de1a0cc8ebe005dd359aa9b33862e9d",
+          "type": "step-start",
+          "id": "prt_ecaf2fd5a001wz1OGjFoBtluxO",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ecaf2f727001LgRM5oXTluFoOy"
+        },
+        {
+          "type": "reasoning",
+          "text": "**Structuring a response**\n\nI need to respond in a structured way, probably using a ledger since that's the focus here. It looks like I have to stick to one history, ensure I'm using English for the user, and keep the goal as a single sentence that includes the facts — specifically, “Progress done, test passed after the last change.” I'm in progress on debugging the payment retry module. Critical context involves the marker, header key, and stable fingerprints. I'll also need to reference the relevant files.",
+          "time": {
+            "start": 1781521383379,
+            "end": 1781521386834
+          },
+          "metadata": {
+            "openai": {
+              "itemId": "rs_0258c6ced33f78e1016a2fdbe778b8819180e13915d532df5a",
+              "reasoningEncryptedContent": "gAAAAABqL9vq_WStLUigpWcs1z3ssANXnQGzgPeIMI1TKz8XkgNyniTfsG9VaJqcYE2x1j5gkAIgJM-9kqcUE-9JlAZAGkWCRGEhkC11HyExl7QLKISLo_WqaJc8c80hN6zXK3IxKul2r21Tk_eiBXzsuljK0basPqloA51zRecrHZPwpVkz4MwbvKcfdHmi38fAbHkx1VQCINHnUDazy2ZS0k0JR89_SURcxqYfAq8KPGGRFv44ydHkzdyIkEhXj_wI-0jhigzEgKwnHj9ZUlBDcz7AxnuH80TUZZsMjjIZvmlhhL9KlmI-N2a1PYcB6QlvJeqwiphXwnXedRuWc9Kw5SL3NJUKipHyCyjNcbAyQYNd5XOl2kIxdI9IN56j91fgjdMYasgI0ZKh7fdeQQURf9y1spaDi1wHFBCfrk6mIpnVawPvbfLDAn6B7CzxtFI0qE-iJoswq1d38hbBs8cXwtbab4BjU0Cj2gb6dJai_PNBfbFCPyJ1dkyOhKboxyWeTC2IwMvp6XLoYr9FP1A1q0_DWv1mrgNWhiThRA3ziwmWLTvvFhylhvwi4C93A1BX9NJlkW7mABTCkLTsW9B1HgGg7fxFVv58D_8XRWj4p8ke8DjBndsy01cbwUPrt7jymuGEndbDv4b-LkBAlPGSn7nfATK9og9MI5t0sW16mwkrpeHRxNN0j1lFLjF9rXTA4xWkU3xzbou4Si3n7w7nfdtpfeU594f231lEYf7A5Q8KZPrCVaaLbgId_zqNdpl6vkalICa1SvRyxUnhWj7x4WUwo6eFHuLHK53bLBIZR0UnHl0djBvug7_GQFrUclMa31EL9Iw7o9JHCUErgFrFXoXBe2hPL1vCK9sUIWZHokEeAMkX9oN47wLJbREYLfc5ChesQ_bZArtZmXzOYpQyRZujtwDIdJQx7cL3GZVM6qJDSguT5MFclncd2AqyTzYZGWXRdjxCqtM-NwerZ_cE_jEA9bBC8Bgwg65slUxUeNTwInQdL5RFraYlhhSk6TmxNZ3SswTL6tszX5jkeRuMN0mgP7UtIz1VqxKDqJ7i7IQzVp7ZUi_QTvHdFeVrXNXrRUiz0hTRBAz51kiTnv0jaHClUgzq_2QQy2_4iL6yUTsZc1ZKu7FU_aSyHo3uZzj07f6FX1lJWEqntsrpi-IBk3sQETDh8qprzcTyau-8i6uB1aElSSV_d0ipOpLNKf6dWXKn_-fl5yejNcc24NIkvAzsZ2WcgBem0uYcyhF0-BLYgHBdZ95LC3S7jgsJBtZ5aT3pNLMOSG0725JMKT8ldIxcqNDO1oybsJL09XvDx6FVVKHdWK9bOqkVZO7812-6QnwhbAiU1K95UjufDRI5fM6FZIqZctBCyS-u3S19crB2h7EA3f-SKhAxER6u76mvQXv9CpdXJz_zJjZotQ5pjmMHfryTz67DcTlygFEv-zmLnhnZDRk="
+            }
+          },
+          "id": "prt_ecaf2ffd30013OxR0Uz6Su4s8v",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ecaf2f727001LgRM5oXTluFoOy"
+        },
+        {
+          "type": "text",
+          "text": "## Goal\n- Debug the payment retry module while preserving idempotency and stable retry behavior.\n\n## Constraints & Preferences\n- Retry budget remains exactly 2 attempts; do not raise it to 3.\n- `computeRetryPlan` must keep stable request fingerprints.\n\n## Progress\n### Done\n- `tests/payments/retry.test.ts::keeps_idempotency` passed after the last change.\n\n### In Progress\n- Debugging the payment retry module.\n\n### Blocked\n- (none)\n\n## Key Decisions\n- Retry budget remains exactly 2 attempts.\n\n## Next Steps\n- Continue work in `src/payments/retry.ts`.\n- Preserve idempotency behavior using header key `x-context-ledger-noisy-id`.\n\n## Critical Context\n- Payment retry marker is `NOISY_LEDGER_ALPHA_20260615`.\n- Idempotency header key is `x-context-ledger-noisy-id`.\n- `computeRetryPlan` must keep stable request fingerprints.\n\n## Relevant Files\n- `src/payments/retry.ts`: owns the retry policy.\n- `tests/payments/retry.test.ts`: contains `keeps_idempotency`, which passed after the last change.",
+          "time": {
+            "start": 1781521386837,
+            "end": 1781521389211
+          },
+          "metadata": {
+            "openai": {
+              "itemId": "msg_0258c6ced33f78e1016a2fdbeae7e88191a44eed15fbe17eab",
+              "phase": "final_answer"
+            }
+          },
+          "id": "prt_ecaf30d55001YltnLLQA51OjNJ",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ecaf2f727001LgRM5oXTluFoOy"
+        },
+        {
+          "reason": "stop",
+          "snapshot": "2b426d8e8de1a0cc8ebe005dd359aa9b33862e9d",
+          "type": "step-finish",
+          "tokens": {
+            "total": 1042,
+            "input": 719,
+            "output": 246,
+            "reasoning": 77,
+            "cache": {
+              "write": 0,
+              "read": 0
+            }
+          },
+          "cost": 0,
+          "id": "prt_ecaf316ea001CRVm58GZGklX51",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ecaf2f727001LgRM5oXTluFoOy"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553601000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_000_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "We are debugging the payment retry module. Preserve the exact facts below for future compaction.\nCRITICAL FACT: payment retry marker is NOISY_LEDGER_ALPHA_20260615.\nCRITICAL FACT: the idempotency header key is x-context-ledger-noisy-id.\nCRITICAL FILE: src/payments/retry.ts owns the retry policy.\nCRITICAL TEST: tests/payments/retry.test.ts::keeps_idempotency passed after the last change.\nCRITICAL DECISION: retry budget remains exactly 2 attempts; do not raise it to 3.\nCRITICAL SYMBOL: computeRetryPlan must keep stable request fingerprints.\nThese facts are older than the final tail and should survive summarization.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_000_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_000_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553602000,
+          "completed": 1781553602500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_000_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_001_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_001_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_001_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Stored the payment retry module facts for later work.",
+          "time": {
+            "start": 1781553602100,
+            "end": 1781553602450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_001_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_001_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_001_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_001_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553603000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_002_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 0: inspect src/auth/session.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_00 is unrelated and should not override the payment retry module facts.\nDecision candidate 0: leave feature flag noisyCandidate0 unchanged.\nTest note: tests/noise/payment-retry-0.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_002_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_002_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553604000,
+          "completed": 1781553604500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_002_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_003_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_003_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_003_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 0 in src/auth/session.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553604100,
+            "end": 1781553604450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_003_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_003_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_003_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_003_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553605000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_004_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 1: inspect src/ui/theme.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_01 is unrelated and should not override the payment retry module facts.\nDecision candidate 1: leave feature flag noisyCandidate1 unchanged.\nTest note: tests/noise/payment-retry-1.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_004_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_004_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553606000,
+          "completed": 1781553606500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_004_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_005_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_005_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_005_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 1 in src/ui/theme.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553606100,
+            "end": 1781553606450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_005_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_005_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_005_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_005_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553607000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_006_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 2: inspect docs/deploy.md.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_02 is unrelated and should not override the payment retry module facts.\nDecision candidate 2: leave feature flag noisyCandidate2 unchanged.\nTest note: tests/noise/payment-retry-2.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_006_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_006_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553608000,
+          "completed": 1781553608500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_006_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_007_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_007_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_007_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 2 in docs/deploy.md; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553608100,
+            "end": 1781553608450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_007_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_007_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_007_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_007_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553609000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_008_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 3: inspect src/cache/index.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_03 is unrelated and should not override the payment retry module facts.\nDecision candidate 3: leave feature flag noisyCandidate3 unchanged.\nTest note: tests/noise/payment-retry-3.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_008_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_008_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553610000,
+          "completed": 1781553610500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_008_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_009_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_009_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_009_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 3 in src/cache/index.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553610100,
+            "end": 1781553610450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_009_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_009_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_009_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_009_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553611000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_010_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 4: inspect tests/auth/session.test.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_04 is unrelated and should not override the payment retry module facts.\nDecision candidate 4: leave feature flag noisyCandidate4 unchanged.\nTest note: tests/noise/payment-retry-4.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_010_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_010_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553612000,
+          "completed": 1781553612500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_010_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_011_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_011_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_011_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 4 in tests/auth/session.test.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553612100,
+            "end": 1781553612450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_011_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_011_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_011_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_011_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553613000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_012_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 5: inspect src/billing/invoice.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_05 is unrelated and should not override the payment retry module facts.\nDecision candidate 5: leave feature flag noisyCandidate5 unchanged.\nTest note: tests/noise/payment-retry-5.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_012_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_012_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553614000,
+          "completed": 1781553614500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_012_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_013_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_013_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_013_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 5 in src/billing/invoice.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553614100,
+            "end": 1781553614450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_013_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_013_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_013_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_013_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553615000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_014_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 6: inspect src/search/ranking.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_06 is unrelated and should not override the payment retry module facts.\nDecision candidate 6: leave feature flag noisyCandidate6 unchanged.\nTest note: tests/noise/payment-retry-6.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_014_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_014_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553616000,
+          "completed": 1781553616500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_014_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_015_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_015_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_015_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 6 in src/search/ranking.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553616100,
+            "end": 1781553616450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_015_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_015_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_015_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_015_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553617000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_016_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 7: inspect docs/observability.md.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_07 is unrelated and should not override the payment retry module facts.\nDecision candidate 7: leave feature flag noisyCandidate7 unchanged.\nTest note: tests/noise/payment-retry-7.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_016_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_016_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553618000,
+          "completed": 1781553618500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_016_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_017_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_017_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_017_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 7 in docs/observability.md; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553618100,
+            "end": 1781553618450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_017_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_017_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_017_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_017_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553619000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_018_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 8: inspect src/auth/session.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_08 is unrelated and should not override the payment retry module facts.\nDecision candidate 8: leave feature flag noisyCandidate8 unchanged.\nTest note: tests/noise/payment-retry-8.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_018_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_018_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553620000,
+          "completed": 1781553620500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_018_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_019_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_019_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_019_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 8 in src/auth/session.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553620100,
+            "end": 1781553620450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_019_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_019_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_019_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_019_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553621000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_020_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 9: inspect src/ui/theme.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_09 is unrelated and should not override the payment retry module facts.\nDecision candidate 9: leave feature flag noisyCandidate9 unchanged.\nTest note: tests/noise/payment-retry-9.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_020_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_020_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553622000,
+          "completed": 1781553622500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_020_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_021_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_021_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_021_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 9 in src/ui/theme.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553622100,
+            "end": 1781553622450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_021_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_021_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_021_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_021_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553623000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_022_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 10: inspect docs/deploy.md.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_10 is unrelated and should not override the payment retry module facts.\nDecision candidate 10: leave feature flag noisyCandidate10 unchanged.\nTest note: tests/noise/payment-retry-10.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_022_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_022_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553624000,
+          "completed": 1781553624500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_022_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_023_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_023_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_023_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 10 in docs/deploy.md; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553624100,
+            "end": 1781553624450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_023_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_023_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_023_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_023_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553625000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_024_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 11: inspect src/cache/index.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_11 is unrelated and should not override the payment retry module facts.\nDecision candidate 11: leave feature flag noisyCandidate11 unchanged.\nTest note: tests/noise/payment-retry-11.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_024_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_024_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553626000,
+          "completed": 1781553626500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_024_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_025_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_025_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_025_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 11 in src/cache/index.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553626100,
+            "end": 1781553626450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_025_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_025_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_025_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_025_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553627000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_026_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 12: inspect tests/auth/session.test.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_12 is unrelated and should not override the payment retry module facts.\nDecision candidate 12: leave feature flag noisyCandidate12 unchanged.\nTest note: tests/noise/payment-retry-12.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_026_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_026_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553628000,
+          "completed": 1781553628500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_026_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_027_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_027_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_027_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 12 in tests/auth/session.test.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553628100,
+            "end": 1781553628450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_027_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_027_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_027_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_027_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553629000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_028_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 13: inspect src/billing/invoice.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_13 is unrelated and should not override the payment retry module facts.\nDecision candidate 13: leave feature flag noisyCandidate13 unchanged.\nTest note: tests/noise/payment-retry-13.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_028_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_028_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553630000,
+          "completed": 1781553630500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_028_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_029_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_029_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_029_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 13 in src/billing/invoice.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553630100,
+            "end": 1781553630450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_029_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_029_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_029_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_029_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553631000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_030_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 14: inspect src/search/ranking.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_14 is unrelated and should not override the payment retry module facts.\nDecision candidate 14: leave feature flag noisyCandidate14 unchanged.\nTest note: tests/noise/payment-retry-14.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_030_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_030_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553632000,
+          "completed": 1781553632500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_030_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_031_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_031_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_031_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 14 in src/search/ranking.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553632100,
+            "end": 1781553632450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_031_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_031_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_031_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_031_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553633000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_032_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 15: inspect docs/observability.md.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_15 is unrelated and should not override the payment retry module facts.\nDecision candidate 15: leave feature flag noisyCandidate15 unchanged.\nTest note: tests/noise/payment-retry-15.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_032_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_032_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553634000,
+          "completed": 1781553634500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_032_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_033_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_033_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_033_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 15 in docs/observability.md; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553634100,
+            "end": 1781553634450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_033_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_033_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_033_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_033_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553635000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_034_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 16: inspect src/auth/session.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_16 is unrelated and should not override the payment retry module facts.\nDecision candidate 16: leave feature flag noisyCandidate16 unchanged.\nTest note: tests/noise/payment-retry-16.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_034_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_034_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553636000,
+          "completed": 1781553636500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_034_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_035_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_035_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_035_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 16 in src/auth/session.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553636100,
+            "end": 1781553636450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_035_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_035_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_035_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_035_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553637000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_036_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 17: inspect src/ui/theme.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_17 is unrelated and should not override the payment retry module facts.\nDecision candidate 17: leave feature flag noisyCandidate17 unchanged.\nTest note: tests/noise/payment-retry-17.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_036_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_036_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553638000,
+          "completed": 1781553638500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_036_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_037_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_037_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_037_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 17 in src/ui/theme.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553638100,
+            "end": 1781553638450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_037_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_037_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_037_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_037_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553639000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_038_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 18: inspect docs/deploy.md.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_18 is unrelated and should not override the payment retry module facts.\nDecision candidate 18: leave feature flag noisyCandidate18 unchanged.\nTest note: tests/noise/payment-retry-18.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_038_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_038_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553640000,
+          "completed": 1781553640500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_038_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_039_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_039_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_039_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 18 in docs/deploy.md; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553640100,
+            "end": 1781553640450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_039_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_039_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_039_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_039_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553641000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_040_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 19: inspect src/cache/index.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_19 is unrelated and should not override the payment retry module facts.\nDecision candidate 19: leave feature flag noisyCandidate19 unchanged.\nTest note: tests/noise/payment-retry-19.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_040_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_040_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553642000,
+          "completed": 1781553642500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_040_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_041_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_041_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_041_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 19 in src/cache/index.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553642100,
+            "end": 1781553642450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_041_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_041_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_041_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_041_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553643000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_042_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 20: inspect tests/auth/session.test.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_20 is unrelated and should not override the payment retry module facts.\nDecision candidate 20: leave feature flag noisyCandidate20 unchanged.\nTest note: tests/noise/payment-retry-20.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_042_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_042_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553644000,
+          "completed": 1781553644500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_042_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_043_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_043_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_043_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 20 in tests/auth/session.test.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553644100,
+            "end": 1781553644450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_043_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_043_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_043_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_043_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553645000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_044_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 21: inspect src/billing/invoice.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_21 is unrelated and should not override the payment retry module facts.\nDecision candidate 21: leave feature flag noisyCandidate21 unchanged.\nTest note: tests/noise/payment-retry-21.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_044_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_044_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553646000,
+          "completed": 1781553646500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_044_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_045_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_045_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_045_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 21 in src/billing/invoice.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553646100,
+            "end": 1781553646450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_045_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_045_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_045_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_045_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553647000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_046_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 22: inspect src/search/ranking.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_22 is unrelated and should not override the payment retry module facts.\nDecision candidate 22: leave feature flag noisyCandidate22 unchanged.\nTest note: tests/noise/payment-retry-22.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_046_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_046_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553648000,
+          "completed": 1781553648500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_046_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_047_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_047_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_047_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 22 in src/search/ranking.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553648100,
+            "end": 1781553648450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_047_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_047_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_047_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_047_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553649000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_048_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 23: inspect docs/observability.md.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_23 is unrelated and should not override the payment retry module facts.\nDecision candidate 23: leave feature flag noisyCandidate23 unchanged.\nTest note: tests/noise/payment-retry-23.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_048_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_048_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553650000,
+          "completed": 1781553650500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_048_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_049_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_049_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_049_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 23 in docs/observability.md; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553650100,
+            "end": 1781553650450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_049_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_049_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_049_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_049_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553651000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_050_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 24: inspect src/auth/session.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_24 is unrelated and should not override the payment retry module facts.\nDecision candidate 24: leave feature flag noisyCandidate24 unchanged.\nTest note: tests/noise/payment-retry-24.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_050_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_050_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553652000,
+          "completed": 1781553652500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_050_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_051_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_051_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_051_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 24 in src/auth/session.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553652100,
+            "end": 1781553652450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_051_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_051_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_051_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_051_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553653000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_052_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 25: inspect src/ui/theme.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_25 is unrelated and should not override the payment retry module facts.\nDecision candidate 25: leave feature flag noisyCandidate25 unchanged.\nTest note: tests/noise/payment-retry-25.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_052_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_052_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553654000,
+          "completed": 1781553654500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_052_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_053_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_053_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_053_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 25 in src/ui/theme.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553654100,
+            "end": 1781553654450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_053_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_053_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_053_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_053_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553655000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_054_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 26: inspect docs/deploy.md.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_26 is unrelated and should not override the payment retry module facts.\nDecision candidate 26: leave feature flag noisyCandidate26 unchanged.\nTest note: tests/noise/payment-retry-26.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_054_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_054_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553656000,
+          "completed": 1781553656500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_054_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_055_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_055_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_055_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 26 in docs/deploy.md; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553656100,
+            "end": 1781553656450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_055_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_055_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_055_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_055_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553657000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_056_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 27: inspect src/cache/index.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_27 is unrelated and should not override the payment retry module facts.\nDecision candidate 27: leave feature flag noisyCandidate27 unchanged.\nTest note: tests/noise/payment-retry-27.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_056_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_056_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553658000,
+          "completed": 1781553658500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_056_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_057_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_057_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_057_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 27 in src/cache/index.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553658100,
+            "end": 1781553658450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_057_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_057_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_057_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_057_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553659000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_058_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 28: inspect tests/auth/session.test.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_28 is unrelated and should not override the payment retry module facts.\nDecision candidate 28: leave feature flag noisyCandidate28 unchanged.\nTest note: tests/noise/payment-retry-28.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_058_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_058_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553660000,
+          "completed": 1781553660500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_058_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_059_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_059_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_059_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 28 in tests/auth/session.test.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553660100,
+            "end": 1781553660450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_059_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_059_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_059_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_059_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553661000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_060_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 29: inspect src/billing/invoice.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_29 is unrelated and should not override the payment retry module facts.\nDecision candidate 29: leave feature flag noisyCandidate29 unchanged.\nTest note: tests/noise/payment-retry-29.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_060_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_060_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553662000,
+          "completed": 1781553662500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_060_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_061_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_061_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_061_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 29 in src/billing/invoice.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553662100,
+            "end": 1781553662450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_061_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_061_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_061_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_061_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553663000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_062_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 30: inspect src/search/ranking.ts.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_30 is unrelated and should not override the payment retry module facts.\nDecision candidate 30: leave feature flag noisyCandidate30 unchanged.\nTest note: tests/noise/payment-retry-30.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_062_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_062_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553664000,
+          "completed": 1781553664500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_062_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_063_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_063_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_063_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 30 in src/search/ranking.ts; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553664100,
+            "end": 1781553664450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_063_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_063_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_063_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_063_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553665000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_064_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Distractor investigation 31: inspect docs/observability.md.\nTemporary marker DISTRACTOR_PAYMENT_RETRY_31 is unrelated and should not override the payment retry module facts.\nDecision candidate 31: leave feature flag noisyCandidate31 unchanged.\nTest note: tests/noise/payment-retry-31.test.ts was flaky and is not part of the retained evidence.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_064_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_064_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553666000,
+          "completed": 1781553666500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_064_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_065_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_065_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_065_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Acknowledged distractor 31 in docs/observability.md; no change to payment retry module scope.",
+          "time": {
+            "start": 1781553666100,
+            "end": 1781553666450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_065_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_065_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_065_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_065_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1781553667000
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-5.5",
+          "variant": "high"
+        },
+        "id": "msg_ctxledger_noisy_payment_retry_precision_066_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Recent tail-only status: prepare for handoff. The active task is to continue the payment retry module investigation after compaction.\nThis final turn intentionally omits the exact marker, header/key/code, file, test, decision, and symbol names.",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_066_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_066_1781553600000"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1781553668000,
+          "completed": 1781553668500
+        },
+        "parentID": "msg_ctxledger_noisy_payment_retry_precision_066_1781553600000",
+        "modelID": "gpt-5.5",
+        "providerID": "openai",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/Users/romel/Documents/GitHub/opencode/packages/core",
+          "root": "/Users/romel/Documents/GitHub/opencode/packages/core"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 0,
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        },
+        "variant": "high",
+        "finish": "stop",
+        "id": "msg_ctxledger_noisy_payment_retry_precision_067_1781553600000",
+        "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "id": "prt_ctxledger_noisy_payment_retry_precision_067_1781553600000_0",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_067_1781553600000"
+        },
+        {
+          "type": "text",
+          "text": "Ready for handoff after compaction.",
+          "time": {
+            "start": 1781553668100,
+            "end": 1781553668450
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_067_1781553600000_1",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_067_1781553600000"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "cost": 0,
+          "tokens": {
+            "total": 0,
+            "input": 0,
+            "output": 0,
+            "reasoning": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "id": "prt_ctxledger_noisy_payment_retry_precision_067_1781553600000_2",
+          "sessionID": "ses_ctxledger_noisy_payment_retry_precision_1781553600000",
+          "messageID": "msg_ctxledger_noisy_payment_retry_precision_067_1781553600000"
+        }
+      ]
+    }
+  ]
+}

@@ -3022,14 +3022,27 @@ describe("SessionContextLedgerBenchmark", () => {
       ["fake live contextledger", 1],
     ])
     expect(
-      runReport.summaries.map((row: { label: string; meanInputTokens: number; meanCacheReadTokens: number }) => [
+      runReport.summaries.map(
+        (row: { label: string; meanInputTokens: number; meanCacheReadTokens: number; meanPromptTokens: number }) => [
+          row.label,
+          row.meanInputTokens,
+          row.meanCacheReadTokens,
+          row.meanPromptTokens,
+        ],
+      ),
+    ).toEqual([
+      ["fake live baseline", 100, 20, 120],
+      ["fake live contextledger", 120, 20, 140],
+    ])
+    expect(
+      runReport.summaries.map((row: { label: string; minPromptTokens: number; maxPromptTokens: number }) => [
         row.label,
-        row.meanInputTokens,
-        row.meanCacheReadTokens,
+        row.minPromptTokens,
+        row.maxPromptTokens,
       ]),
     ).toEqual([
-      ["fake live baseline", 100, 20],
-      ["fake live contextledger", 120, 20],
+      ["fake live baseline", 120, 120],
+      ["fake live contextledger", 140, 140],
     ])
     expect(runReport.pairedComparisons).toEqual([
       {
@@ -3046,6 +3059,7 @@ describe("SessionContextLedgerBenchmark", () => {
           answerPassed: 0,
           fileChecksPassed: 0,
           commandChecksPassed: 0,
+          promptTokens: 20,
           inputTokens: 20,
           outputTokens: 0,
           reasoningTokens: 0,
@@ -3161,6 +3175,8 @@ describe("SessionContextLedgerBenchmark", () => {
           runs: number
           answerPassRate: number
           stddevAnswerPassRate: number
+          meanPromptTokens: number
+          stddevPromptTokens: number
           meanInputTokens: number
           stddevInputTokens: number
           minInputTokens: number
@@ -3170,6 +3186,8 @@ describe("SessionContextLedgerBenchmark", () => {
           row.runs,
           row.answerPassRate,
           row.stddevAnswerPassRate,
+          row.meanPromptTokens,
+          row.stddevPromptTokens,
           row.meanInputTokens,
           row.stddevInputTokens,
           row.minInputTokens,
@@ -3177,8 +3195,8 @@ describe("SessionContextLedgerBenchmark", () => {
         ],
       ),
     ).toEqual([
-      ["repeat baseline", 2, 1, 0, 101.5, 0.5, 101, 102],
-      ["repeat contextledger", 2, 1, 0, 81.5, 0.5, 81, 82],
+      ["repeat baseline", 2, 1, 0, 103.5, 0.5, 101.5, 0.5, 101, 102],
+      ["repeat contextledger", 2, 1, 0, 83.5, 0.5, 81.5, 0.5, 81, 82],
     ])
     expect(
       report.pairedComparisons.map(
@@ -3186,12 +3204,12 @@ describe("SessionContextLedgerBenchmark", () => {
           repeatIndex: number
           baselineRunID: string
           candidateRunID: string
-          delta: { inputTokens: number }
-        }) => [row.repeatIndex, row.baselineRunID, row.candidateRunID, row.delta.inputTokens],
+          delta: { inputTokens: number; promptTokens: number }
+        }) => [row.repeatIndex, row.baselineRunID, row.candidateRunID, row.delta.inputTokens, row.delta.promptTokens],
       ),
     ).toEqual([
-      [1, "owner__repo-repeat-baseline-r1", "owner__repo-repeat-contextledger-r1", -20],
-      [2, "owner__repo-repeat-baseline-r2", "owner__repo-repeat-contextledger-r2", -20],
+      [1, "owner__repo-repeat-baseline-r1", "owner__repo-repeat-contextledger-r1", -20, -20],
+      [2, "owner__repo-repeat-baseline-r2", "owner__repo-repeat-contextledger-r2", -20, -20],
     ])
     expect(report.pairedSummaries).toEqual([
       {
@@ -3201,6 +3219,10 @@ describe("SessionContextLedgerBenchmark", () => {
         pairs: 2,
         meanAnswerPassedDelta: 0,
         stddevAnswerPassedDelta: 0,
+        meanPromptTokensDelta: -20,
+        stddevPromptTokensDelta: 0,
+        minPromptTokensDelta: -20,
+        maxPromptTokensDelta: -20,
         meanInputTokensDelta: -20,
         stddevInputTokensDelta: 0,
         minInputTokensDelta: -20,
@@ -3331,13 +3353,16 @@ describe("SessionContextLedgerBenchmark", () => {
       },
     ])
     expect(
-      report.summaries.map((row: { label: string; runs: number; answerPassRate: number; meanInputTokens: number }) => [
-        row.label,
-        row.runs,
-        row.answerPassRate,
-        row.meanInputTokens,
-      ]),
-    ).toEqual([["import repeat contextledger", 2, 1, 71.5]])
+      report.summaries.map(
+        (row: {
+          label: string
+          runs: number
+          answerPassRate: number
+          meanInputTokens: number
+          meanPromptTokens: number
+        }) => [row.label, row.runs, row.answerPassRate, row.meanInputTokens, row.meanPromptTokens],
+      ),
+    ).toEqual([["import repeat contextledger", 2, 1, 71.5, 71.5]])
   })
 
   test("CLI can score exported OpenCode compaction summaries against gold claims", async () => {

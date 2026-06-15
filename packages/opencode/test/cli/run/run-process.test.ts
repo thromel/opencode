@@ -104,4 +104,28 @@ describe("opencode run (non-interactive subprocess)", () => {
       }),
     60_000,
   )
+
+  cliIt.concurrent(
+    "--format json does not replay older stored assistant text after the current prompt",
+    ({ llm, opencode }) =>
+      Effect.gen(function* () {
+        yield* llm.text("current answer from prompt")
+        const result = yield* opencode.run("say current", {
+          format: "json",
+          timeoutMs: 30_000,
+          env: {
+            OPENCODE_TEST_RUN_APPEND_STALE_STORED_ASSISTANT_TEXT: "stale stored answer",
+          },
+        })
+        opencode.expectExit(result, 0)
+
+        const events = opencode.parseJsonEvents(result.stdout)
+        const texts = events
+          .filter((event) => event.type === "text")
+          .map((event) => (event.part as { text?: string } | undefined)?.text)
+        expect(texts).toEqual(["current answer from prompt"])
+        expect(result.stdout).not.toContain("stale stored answer")
+      }),
+    60_000,
+  )
 })

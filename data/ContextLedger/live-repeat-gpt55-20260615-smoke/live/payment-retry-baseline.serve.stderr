@@ -1,0 +1,36 @@
+timestamp=2026-06-15T11:02:43.817Z level=INFO run=4a2bab8b message=loading path=/Users/romel/.config/opencode/config.json
+timestamp=2026-06-15T11:02:43.819Z level=INFO run=4a2bab8b message=loading path=/Users/romel/.config/opencode/opencode.json
+timestamp=2026-06-15T11:02:43.822Z level=INFO run=4a2bab8b message=loading path=/Users/romel/.config/opencode/opencode.jsonc
+timestamp=2026-06-15T11:02:43.964Z level=INFO run=4a2bab8b message="creating instance" directory=/Users/romel/Documents/GitHub/opencode/packages/opencode
+timestamp=2026-06-15T11:02:43.965Z level=INFO run=4a2bab8b message=fromDirectory directory=/Users/romel/Documents/GitHub/opencode/packages/opencode
+timestamp=2026-06-15T11:02:44.004Z level=INFO run=4a2bab8b message=bootstrapping directory=/Users/romel/Documents/GitHub/opencode/packages/opencode
+timestamp=2026-06-15T11:02:44.013Z level=INFO run=4a2bab8b message=loading path=/Users/romel/.config/opencode/config.json
+timestamp=2026-06-15T11:02:44.013Z level=INFO run=4a2bab8b message=loading path=/Users/romel/.config/opencode/opencode.json
+timestamp=2026-06-15T11:02:44.014Z level=INFO run=4a2bab8b message=loading path=/Users/romel/.config/opencode/opencode.jsonc
+timestamp=2026-06-15T11:02:44.041Z level=DEBUG run=4a2bab8b message="loading config from /Users/romel/Documents/GitHub/opencode/.opencode/opencode.json"
+timestamp=2026-06-15T11:02:44.041Z level=INFO run=4a2bab8b message=loading path=/Users/romel/Documents/GitHub/opencode/.opencode/opencode.json
+timestamp=2026-06-15T11:02:44.041Z level=DEBUG run=4a2bab8b message="loading config from /Users/romel/Documents/GitHub/opencode/.opencode/opencode.jsonc"
+timestamp=2026-06-15T11:02:44.042Z level=INFO run=4a2bab8b message=loading path=/Users/romel/Documents/GitHub/opencode/.opencode/opencode.jsonc
+timestamp=2026-06-15T11:02:44.046Z level=DEBUG run=4a2bab8b message="loading config from /Users/romel/.opencode/opencode.json"
+timestamp=2026-06-15T11:02:44.046Z level=INFO run=4a2bab8b message=loading path=/Users/romel/.opencode/opencode.json
+timestamp=2026-06-15T11:02:44.046Z level=DEBUG run=4a2bab8b message="loading config from /Users/romel/.opencode/opencode.jsonc"
+timestamp=2026-06-15T11:02:44.046Z level=INFO run=4a2bab8b message=loading path=/Users/romel/.opencode/opencode.jsonc
+timestamp=2026-06-15T11:02:44.048Z level=DEBUG run=4a2bab8b message="loaded custom config from OPENCODE_CONFIG_CONTENT"
+timestamp=2026-06-15T11:02:44.052Z level=INFO run=4a2bab8b message="all LSPs are disabled"
+timestamp=2026-06-15T11:02:44.053Z level=INFO run=4a2bab8b message="all formatters are disabled"
+timestamp=2026-06-15T11:02:44.053Z level=INFO run=4a2bab8b message=init
+timestamp=2026-06-15T11:02:44.081Z level=INFO run=4a2bab8b message="booting location services" directory=/Users/romel/Documents/GitHub/opencode/packages/opencode workspaceID=undefined
+timestamp=2026-06-15T11:02:44.142Z level=INFO run=4a2bab8b message="watcher backend" directory=/Users/romel/Documents/GitHub/opencode/packages/opencode platform=darwin backend=fs-events
+timestamp=2026-06-15T11:02:44.447Z level=INFO run=4a2bab8b message="project copy refresh started" projectID=c4eccea9c102763c2338a0844539dd8bb2125866
+timestamp=2026-06-15T11:02:44.484Z level=INFO run=4a2bab8b message=loop session.id=ses_ctxledger_noisy_payment_retry_baseline_1781553600000 step=0
+timestamp=2026-06-15T11:02:44.508Z level=INFO run=4a2bab8b message="project copy refresh done" projectID=c4eccea9c102763c2338a0844539dd8bb2125866 updated=[] removed=[]
+timestamp=2026-06-15T11:02:44.549Z level=WARN run=4a2bab8b message="failed to add snapshot files" exitCode=128 stderr="warning: could not open directory 'packages/opencode/packages/opencode/': No such file or directory\nfatal: pathspec 'packages/opencode/src/cli/cmd/run.ts' did not match any files\n"
+timestamp=2026-06-15T11:02:44.560Z level=INFO run=4a2bab8b message=tracking hash=2b426d8e8de1a0cc8ebe005dd359aa9b33862e9d cwd=/Users/romel/Documents/GitHub/opencode/packages/opencode git=/Users/romel/.local/share/opencode/snapshot/c4eccea9c102763c2338a0844539dd8bb2125866/517d6e01c861dedb08c66ba7a859a28c84e97f31
+timestamp=2026-06-15T11:02:44.560Z level=INFO run=4a2bab8b message=process session.id=ses_ctxledger_noisy_payment_retry_baseline_1781553600000 messageID=msg_ecaf2b60b001iUAFrQ5WlBfOap
+timestamp=2026-06-15T11:02:44.562Z level=INFO run=4a2bab8b message=stream providerID=openai modelID=gpt-5.5 session.id=ses_ctxledger_noisy_payment_retry_baseline_1781553600000 small=false agent=compaction mode=primary
+timestamp=2026-06-15T11:02:44.570Z level=INFO run=4a2bab8b message="llm runtime selected" llm.runtime=ai-sdk llm.provider=openai llm.model=gpt-5.5
+timestamp=2026-06-15T11:02:56.308Z level=WARN run=4a2bab8b message="failed to add snapshot files" exitCode=128 stderr="warning: could not open directory 'packages/opencode/packages/opencode/': No such file or directory\nfatal: pathspec 'packages/opencode/src/cli/cmd/run.ts' did not match any files\n"
+timestamp=2026-06-15T11:02:56.317Z level=INFO run=4a2bab8b message=tracking hash=2b426d8e8de1a0cc8ebe005dd359aa9b33862e9d cwd=/Users/romel/Documents/GitHub/opencode/packages/opencode git=/Users/romel/.local/share/opencode/snapshot/c4eccea9c102763c2338a0844539dd8bb2125866/517d6e01c861dedb08c66ba7a859a28c84e97f31
+timestamp=2026-06-15T11:02:56.373Z level=WARN run=4a2bab8b message="failed to add snapshot files" exitCode=128 stderr="warning: could not open directory 'packages/opencode/packages/opencode/': No such file or directory\nfatal: pathspec 'packages/opencode/src/cli/cmd/run.ts' did not match any files\n"
+timestamp=2026-06-15T11:02:56.389Z level=INFO run=4a2bab8b message=loop session.id=ses_ctxledger_noisy_payment_retry_baseline_1781553600000 step=1
+timestamp=2026-06-15T11:02:56.391Z level=INFO run=4a2bab8b message="exiting loop" session.id=ses_ctxledger_noisy_payment_retry_baseline_1781553600000
